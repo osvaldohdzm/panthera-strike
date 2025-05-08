@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panthera Strike - Web Scanner</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0a0a0a;
+            color: #ffffff; /* Cambiado a blanco */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: #1a1a1a;
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px #ff0000; /* Cambiado de verde a rojo */
+            width: 80%;
+            max-width: 900px;
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff; /* Cambiado a blanco */
+            text-shadow: 0 0 5px #ff0000; /* Cambiado de verde a rojo */
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: calc(100% - 22px); /* Ajustar por padding y borde */
+            height: 150px;
+            background-color: #000;
+            color: #ffffff; /* Cambiado a blanco */
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            padding: 10px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        button {
+            background-color: #330000; /* Cambiado de verde a rojo */
+            color: #ffffff; /* Cambiado a blanco */
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1em;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        button:hover {
+            background-color: #660000; /* Cambiado de verde a rojo */
+            box-shadow: 0 0 10px #ff0000; /* Cambiado de verde a rojo */
+        }
+        #statusArea, #logsArea {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #000;
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            min-height: 100px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap; /* Para mantener saltos de línea y espacios */
+            word-wrap: break-word;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #330000; /* Cambiado de verde a rojo */
+            padding-bottom: 5px;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        .error {
+            color: #ff0000;
+        }
+        .warn {
+            color: #ffff00;
+        }
+        .info {
+            color: #ffffff; /* Cambiado a blanco */
+        }
+        .job-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px dashed #660000; /* Cambiado de verde a rojo */
+            background-color: #050505;
+        }
+        .jobs-list {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #000;
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .jobs-list h3 {
+            margin-top: 0;
+        }
+        .jobs-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .jobs-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #330000; /* Cambiado de verde a rojo */
+            cursor: pointer;
+        }
+        .jobs-list li:hover {
+            background-color: #330000; /* Cambiado de verde a rojo */
+        }
+        .jobs-list li:last-child {
+            border-bottom: none;
+        }
+        .tool-selection-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #101010; /* Slightly lighter than container for distinction */
+            border: 1px solid #cc0000; /* Cambiado de verde a rojo */
+            border-radius: 5px;
+        }
+        .tool-selection-container h3 {
+            margin-top: 0;
+            color: #ffffff; /* Cambiado a blanco */
+        }
+        .tool-category {
+            margin-bottom: 15px;
+        }
+        .tool-category h4 {
+            color: #dd0000; /* Cambiado de verde a rojo */
+            border-bottom: 1px solid #660000; /* Cambiado de verde a rojo */
+            padding-bottom: 5px;
+        }
+        .tool-item {
+            margin-bottom: 8px;
+        }
+        .tool-item label {
+            display: flex;
+            align-items: center;
+        }
+        .tool-item input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: #ff0000; /* Style the checkbox color */ /* Cambiado de verde a rojo */
+        }
+        .tool-description {
+            font-size: 0.8em;
+            color: #ffffff; /* Cambiado a blanco */
+            margin-left: 25px; /* Align with checkbox text */
+        }
+        .preset-buttons button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Panthera Strike - Web Scanner</h1>
+        
+        <label for="targets">Targets (FQDN, IPv4, IPv6, URL - uno por línea):</label>
+        <textarea id="targets" placeholder="ejemplo.com\n192.168.1.1\nhttps://sitio.seguro"></textarea>
+
+        <div class="tool-selection-container">
+            <h3>Seleccionar Herramientas de Escaneo</h3>
+            <div class="preset-buttons">
+                <button onclick="applyToolPreset('none')">Desmarcar Todas</button>
+                <button onclick="applyToolPreset('full_scan')">Escaneo Robusto (Marcar Todas Seguras)</button>
+                <button onclick="applyToolPreset('quick_scan')">Escaneo Rápido</button>
+                <button id="downloadZip" style="background-color:#006600;color:white;margin-left:10px;">Descargar Resultados (ZIP)</button>
+                <button onclick="applyToolPreset('discovery_only')">Solo Descubrimiento</button>
+            </div>
+            <div id="toolList">Cargando herramientas...</div>
+        </div>
+
+        <button onclick="startScan()">Enviar Ataque</button>
+
+        <div class="jobs-list">
+            <h3>Historial de Trabajos</h3>
+            <ul id="jobsListArea">
+                <li>Cargando trabajos anteriores...</li>
+            </ul>
+        </div>
+
+        <div id="currentJobInfo" class="job-info" style="display:none;">
+            <h3>Información del Trabajo Actual:</h3>
+            <p><strong>Job ID:</strong> <span id="jobIdDisplay"></span></p>
+            <p><strong>Estado:</strong> <span id="jobStatusDisplay"></span></p>
+            <p><button onclick="refreshStatus()">Actualizar Estado</button></p>
+        </div>
+
+        <h2>Estado/Logs del Escaneo:</h2>
+        <div id="statusArea">
+            Esperando inicio de escaneo...
+        </div>
+    </div>
+
+    <script>
+        let currentJobId = null;
+        let statusInterval = null;
+        let availableTools = [];
+        let toolPresets = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTools();
+            fetchJobs();
+        });
+
+        async function fetchTools() {
+            try {
+                const response = await fetch('/tools');
+                const data = await response.json();
+                if (response.ok) {
+                    availableTools = data.tools;
+                    toolPresets = data.presets;
+                    renderToolList(availableTools);
+                } else {
+                    document.getElementById('toolList').innerHTML = `<span class="error">Error cargando herramientas: ${data.error || response.statusText}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('toolList').innerHTML = `<span class="error">Error de red o servidor al cargar herramientas: ${error.message}</span>`;
+            }
+        }
+
+        function renderToolList(tools) {
+            const toolListDiv = document.getElementById('toolList');
+            toolListDiv.innerHTML = ''; // Limpiar contenido anterior
+
+            const toolsByCategory = tools.reduce((acc, tool) => {
+                acc[tool.category] = acc[tool.category] || [];
+                acc[tool.category].push(tool);
+                return acc;
+            }, {});
+
+            for (const category in toolsByCategory) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'tool-category';
+                
+                const categoryTitle = document.createElement('h4');
+                categoryTitle.textContent = category;
+                categoryDiv.appendChild(categoryTitle);
+
+                toolsByCategory[category].forEach(tool => {
+                    const toolItemDiv = document.createElement('div');
+                    toolItemDiv.className = 'tool-item';
+                    
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `tool-${tool.id}`;
+                    checkbox.value = tool.id;
+                    checkbox.checked = tool.default_enabled; // Marcar por defecto según configuración
+                    if (tool.dangerous) {
+                        label.title = "PELIGROSO: Esta herramienta puede tener efectos no deseados.";
+                        label.style.color = "#ff6600";
+                    }
+                    if (tool.requires_api_token) {
+                        label.title = "Requiere configuración de API token en el backend.";
+                        // checkbox.disabled = true; // Opcional: deshabilitar si no está configurada
+                    }
+
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(` ${tool.name}`));
+                    
+                    const description = document.createElement('div');
+                    description.className = 'tool-description';
+                    description.textContent = tool.description;
+                    if (tool.dangerous) description.innerHTML += ' <strong style="color:red;">[PELIGROSO]</strong>';
+                    if (tool.requires_api_token) description.innerHTML += ' <strong style="color:orange;">[REQUIERE API TOKEN]</strong>';
+
+
+                    toolItemDiv.appendChild(label);
+                    toolItemDiv.appendChild(description);
+                    categoryDiv.appendChild(toolItemDiv);
+                });
+                toolListDiv.appendChild(categoryDiv);
+            }
+        }
+
+        function applyToolPreset(presetName) {
+            const checkboxes = document.querySelectorAll('#toolList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false); // Desmarcar todos primero
+
+            if (presetName === 'none') {
+                return; // Ya están todos desmarcados
+            }
+
+            const presetToolIds = toolPresets[presetName];
+            if (presetToolIds) {
+                presetToolIds.forEach(toolId => {
+                    const checkbox = document.getElementById(`tool-${toolId}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+        }
+
+        function getSelectedToolIds() {
+            const selectedTools = [];
+            const checkboxes = document.querySelectorAll('#toolList input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                selectedTools.push(checkbox.value);
+            });
+            return selectedTools;
+        }
+
+        async function fetchJobs() {
+            try {
+                const response = await fetch('/jobs');
+                const jobs = await response.json();
+                const jobsListArea = document.getElementById('jobsListArea');
+                jobsListArea.innerHTML = ''; // Limpiar
+                if (jobs.length === 0) {
+                    jobsListArea.innerHTML = '<li>No hay trabajos anteriores.</li>';
+                    return;
+                }
+                jobs.forEach(job => {
+                    const li = document.createElement('li');
+                    li.textContent = `Job ID: ${job.id} - Estado: ${job.status} - Targets: ${job.targets.join(', ') || 'N/A'} - Inicio: ${job.start_time}`;
+                    li.onclick = () => {
+                        currentJobId = job.id;
+                        document.getElementById('jobIdDisplay').textContent = job.id;
+                        document.getElementById('jobStatusDisplay').textContent = job.status;
+                        document.getElementById('currentJobInfo').style.display = 'block';
+                        fetchStatus(job.id); // Cargar logs e info detallada
+                        if(statusInterval) clearInterval(statusInterval);
+                        // Solo reiniciar intervalo si el job no está finalizado
+                        if (job.status !== 'completed' && job.status !== 'failed' && job.status !== 'cancelled' && job.status !== 'error') {
+                           statusInterval = setInterval(() => fetchStatus(job.id), 5000);
+                        }
+                    };
+                    jobsListArea.appendChild(li);
+                });
+            } catch (error) {
+                document.getElementById('jobsListArea').innerHTML = `<li><span class="error">Error cargando trabajos: ${error.message}</span></li>`;
+            }
+        }
+
+
+        async function startScan() {
+            const targetsText = document.getElementById('targets').value;
+            if (!targetsText.trim()) {
+                alert('Por favor, ingrese al menos un objetivo.');
+                return;
+            }
+            const targetsArray = targetsText.split('\n').map(t => t.trim()).filter(t => t);
+            const selectedTools = getSelectedToolIds();
+
+            if (selectedTools.length === 0) {
+                if (!confirm('No ha seleccionado ninguna herramienta. ¿Desea continuar con un escaneo predeterminado (rápido)?')) {
+                    return;
+                }
+                // Si el usuario confirma, selectedTools se queda vacío y el backend usará el default.
+            }
+
+            document.getElementById('statusArea').innerHTML = 'Iniciando escaneo...';
+            document.getElementById('currentJobInfo').style.display = 'none';
+            if(statusInterval) clearInterval(statusInterval);
+
+            try {
+                const response = await fetch('/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ targets: targetsArray, tools: selectedTools }), // Enviar herramientas seleccionadas
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    currentJobId = data.job_id;
+                    document.getElementById('statusArea').innerHTML = `Escaneo iniciado. Job ID: ${data.job_id}.<br>Consultando estado...`;
+                    document.getElementById('jobIdDisplay').textContent = data.job_id;
+                    document.getElementById('jobStatusDisplay').textContent = 'pending';
+                    document.getElementById('currentJobInfo').style.display = 'block';
+                    fetchStatus(currentJobId);
+                    statusInterval = setInterval(() => fetchStatus(currentJobId), 5000); // Actualizar cada 5 segundos
+                    fetchJobs(); // Actualizar lista de jobs
+                } else {
+                    document.getElementById('statusArea').innerHTML = `<span class="error">Error iniciando escaneo: ${data.error || response.statusText}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('statusArea').innerHTML = `<span class="error">Error de red o servidor: ${error.message}</span>`;
+            }
+        }
+
+        async function fetchStatus(jobId) {
+            if (!jobId) return;
+            try {
+                const response = await fetch(`/status/${jobId}`);
+                const data = await response.json();
+                const statusArea = document.getElementById('statusArea');
+                const jobStatusDisplay = document.getElementById('jobStatusDisplay');
+
+                if (response.ok) {
+                    jobStatusDisplay.textContent = data.status;
+                    let logsHtml = `<strong>Estado del Job ${jobId}: ${data.status}</strong><br>`;
+                    logsHtml += `Hora de inicio: ${data.start_time || 'N/A'}<br>`;
+                    if(data.end_time) logsHtml += `Hora de finalización: ${data.end_time}<br>`;
+                    logsHtml += `Objetivos: ${data.targets ? data.targets.join(', ') : 'N/A'}<br>`;
+                    logsHtml += `Resultados en: ${data.results_path || 'N/A'}<br><hr>`;
+                    
+                    if (data.logs && data.logs.length > 0) {
+                        logsHtml += data.logs.map(log => {
+                            let logClass = 'info';
+                            if (log.includes('[ERROR]')) logClass = 'error';
+                            else if (log.includes('[WARN]')) logClass = 'warn';
+                            return `<div class="log-entry ${logClass}">${escapeHtml(log)}</div>`;
+                        }).join('');
+                    } else {
+                        logsHtml += 'No hay logs detallados disponibles aún.';
+                    }
+                    statusArea.innerHTML = logsHtml;
+
+                    if (data.status === 'completed' || data.status === 'failed' || data.status === 'cancelled' || data.status === 'error') {
+                        if(statusInterval) clearInterval(statusInterval);
+                        statusInterval = null;
+                        jobStatusDisplay.textContent += ` (Finalizado)`;
+                    }
+                } else {
+                    statusArea.innerHTML += `<br><span class="error">Error obteniendo estado para ${jobId}: ${data.error || response.statusText}</span>`;
+                    if(statusInterval) clearInterval(statusInterval);
+                }
+            } catch (error) {
+                document.getElementById('statusArea').innerHTML += `<br><span class="error">Error de red o servidor al obtener estado: ${error.message}</span>`;
+                if(statusInterval) clearInterval(statusInterval);
+            }
+        }
+
+        function refreshStatus(){
+            if(currentJobId){
+                fetchStatus(currentJobId);
+            }
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+    </script>
+</body>
+</html>
