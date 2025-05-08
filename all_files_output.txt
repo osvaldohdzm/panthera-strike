@@ -1,0 +1,3217 @@
+==== static/js/animation-02.js ====
+var i = 0;
+var a3 = $('#a3');
+var a4 = $('#a4');
+var a5 = $('#a5');
+var a8 = $('#a8');
+var f2 = $('#f2');
+var f1 = $('#f1');
+var f5 = $('#f5');
+
+for (i = 1; i < 11; i++) {      
+    a3.append('<span class=a3'+i+'></span>');
+    $('.a3'+i+'').css({
+        '-webkit-animation' : 'a3 1s '+(Math.random()*2)+'s  infinite',
+        '-moz-animation' : 'a3 1s '+(Math.random()*2)+'s  infinite'
+    }); 
+}
+setInterval(function() {
+    $('#a3 span').each(function() {
+        $(this).text(Math.ceil(Math.random()*999));;
+    });
+}, 100); 
+
+for (i = 1; i < 31; i++) {      
+    a4.append('<span class=a3'+i+'></span>');
+    setInterval(function() {
+        $('#a4 span').each(function() {
+            $(this).width((Math.random()*15));
+        });
+    }, 500);		
+}
+
+for (i = 1; i < 16; i++) {      
+    a5.append('<span><b class=a5'+i+'></b></span>');
+    $('.a5'+i+'').css({
+        '-webkit-animation' : 'a3 1s 0.'+i+'s  infinite',
+        '-moz-animation' : 'a3 1s 0.'+i+'s  infinite'
+    }); 		
+}
+
+setInterval(function() {
+    var h = Math.ceil(Math.random()*24);
+    var m = Math.ceil(Math.random()*60);
+    if (h<10) {$('.a731').text('0'+h+':');}
+    else {$('.a731').text(h+':');}
+    if (m<10) {$('.a732').text('0'+m);}
+    else {$('.a732').text(m);}		
+}, 100);
+
+setInterval(function() {
+    var d = Math.ceil(Math.random()*30);
+    var m = Math.ceil(Math.random()*12);
+    var min = 1700, max = 1999;
+    var rand = min - 0.5 + Math.random()*(max-min+1)
+    rand = Math.round(rand);
+
+    if (d<10) {$('.a741').text('0'+d+'/');}
+    else {$('.a741').text(d+'/');}
+    if (m<10) {$('.a742').text('0'+m+'/');}
+    else {$('.a742').text(m+'/');}	
+    $('.a743').text(rand);	
+}, 50);	
+
+for (i = 1; i < 41; i++) {      
+    a8.append('<span></span>');	
+}
+
+setInterval(function() {
+    var mino = 10000, maxo = 99999;
+    var rand = mino - 0.5 + Math.random()*(maxo-mino+1);
+    rand = Math.round(rand);
+    
+    var mine = 100000000, maxe = 999999999;		
+    var ran = mine - 0.5 + Math.random()*(maxe-mine+1);
+    ran = Math.round(ran);		
+    
+    $('#a9 span:odd').text(rand);
+    $('#a9 span:even').text(ran);		
+
+}, 100); 
+
+
+for (i = 1; i < 37; i++) {      
+    f2.append('<span class=f2'+i+'></span>');
+    $('.f2'+i+'').css({
+        '-webkit-transform' : 'rotateZ('+i+'0deg) translateY(95px)'
+    }); 		
+}
+
+for (i = 1; i < 19; i++) {      
+    f5.append('<span class=f5'+i+'><b>'+Math.random()*30+'</b></span>');
+    $('.f5'+i+'').css({
+        '-webkit-transform' : 'rotateZ('+i*2+'0deg) translateY(40px)'
+    }); 		
+}	
+
+for (i = 1; i < 13; i++) {      
+    f1.append('<span class=f1'+i+'></span>');
+    $('.f1'+i+'').css({
+        '-webkit-transform' : 'rotateZ('+i*30+'deg) translateY(91px)'
+    }); 		
+}==== static/js/scripts.js ====
+$(document).ready(function() {
+    const a3 = $('#animacion');
+    const a4 = $('#a4');
+    const a5 = $('#a5');
+    const a8 = $('#a8');
+    const a9 = $('#a9');
+    const f1 = $('#f1');
+    const f2 = $('#f2');
+    const f5 = $('#f5');
+    
+    $('.f11, .f12, .f13, .f14, .f15, .f16, .f17, .f18, .f19, .f110, .f111, .f112').css('transform', function() {
+        return 'rotateZ(' + (Math.random() * 360) + 'deg) translateY(91px)';
+    });
+    
+    $('.f21, .f22, .f23, .f24, .f25, .f26, .f27, .f28, .f29, .f210, .f211, .f212, .f213, .f214, .f215, .f216, .f217, .f218, .f219, .f220, .f221, .f222, .f223, .f224, .f225, .f226, .f227, .f228, .f229, .f230, .f231, .f232, .f233').css('transform', function() {
+        return 'rotateZ(' + (Math.random() * 360) + 'deg) translateY(95px)';
+    });
+    
+    for (let i = 1; i < 11; i++) {      
+        a3.append('<span class=a3'+i+'></span>'); 
+        $('.a3'+i+'').css({ 
+            '-webkit-animation': 'a3 1s '+(Math.random()*2)+'s infinite', 
+            '-moz-animation': 'a3 1s '+(Math.random()*2)+'s infinite',
+            'color': '#ff0000'
+        }); 
+    } 
+    
+    setInterval(function() { 
+        $('#animacion span').each(function() { 
+            $(this).text(Math.ceil(Math.random()*999));
+        }); 
+    }, 100);
+    
+    for (let i = 1; i < 31; i++) {      
+        a4.append('<span class=a3'+i+'></span>'); 
+    }
+    
+    setInterval(function() { 
+        $('#a4 span').each(function() { 
+            $(this).width((Math.random()*15)); 
+        }); 
+    }, 500);  
+    
+    for (let i = 1; i < 16; i++) {      
+        a5.append('<span><b class=a5'+i+'></b></span>'); 
+        $('.a5'+i+'').css({ 
+            '-webkit-animation': 'a3 1s 0.'+i+'s infinite', 
+            '-moz-animation': 'a3 1s 0.'+i+'s infinite' 
+        });   
+    } 
+    
+    setInterval(function() { 
+        var h = Math.ceil(Math.random()*24); 
+        var m = Math.ceil(Math.random()*60); 
+        if (h<10) {$('.a731').text('0'+h+':');} 
+        else {$('.a731').text(h+':');} 
+        if (m<10) {$('.a732').text('0'+m);} 
+        else {$('.a732').text(m);}  
+    }, 100); 
+    
+    setInterval(function() { 
+        var d = Math.ceil(Math.random()*30); 
+        var m = Math.ceil(Math.random()*12); 
+        var min = 1700, max = 1999; 
+        var rand = min - 0.5 + Math.random()*(max-min+1) 
+        rand = Math.round(rand); 
+        if (d<10) {$('.a741').text('0'+d+'/');} 
+        else {$('.a741').text(d+'/');} 
+        if (m<10) {$('.a742').text('0'+m+'/');} 
+        else {$('.a742').text(m+'/');} 
+        $('.a743').text(rand); 
+    }, 50); 
+    
+    for (let i = 1; i < 41; i++) {      
+        a8.append('<span></span>'); 
+    } 
+    
+    setInterval(function() { 
+        var mino = 10000, maxo = 99999; 
+        var rand = mino - 0.5 + Math.random()*(maxo-mino+1); 
+        rand = Math.round(rand); 
+        var mine = 100000000, maxe = 999999999;  
+        var ran = mine - 0.5 + Math.random()*(maxe-mine+1); 
+        ran = Math.round(ran);  
+        $('#a9 span:odd').text(rand); 
+        $('#a9 span:even').text(ran);  
+    }, 100); 
+    
+    for (let i = 1; i < 37; i++) {      
+        f2.append('<span class=f2'+i+'></span>'); 
+        $('.f2'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i+'0deg) translateY(95px)' 
+        });   
+    } 
+    
+    for (let i = 1; i < 19; i++) {      
+        f5.append('<span class=f5'+i+'><b>'+Math.random()*30+'</b></span>'); 
+        $('.f5'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i*2+'0deg) translateY(40px)' 
+        });   
+    } 
+    
+    for (let i = 1; i < 13; i++) {      
+        f1.append('<span class=f1'+i+'></span>'); 
+        $('.f1'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i*30+'deg) translateY(91px)' 
+        });   
+    }
+});
+
+// Animación de creación de spans
+for(let i=0; i<200; i++) {
+    let span = document.createElement('span');
+    document.querySelector('section').appendChild(span);
+}==== static/css/animation-2.css ====
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+/* === ESTILOS BASE Y DE LOGIN (ANIMACIÓN 01 Y FORMULARIO) === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #000;
+}
+
+section /* Contenedor Animación 01 (Fondo cuadrados) */ {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+section::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(#000, #ff0000, #000);
+    animation: animate-bg-glow 5s linear infinite;
+}
+
+@keyframes animate-bg-glow {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+section span {
+    position: relative;
+    display: block;
+    width: calc(6.25vw - 2px);
+    height: calc(6.25vw - 2px);
+    background: #181818;
+    z-index: 2;
+    transition: 1.5s;
+}
+
+section span:hover {
+    background: #ff0000;
+    transition: 0s;
+}
+
+section .signin { /* Contenedor principal del login ("la caja") */
+    position: relative; 
+    width: 400px;
+    background: #222; /* Fondo de la caja de login */
+    z-index: 1000;
+    display: flex; /* Usamos flex para organizar el contenido interno */
+    flex-direction: column; /* Hacemos que los hijos se apilen verticalmente */
+    align-items: center; /* Centramos los hijos horizontalmente */
+    padding: 30px; /* Reducido un poco el padding general */
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
+}
+
+section .signin .content { /* Contenedor del contenido dentro de .signin */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Asegura que el título y formulario estén centrados si tienen ancho menor al 100% */
+}
+
+section .signin .content h2 { /* Título "Iniciar Sesión" */
+    font-size: 2em;
+    color: #ff0000;
+    text-transform: uppercase;
+    margin-top: 15px;      /* Espacio después de la animación HUD */
+    margin-bottom: 25px;   /* Espacio antes del formulario */
+    text-align: center;
+}
+
+section .signin .content .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+section .signin .content .form .inputBox {
+    position: relative;
+    width: 100%;
+}
+
+section .signin .content .form .inputBox input {
+    position: relative;
+    width: 100%;
+    background: #333;
+    border: none;
+    outline: none;
+    padding: 25px 10px 7.5px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1em;
+}
+
+section .signin .content .form .inputBox i {
+    position: absolute;
+    left: 0;
+    padding: 15px 10px;
+    font-style: normal;
+    color: #aaa;
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+.signin .content .form .inputBox input:focus~i,
+.signin .content .form .inputBox input:valid~i {
+    transform: translateY(-7.5px);
+    font-size: 0.8em;
+    color: #fff;
+}
+
+.signin .content .form .links {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.signin .content .form .links a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.signin .content .form .links a:nth-child(2) {
+    color: #ff0000;
+    font-weight: 600;
+}
+
+.signin .content .form .inputBox input[type="submit"] {
+    padding: 10px;
+    background: #ff0000;
+    color: #000;
+    font-weight: 600;
+    font-size: 1.35em;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+}
+
+input[type="submit"]:active {
+    opacity: 0.6;
+}
+
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    color: #fff;
+    z-index: 1001;
+    width: 100%; /* Para que la alerta ocupe el ancho del form */
+}
+/* ... (otros estilos de alerta) ... */
+
+@media (max-width: 900px) {
+    section span { width: calc(10vw - 2px); height: calc(10vw - 2px); }
+}
+
+@media (max-width: 600px) {
+    section span { width: calc(20vw - 2px); height: calc(20vw - 2px); }
+    section .signin { width: 90%; padding: 20px; }
+    section .signin .content h2 { font-size: 1.5em; }
+}
+
+
+/* === ESTILOS PARA LA ANIMACIÓN HUD (ANIMACIÓN 02 - RENOMBRADA Y CORREGIDA) === */
+#animacion-hud-wrapper {
+    width: 100%;           /* Ocupa todo el ancho disponible en .content */
+    max-width: 340px;      
+    height: 180px;         /* Altura de la animación HUD */
+    position: relative;    /* Se mantiene en el flujo, no absolute */
+    margin-bottom: 20px;   /* Espacio antes del título "Iniciar Sesión" */
+    background: #1A1A1A;   /* Fondo oscuro para la HUD, puede ser #000 también */
+    overflow: hidden;
+    border: 1px solid #440000; /* Borde rojo oscuro */
+    color: #CCCCCC;        /* Color de texto por defecto (blanco/gris claro) */
+    font-family: 'Courier New', Courier, monospace; /* Fuente más "tech" */
+}
+
+#animacion-hud-wrapper * {
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
+    box-sizing: border-box; 
+}
+
+#animacion-hud-wrapper #anim2-container > div {
+    position: absolute;
+}
+
+#anim2-container {
+    height: 100%; width: 100%; position: relative;
+    -webkit-perspective: 600px; /* Reducir perspectiva un poco */
+    -moz-perspective: 600px;
+    -webkit-animation: anim2-start 0.8s ease-out; /* Animación más rápida */
+    -moz-animation: anim2-start 0.8s ease-out;
+    overflow: hidden;
+}
+
+@-webkit-keyframes anim2-start {
+    from { -webkit-transform: scale(0.5); opacity: 0; } /* Inicia más pequeño */
+    to   { -webkit-transform: scale(1); opacity: 1; }
+}
+@-moz-keyframes anim2-start {
+    from { -moz-transform: scale(0.5); opacity: 0; }
+    to   { -moz-transform: scale(1); opacity: 1; }
+}
+
+/* Elementos generales de la HUD con nuevos colores */
+#anim2-a1 { border:1px dotted #990000; } /* Rojo oscuro punteado */
+#anim2-a11 { background:#AA0000; } /* Rojo */
+#anim2-a2 { border:1px dashed #990000; }
+#anim2-a21 { background:#444; } /* Gris oscuro para contraste */
+
+#anim2-a3-placeholder { top:15px; left:5px; height:calc(100% - 70px); width:35px; font-size:10px; overflow-y: auto; color: #FF0000;} /* Números en rojo */
+#anim2-a3-placeholder span { text-shadow:0 0 3px #FF0000; } /* Sombra roja */
+/* Keyframes para opacidad ya están definidos como anim2-kf-opacity, usado por JS */
+
+#anim2-a4 { top:50px; left:8px; height:calc(100% - 80px); width:12px; }
+#anim2-a4 span { background:#FF0000; } /* Barras rojas */
+
+#anim2-a5 { border-top:1px solid #440000; }
+#anim2-a5 span { border-right:1px solid #440000; }
+#anim2-a5 span:first-child { border-left:1px solid #440000; }
+#anim2-a5 span b { background:#AA0000; } /* Bloques rojos */
+
+#anim2-a6 { color: #FFFFFF; font-size: 12px; } /* Título en blanco */
+#anim2-a7 { color: #CCCCCC; } /* Texto de fecha/hora en gris claro */
+#anim2-a7 span b { text-shadow:0 0 2px #FF0000; } /* Sombra roja para resaltar */
+
+#anim2-a8 { border-bottom:2px solid #AA0000; }
+#anim2-a8 span { background:#FF0000; }
+#anim2-a81 { background:#111; } /* Fondo muy oscuro para el efecto de barrido */
+
+#anim2-a9 { color: #FF0000; text-shadow:0 0 2px #FF0000; font-size:12px; }
+#anim2-a10 { color: #FFFFFF; font-size:11px;}
+#anim2-a10 span { background:#AA0000; }
+
+#anim2-b1 span { background:#FF0000; } /* Barras rojas */
+
+/* --- Estilos de #anim2-figure y sus hijos --- */
+#anim2-figure {
+    top: 50%; left: 50%; width: 140px; height: 140px; /* Ligeramente más pequeño */
+    margin-top: -70px; margin-left: -70px;
+    -webkit-transform: rotateY(-30deg) rotateX(10deg) scale(0.8); /* Escala ajustada */
+    -moz-transform: rotateY(-30deg) rotateX(10deg) scale(0.8);
+    -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d;
+    -webkit-animation: anim2-kf-figure 8s ease-in-out infinite;
+    -moz-animation: anim2-kf-figure 8s ease-in-out infinite;
+}
+/* Keyframes de anim2-kf-figure ya están definidos, no cambian de color */
+
+#anim2-figure #anim2-a7 { left:-90px; top:10px; color:#FF0000; -webkit-transform:scale(0.5); -moz-transform:scale(0.5); -webkit-animation:anim2-kf-fa7-red 2s ease-in-out infinite; -moz-animation:anim2-kf-fa7-red 2s ease-in-out infinite; }
+@-webkit-keyframes anim2-kf-fa7-red { from {color:#FF0000;} 25% {color:#DD0000;} 50% {color:#FFFFFF;} 75% {color:#DD0000;} to {color:#FF0000;} } /* Rojo y blanco */
+@-moz-keyframes anim2-kf-fa7-red { from {color:#FF0000;} 25% {color:#DD0000;} 50% {color:#FFFFFF;} 75% {color:#DD0000;} to {color:#FF0000;} }
+
+#anim2-figure div, #anim2-figure span { -webkit-transform-style:preserve-3d; -moz-transform-style:preserve-3d; }
+
+/* Elementos F1 */
+#anim2-f1 { box-shadow:0 0 5px #AA0000; -webkit-animation:anim2-kf-f1-red 4s ease-in-out infinite; -moz-animation:anim2-kf-f1-red 4s ease-in-out infinite; }
+@-webkit-keyframes anim2-kf-f1-red { from {-webkit-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} 10% {-webkit-transform:rotateZ(30deg); opacity:1.0; border-color:#FF0000;} /* ... (alternar rojos y blancos/grises) ... */ 50% {-webkit-transform:rotateZ(-40deg); opacity:1.0; border-color:#FFFFFF;} to {-webkit-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} }
+@-moz-keyframes anim2-kf-f1-red { from {-moz-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} 10% {-moz-transform:rotateZ(30deg); opacity:1.0; border-color:#FF0000;} 50% {-moz-transform:rotateZ(-40deg); opacity:1.0; border-color:#FFFFFF;} to {-moz-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} }
+#anim2-f1 span { box-shadow:0 0 3px #AA0000; -webkit-animation:anim2-kf-f1div-red 4s ease-in-out infinite; -moz-animation:anim2-kf-f1div-red 4s ease-in-out infinite; }
+@-webkit-keyframes anim2-kf-f1div-red { from {background:#AA0000;} 10% {background:#FF0000;} /* ... */ 50% {background:#FFFFFF;} to {background:#AA0000;} }
+@-moz-keyframes anim2-kf-f1div-red { from {background:#AA0000;} 10% {background:#FF0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+
+/* Elementos F2 */
+#anim2-f2 span { background:#999999; } /* Barras grises/blancas */
+
+/* Elementos F3 */
+#anim2-f3 { border-color:#FF0000; box-shadow:0 0 5px #FF0000; -webkit-animation:anim2-kf-f3-red 6s ease-in-out infinite; -moz-animation:anim2-kf-f3-red 6s ease-in-out infinite;}
+@-webkit-keyframes anim2-kf-f3-red { /* Similar a anim2-kf-f1-red, alternando rojos y blancos/grises para border-color */ from {-webkit-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} 50% {-webkit-transform:translateZ(10px) rotateZ(-120deg); border-color:#FFFFFF; opacity:1.0;} to {-webkit-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} }
+@-moz-keyframes anim2-kf-f3-red { from {-moz-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} 50% {-moz-transform:translateZ(10px) rotateZ(-120deg); border-color:#FFFFFF; opacity:1.0;} to {-moz-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} }
+#anim2-f31 span { border:1px solid #FF0000; }
+#anim2-f31 span b { -webkit-animation:anim2-kf-f31span-red 2s ease-in-out infinite; -moz-animation:anim2-kf-f31span-red 2s ease-in-out infinite;}
+@-webkit-keyframes anim2-kf-f31span-red { from {background:#FF0000; opacity:1;} 25% {background:#DD0000; opacity:0;} 50% {background:#FFFFFF; opacity:1;} 75% {background:#DD0000; opacity:0;} to {background:#FF0000; opacity:1;} }
+@-moz-keyframes anim2-kf-f31span-red { from {background:#FF0000; opacity:1;} 25% {background:#DD0000; opacity:0;} 50% {background:#FFFFFF; opacity:1;} 75% {background:#DD0000; opacity:0;} to {background:#FF0000; opacity:1;} }
+#anim2-f32 span { border:1px solid #AA0000; }
+
+/* Elementos F4 */
+#anim2-f4 { border:1px solid #FF0000; -webkit-animation:anim2-kf-f4-red 6s ease-in-out infinite; -moz-animation:anim2-kf-f4-red 6s ease-in-out infinite;}
+ /* Keyframes anim2-kf-f4-red similar a otros, alternando opacidad y quizás colores */
+ @-webkit-keyframes anim2-kf-f4-red { from {-webkit-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} 25% {-webkit-transform:translateZ(15px) rotateZ(120deg); opacity:1; border-color: #FFFFFF;} 50% {-webkit-transform:translateZ(15px) rotateZ(0); opacity:0; border-color: #FF0000;} 75% {-webkit-transform:translateZ(15px) rotateZ(-120deg); opacity:1; border-color: #FFFFFF;} to {-webkit-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} }
+ @-moz-keyframes anim2-kf-f4-red { from {-moz-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} 25% {-moz-transform:translateZ(15px) rotateZ(120deg); opacity:1; border-color: #FFFFFF;} 50% {-moz-transform:translateZ(15px) rotateZ(0); opacity:0; border-color: #FF0000;} 75% {-moz-transform:translateZ(15px) rotateZ(-120deg); opacity:1; border-color: #FFFFFF;} to {-moz-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} }
+#anim2-f43 { background:#FF0000; }
+
+/* Elementos F5 */
+#anim2-f5 span { background:#999999; } /* Gris claro */
+
+/* Elementos F6 */
+#anim2-f6 { border:1px solid #FF0000; }
+
+/* Elementos F7 */
+#anim2-f7 { border:1px solid #FF0000; background:#111; -webkit-animation:anim2-kf-f7-red 6s linear infinite; -moz-animation:anim2-kf-f7-red 6s linear infinite;}
+ /* Keyframes anim2-kf-f7-red con colores rojos y blancos */
+ @-webkit-keyframes anim2-kf-f7-red { from {-webkit-transform:translateZ(28px) rotateZ(0deg); opacity:1;} 10% {-webkit-transform:translateZ(28px) rotateZ(36deg); opacity:0;} /* ... */ to {-webkit-transform:translateZ(28px) rotateZ(360deg); opacity:1;} }
+ @-moz-keyframes anim2-kf-f7-red { from {-moz-transform:translateZ(28px) rotateZ(0deg); opacity:1;} 10% {-moz-transform:translateZ(28px) rotateZ(36deg); opacity:0;} /* ... */ to {-moz-transform:translateZ(28px) rotateZ(360deg); opacity:1;} }
+#anim2-f71 { background:#FF0000; }
+#anim2-f72 { background:#FF0000; }
+
+/* Elementos F8 */
+#anim2-f8 { border:1px solid #AA0000; background:#111; -webkit-animation:anim2-kf-f8-red 8s linear infinite; -moz-animation:anim2-kf-f8-red 8s linear infinite;}
+@-webkit-keyframes anim2-kf-f8-red { from {-webkit-transform:translateZ(32px) rotateZ(360deg); border-color:#AA0000; opacity:1;} /* ... */ 50%  {-webkit-transform:translateZ(32px) rotateZ(180deg); border-color:#FFFFFF;} to   {-webkit-transform:translateZ(32px) rotateZ(0deg); border-color:#AA0000;} }
+@-moz-keyframes anim2-kf-f8-red { from {-moz-transform:translateZ(32px) rotateZ(360deg); border-color:#AA0000; opacity:1;} 50%  {-moz-transform:translateZ(32px) rotateZ(180deg); border-color:#FFFFFF;} to   {-moz-transform:translateZ(32px) rotateZ(0deg); border-color:#AA0000;} }
+#anim2-f81 { -webkit-animation:anim2-kf-f8div-red 8s linear infinite; -moz-animation:anim2-kf-f8div-red 8s linear infinite;}
+#anim2-f82 { -webkit-animation:anim2-kf-f8div-red 8s linear infinite; -moz-animation:anim2-kf-f8div-red 8s linear infinite;}
+@-webkit-keyframes anim2-kf-f8div-red { from {background:#AA0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+@-moz-keyframes anim2-kf-f8div-red { from {background:#AA0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+
+/* Elementos F9 */
+#anim2-f9 { border:1px solid #FF0000; }
+#anim2-f9 span { background:#FF0000; }
+
+/* Keyframes genéricos de opacidad (ya definidos) */
+/* @-webkit-keyframes anim2-kf-opacity { ... } */
+/* @-moz-keyframes anim2-kf-opacity { ... } */
+
+/* Keyframes genéricos de barras (ya definidos) */
+/* @-webkit-keyframes anim2-kf-b1 { ... } */
+/* @-moz-keyframes anim2-kf-b1 { ... } */==== static/css/animation-hud.css ====
+/* Estilos para la Animación HUD (Animación 02) */
+#animacion-hud-wrapper {
+    width: 300px;
+    height: 220px;
+    position: absolute;
+    top: -230px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    overflow: hidden;
+    background: #000;
+}
+
+#animacion-hud-wrapper * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+#animacion-hud-wrapper div {
+    position: absolute;
+}
+
+#anim2-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    border: 1px solid #333;
+    -webkit-perspective: 700;
+    -moz-perspective: 700px;
+    -webkit-animation: anim2-start 1s linear;
+    -moz-animation: anim2-start 1s linear;
+    overflow: hidden;
+    color: #666;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+@-webkit-keyframes anim2-start {
+    from { -webkit-transform: scale(0); }
+    to { -webkit-transform: scale(1); }
+}
+
+@-moz-keyframes anim2-start {
+    from { -moz-transform: scale(0); }
+    to { -moz-transform: scale(1); }
+}
+
+#animacion-hud-wrapper * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+#animacion-hud-wrapper div {
+    position: absolute;
+}
+
+#anim2-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    border: 1px solid #333;
+    -webkit-perspective: 700;
+    -moz-perspective: 700px;
+    -webkit-animation: anim2-start 1s linear;
+    -moz-animation: anim2-start 1s linear;
+    overflow: hidden;
+    color: #666;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+@-webkit-keyframes anim2-start {
+    from { -webkit-transform: scale(0); }
+    to { -webkit-transform: scale(1); }
+}==== static/css/styles.css ====
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+* 
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+body 
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #000;
+}
+section 
+{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+section::before 
+{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(#000,#ff0000,#000);
+    animation: animate 5s linear infinite;
+}
+@keyframes animate 
+{
+    0% 
+    {
+        transform: translateY(-100%);
+    }
+    100% 
+    {
+        transform: translateY(100%);
+    }
+}
+@-webkit-keyframes a3 {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+@-moz-keyframes a3 {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+#a3 {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 200px;
+    height: auto;
+    z-index: 1001;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+#a3 span {
+    color: #ff0000;
+    font-size: 12px;
+    padding: 2px;
+    opacity: 0.8;
+}
+section span 
+{
+    position: relative;
+    display: block;
+    width: calc(6.25vw - 2px);
+    height: calc(6.25vw - 2px);
+    background: #181818;
+    z-index: 2;
+    transition: 1.5s;
+}
+section span:hover 
+{
+    background: #ff0000;
+    transition: 0s;
+}
+
+section .signin 
+{
+    position: absolute;
+    width: 400px;
+    background: #222;  
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(0,0,0,9);
+}
+section .signin .content 
+{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 40px;
+}
+section .signin .content h2 
+{
+    font-size: 2em;
+    color: #ff0000;
+    text-transform: uppercase;
+}
+section .signin .content .form 
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+section .signin .content .form .inputBox 
+{
+    position: relative;
+    width: 100%;
+}
+section .signin .content .form .inputBox input 
+{
+    position: relative;
+    width: 100%;
+    background: #333;
+    border: none;
+    outline: none;
+    padding: 25px 10px 7.5px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1em;
+}
+section .signin .content .form .inputBox i 
+{
+    position: absolute;
+    left: 0;
+    padding: 15px 10px;
+    font-style: normal;
+    color: #aaa;
+    transition: 0.5s;
+    pointer-events: none;
+}
+.signin .content .form .inputBox input:focus ~ i,
+.signin .content .form .inputBox input:valid ~ i 
+{
+    transform: translateY(-7.5px);
+    font-size: 0.8em;
+    color: #fff;
+}
+.signin .content .form .links 
+{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.signin .content .form .links a 
+{
+    color: #fff;
+    text-decoration: none;
+}
+.signin .content .form .links a:nth-child(2) 
+{
+    color: #ff0000;
+    font-weight: 600;
+}
+.signin .content .form .inputBox input[type="submit"] 
+{
+    padding: 10px;
+    background: #ff0000;
+    color: #000;
+    font-weight: 600;
+    font-size: 1.35em;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+}
+input[type="submit"]:active 
+{
+    opacity: 0.6;
+}
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    color: #fff;
+    z-index: 1001;
+}
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+}
+.close:hover {
+    color: #000;
+    text-decoration: none;
+    opacity: .75;
+}
+
+@media (max-width: 900px) 
+{
+    section span 
+    {
+        width: calc(10vw - 2px);
+        height: calc(10vw - 2px);
+    }
+}
+@media (max-width: 600px) 
+{
+    section span 
+    {
+        width: calc(20vw - 2px);
+        height: calc(20vw - 2px);
+    }
+}==== static/css/login.css ====
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #000;
+}
+
+section {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+section::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(#000,#ff0000,#000);
+    animation: animate 5s linear infinite;
+}
+
+@keyframes animate {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+section span {
+    position: relative;
+    display: block;
+    width: calc(6.25vw - 2px);
+    height: calc(6.25vw - 2px);
+    background: #181818;
+    z-index: 2;
+    transition: 1.5s;
+}
+
+section span:hover {
+    background: #ff0000;
+    transition: 0s;
+}
+
+.signin {
+    position: absolute;
+    width: 400px;
+    background: #222;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(0,0,0,9);
+}
+
+.signin .content {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.signin .content h2 {
+    font-size: 2em;
+    color: #ff0000;
+    text-transform: uppercase;
+}
+
+.signin .content .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.signin .content .form .inputBox {
+    position: relative;
+    width: 100%;
+}
+
+.signin .content .form .inputBox input {
+    position: relative;
+    width: 100%;
+    background: #333;
+    border: none;
+    outline: none;
+    padding: 25px 10px 7.5px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1em;
+}
+
+.signin .content .form .inputBox i {
+    position: absolute;
+    left: 0;
+    padding: 15px 10px;
+    font-style: normal;
+    color: #aaa;
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+.signin .content .form .inputBox input:focus ~ i,
+.signin .content .form .inputBox input:valid ~ i {
+    transform: translateY(-7.5px);
+    font-size: 0.8em;
+    color: #fff;
+}
+
+.signin .content .form .links {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.signin .content .form .links a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.signin .content .form .links a:nth-child(2) {
+    color: #ff0000;
+    font-weight: 600;
+}
+
+.signin .content .form .inputBox input[type="submit"] {
+    padding: 10px;
+    background: #ff0000;
+    color: #000;
+    font-weight: 600;
+    font-size: 1.35em;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+}
+
+input[type="submit"]:active {
+    opacity: 0.6;
+}
+
+@media (max-width: 900px) {
+    section span {
+        width: calc(10vw - 2px);
+        height: calc(10vw - 2px);
+    }
+}
+
+@media (max-width: 600px) {
+    section span {
+        width: calc(20vw - 2px);
+        height: calc(20vw - 2px);
+    }
+}==== templates/login.html ====
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Panthera Strike</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000;
+            /* overflow: hidden; Evitar overflow hidden aquí para que la página completa sea scrolleable si es necesario */
+        }
+
+        section
+
+        /* Contenedor Animación 01 (Fondo cuadrados) */
+            {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+            flex-wrap: wrap;
+            overflow: hidden;
+            /* Esto es para la animación de fondo, está bien */
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(#000, #ff0000, #000);
+            animation: animate-bg-glow 5s linear infinite;
+            /* Renombrado para claridad, aunque no había conflicto */
+        }
+
+        @keyframes animate-bg-glow
+
+        /* Renombrado para claridad */
+            {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        /* Estilos de la Animación 01 (cuadrados de fondo) */
+        section span {
+            position: relative;
+            display: block;
+            width: calc(6.25vw - 2px);
+            height: calc(6.25vw - 2px);
+            background: #181818;
+            z-index: 2;
+            transition: 1.5s;
+        }
+
+        section span:hover {
+            background: #ff0000;
+            transition: 0s;
+        }
+
+        /* Formulario de Inicio de Sesión */
+        section .signin {
+            position: absolute;
+            width: 400px;
+            background: #222;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 9);
+        }
+
+        section .signin .content {
+            position: relative;
+            /* Para posicionar el wrapper de la animacion HUD */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            /* Reducido para dar espacio a la animación HUD */
+        }
+
+        section .signin .content h2 {
+            font-size: 2em;
+            color: #ff0000;
+            text-transform: uppercase;
+            margin-top: 10px;
+            /* Ajustar si es necesario por la animación HUD */
+        }
+
+        section .signin .content .form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        section .signin .content .form .inputBox {
+            position: relative;
+            width: 100%;
+        }
+
+        section .signin .content .form .inputBox input {
+            position: relative;
+            width: 100%;
+            background: #333;
+            border: none;
+            outline: none;
+            padding: 25px 10px 7.5px;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: 500;
+            font-size: 1em;
+        }
+
+        section .signin .content .form .inputBox i {
+            position: absolute;
+            left: 0;
+            padding: 15px 10px;
+            font-style: normal;
+            color: #aaa;
+            transition: 0.5s;
+            pointer-events: none;
+        }
+
+        .signin .content .form .inputBox input:focus~i,
+        .signin .content .form .inputBox input:valid~i {
+            transform: translateY(-7.5px);
+            font-size: 0.8em;
+            color: #fff;
+        }
+
+        .signin .content .form .links {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signin .content .form .links a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .signin .content .form .links a:nth-child(2) {
+            color: #ff0000;
+            font-weight: 600;
+        }
+
+        .signin .content .form .inputBox input[type="submit"] {
+            padding: 10px;
+            background: #ff0000;
+            color: #000;
+            font-weight: 600;
+            font-size: 1.35em;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:active {
+            opacity: 0.6;
+        }
+
+        .alert {
+            position: relative;
+            padding: .75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: .25rem;
+            color: #fff;
+            z-index: 1001;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            opacity: .5;
+        }
+
+        .close:hover {
+            color: #000;
+            text-decoration: none;
+            opacity: .75;
+        }
+
+        @media (max-width: 900px) {
+            section span {
+                width: calc(10vw - 2px);
+                height: calc(10vw - 2px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            section span {
+                width: calc(20vw - 2px);
+                height: calc(20vw - 2px);
+            }
+        }
+
+        <!-- Enlace al archivo CSS de la animación HUD -->
+        <link rel="stylesheet" href="/static/css/animation-hud.css">
+
+
+                -moz-transform: scale(0);
+            }
+
+            to {
+                -moz-transform: scale(1);
+            }
+        }
+
+        #anim2-a1 {
+            top: 4px;
+            left: 20px;
+            height: 4px;
+            width: 70px;
+            border: 1px dotted #666;
+        }
+
+        #anim2-a11 {
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: #666;
+            -webkit-animation: anim2-kf-a11 4s ease-in-out infinite;
+            -moz-animation: anim2-kf-a11 4s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-a11 {
+            from {
+                width: 70%;
+            }
+
+            10% {
+                width: 20%;
+            }
+
+            20% {
+                width: 90%;
+            }
+
+            30% {
+                width: 60%;
+            }
+
+            40% {
+                width: 100%;
+            }
+
+            50% {
+                width: 10%;
+            }
+
+            60% {
+                width: 30%;
+            }
+
+            70% {
+                width: 20%;
+            }
+
+            80% {
+                width: 50%;
+            }
+
+            90% {
+                width: 10%;
+            }
+
+            to {
+                width: 70%;
+            }
+        }
+
+        @-moz-keyframes anim2-kf-a11 {
+            from {
+                width: 70%;
+            }
+
+            10% {
+                width: 20%;
+            }
+
+            20% {
+                width: 90%;
+            }
+
+            30% {
+                width: 60%;
+            }
+
+            40% {
+                width: 100%;
+            }
+
+            50% {
+                width: 10%;
+            }
+
+            60% {
+                width: 30%;
+            }
+
+            70% {
+                width: 20%;
+            }
+
+            80% {
+                width: 50%;
+            }
+
+            90% {
+                width: 10%;
+            }
+
+            to {
+                width: 70%;
+            }
+        }
+
+        #anim2-a2 {
+            top: 18px;
+            left: 50px;
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            border: 1px dashed #666;
+        }
+
+        #anim2-a21 {
+            top: 8px;
+            left: 13px;
+            height: 14px;
+            width: 4px;
+            background: #333;
+            border-radius: 3px;
+            -webkit-animation: anim2-kf-a21 8s linear infinite;
+            -moz-animation: anim2-kf-a21 8s linear infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-a21 {
+            from {
+                -webkit-transform: rotateZ(0deg) translateY(50%);
+            }
+
+            to {
+                -webkit-transform: rotateZ(360deg) translateY(50%);
+            }
+        }
+
+        @-moz-keyframes anim2-kf-a21 {
+            from {
+                -moz-transform: rotateZ(0deg) translateY(50%);
+            }
+
+            to {
+                -moz-transform: rotateZ(360deg) translateY(50%);
+            }
+        }
+
+        /* #anim2-a3-placeholder es para los números aleatorios del script, si se usa ese ID en el script */
+        #anim2-a3-placeholder {
+            top: 20px;
+            left: 5px;
+            height: 180px;
+            width: 30px;
+            font-size: 50%;
+            overflow-y: auto;
+            /* Para que no se desborde si hay muchos números */
+        }
+
+        #anim2-a3-placeholder span {
+            display: block;
+            margin-bottom: 5px;
+            text-shadow: 0 0 1px #666;
+            /* Color se define en JS */
+            font-size: 10px;
+            /* Ajustar tamaño de números */
+        }
+
+        /* Keyframes para la animación de opacidad de los números, si se aplica */
+        @-webkit-keyframes anim2-kf-opacity {
+            from {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @-moz-keyframes anim2-kf-opacity {
+            from {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        #anim2-a4 {
+            top: 60px;
+            left: 5px;
+            height: 150px;
+            width: 14px;
+        }
+
+        /* Ajustado left */
+        #anim2-a4 span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: #666;
+            margin-bottom: 3px;
+        }
+
+        #anim2-a5 {
+            height: 30px;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            border-top: 1px solid #666;
+        }
+
+        #anim2-a5 span {
+            display: block;
+            position: relative;
+            float: left;
+            height: 30px;
+            width: 24px;
+            border-right: 1px solid #666;
+        }
+
+        #anim2-a5 span:first-child {
+            margin-left: 12px;
+            border-left: 1px solid #666;
+        }
+
+        #anim2-a5 span b {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: #666;
+            opacity: 0;
+            -webkit-animation: anim2-kf-a5-b 2s linear infinite;
+            -moz-animation: anim2-kf-a5-b 2s linear infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-a5-b {
+            from {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @-moz-keyframes anim2-kf-a5-b {
+            from {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        #anim2-a6 {
+            text-transform: uppercase;
+            left: 90px;
+            top: 0;
+            width: calc(100% - 180px);
+            /* Ajustar ancho */
+            padding: 2px 0 2px 0;
+            font-size: 75%;
+            text-align: center;
+        }
+
+        #anim2-a7 {
+            top: 5px;
+            right: 10px;
+            width: 80px;
+            text-align: right;
+        }
+
+        #anim2-a7 span {
+            display: block;
+        }
+
+        #anim2-a7 span b {
+            font-weight: normal;
+            margin-left: -4px;
+            text-shadow: 0 0 1px #666;
+        }
+
+        #anim2-a71 {
+            font-size: 40%;
+        }
+
+        #anim2-a72 {
+            font-size: 50%;
+        }
+
+        #anim2-a73 {
+            font-size: 100%;
+        }
+
+        #anim2-a74 {
+            font-size: 80%;
+        }
+
+        #anim2-a75 {
+            font-size: 50%;
+        }
+
+        #anim2-a76 {
+            font-size: 40%;
+        }
+
+        #anim2-a8 {
+            top: 80px;
+            right: 7px;
+            height: 100px;
+            /* Ajustar altura */
+            width: 50px;
+            border-bottom: 2px solid #666;
+        }
+
+        #anim2-a8 span {
+            display: block;
+            margin-left: 10%;
+            width: 80%;
+            height: 1px;
+            background: #666;
+            margin-bottom: 3px;
+        }
+
+        #anim2-a81 {
+            top: 0;
+            width: 100%;
+            background: #000;
+            -webkit-animation: anim2-kf-a81 2s ease-in-out infinite;
+            -moz-animation: anim2-kf-a81 2s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-a81 {
+            from {
+                height: 0;
+            }
+
+            20% {
+                height: 25px;
+            }
+
+            40% {
+                height: 5px;
+            }
+
+            60% {
+                height: 60px;
+            }
+
+            80% {
+                height: 35px;
+            }
+
+            to {
+                height: 0;
+            }
+        }
+
+        /* Alturas ajustadas */
+        @-moz-keyframes anim2-kf-a81 {
+            from {
+                height: 0;
+            }
+
+            20% {
+                height: 25px;
+            }
+
+            40% {
+                height: 5px;
+            }
+
+            60% {
+                height: 60px;
+            }
+
+            80% {
+                height: 35px;
+            }
+
+            to {
+                height: 0;
+            }
+        }
+
+        #anim2-a9 {
+            bottom: 37px;
+            right: 7px;
+            font-size: 80%;
+            text-align: right;
+            text-shadow: 0 0 1px #666;
+        }
+
+        #anim2-a9 span {
+            margin-left: -4px;
+        }
+
+        #anim2-a10 {
+            width: 150px;
+            /* Ajustar */
+            bottom: 56px;
+            right: 70px;
+            font-size: 40%;
+            text-align: right;
+        }
+
+        #anim2-a10 span {
+            position: absolute;
+            top: 1px;
+            height: 60%;
+            width: 70px;
+            background: #666;
+            right: 40px;
+            -webkit-animation: anim2-kf-a10 2s ease-in-out infinite;
+            -moz-animation: anim2-kf-a10 2s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-a10 {
+            from {
+                width: 70px;
+            }
+
+            20% {
+                width: 10px;
+            }
+
+            40% {
+                width: 100px;
+            }
+
+            60% {
+                width: 30px;
+            }
+
+            80% {
+                width: 90px;
+            }
+
+            to {
+                width: 70px;
+            }
+        }
+
+        /* Ajustado */
+        @-moz-keyframes anim2-kf-a10 {
+            from {
+                width: 70px;
+            }
+
+            20% {
+                width: 10px;
+            }
+
+            40% {
+                width: 100px;
+            }
+
+            60% {
+                width: 30px;
+            }
+
+            80% {
+                width: 90px;
+            }
+
+            to {
+                width: 70px;
+            }
+        }
+
+        #anim2-b1 {
+            bottom: 32px;
+            width: 100px;
+            height: 50px;
+            left: 10px;
+        }
+
+        #anim2-b1 span {
+            position: absolute;
+            bottom: 0;
+            height: 50px;
+            width: 7px;
+            background: #666;
+        }
+
+        .anim2-b110 {
+            right: 5px;
+            -webkit-animation: anim2-kf-b1 1s ease-in-out infinite;
+            -moz-animation: anim2-kf-b1 1s ease-in-out infinite;
+        }
+
+        /* ... (continuar renombrando clases .b1x y keyframe b1) ... */
+        .anim2-b11 {
+            right: 95px;
+            -webkit-animation: anim2-kf-b1 2s ease-in-out infinite alternate;
+            -moz-animation: anim2-kf-b1 2s ease-in-out infinite alternate;
+        }
+
+        @-webkit-keyframes anim2-kf-b1 {
+            from {
+                height: 50px;
+            }
+
+            20% {
+                height: 10px;
+            }
+
+            40% {
+                height: 30px;
+            }
+
+            60% {
+                height: 5px;
+            }
+
+            80% {
+                height: 20px;
+            }
+
+            to {
+                height: 50px;
+            }
+        }
+
+        @-moz-keyframes anim2-kf-b1 {
+            from {
+                height: 50px;
+            }
+
+            20% {
+                height: 10px;
+            }
+
+            40% {
+                height: 30px;
+            }
+
+            60% {
+                height: 5px;
+            }
+
+            80% {
+                height: 20px;
+            }
+
+            to {
+                height: 50px;
+            }
+        }
+
+        #anim2-figure {
+            /* Ajustar tamaño y posición para que quepa en #animacion-hud-wrapper */
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            height: 150px;
+            /* Reducido */
+            margin-top: -75px;
+            /* Mitad de la nueva altura */
+            margin-left: -75px;
+            /* Mitad del nuevo ancho */
+            border-radius: 5px;
+            -webkit-transform: rotateY(-30deg) rotateX(10deg);
+            -webkit-transform-style: preserve-3d;
+            -webkit-animation: anim2-kf-figure 8s ease-in-out infinite;
+            -moz-transform: rotateY(-30deg) rotateX(10deg);
+            -moz-transform-style: preserve-3d;
+            -moz-animation: anim2-kf-figure 8s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-figure {
+            from {
+                -webkit-transform: rotateY(-30deg) rotateX(30deg) scale(0.8);
+            }
+
+            20% {
+                -webkit-transform: rotateY(30deg) rotateX(30deg) scale(0.8);
+            }
+
+            40% {
+                -webkit-transform: rotateY(30deg) rotateX(-30deg) scale(0.8);
+            }
+
+            60% {
+                -webkit-transform: rotateY(-10deg) rotateX(30deg) scale(0.8);
+            }
+
+            80% {
+                -webkit-transform: rotateY(30deg) rotateX(-10deg) scale(0.8);
+            }
+
+            to {
+                -webkit-transform: rotateY(-30deg) rotateX(30deg) scale(0.8);
+            }
+        }
+
+        /* Añadido scale para ajustar */
+        @-moz-keyframes anim2-kf-figure {
+            from {
+                -moz-transform: rotateY(-30deg) rotateX(30deg) scale(0.8);
+            }
+
+            20% {
+                -moz-transform: rotateY(30deg) rotateX(30deg) scale(0.8);
+            }
+
+            40% {
+                -moz-transform: rotateY(30deg) rotateX(-30deg) scale(0.8);
+            }
+
+            60% {
+                -moz-transform: rotateY(-10deg) rotateX(30deg) scale(0.8);
+            }
+
+            80% {
+                -moz-transform: rotateY(30deg) rotateX(-10deg) scale(0.8);
+            }
+
+            to {
+                -moz-transform: rotateY(-30deg) rotateX(30deg) scale(0.8);
+            }
+        }
+
+        #anim2-figure #anim2-a7 {
+            /* #a7 dentro de figure */
+            left: -80px;
+            top: 10px;
+            /* Ajustado */
+            color: #03F;
+            -webkit-transform: scale(0.6);
+            /* Reducido */
+            -moz-transform: scale(0.6);
+            -webkit-animation: anim2-kf-fa7 2s ease-in-out infinite;
+            -moz-animation: anim2-kf-fa7 2s ease-in-out infinite;
+            /* Añadido */
+        }
+
+        @-webkit-keyframes anim2-kf-fa7 {
+            from {
+                color: #03F;
+            }
+
+            25% {
+                color: #00C;
+            }
+
+            50% {
+                color: #0CF;
+            }
+
+            75% {
+                color: #03C;
+            }
+
+            to {
+                color: #03F;
+            }
+        }
+
+        @-moz-keyframes anim2-kf-fa7 {
+            from {
+                color: #03F;
+            }
+
+            25% {
+                color: #00C;
+            }
+
+            50% {
+                color: #0CF;
+            }
+
+            75% {
+                color: #03C;
+            }
+
+            to {
+                color: #03F;
+            }
+        }
+
+
+        #anim2-figure div,
+        #anim2-figure span {
+            -webkit-transform-style: preserve-3d;
+            -moz-transform-style: preserve-3d;
+        }
+
+        /* Agregado -moz- */
+
+        /* Todos los #fX e internos necesitan ser ajustados en tamaño/posicionamiento si #anim2-figure se reduce */
+        /* Ejemplo para #f1 y sus spans, el resto seguiría un patrón similar */
+        #anim2-f1 {
+            left: -2px;
+            top: -2px;
+            height: 100%;
+            width: 100%;
+            border-radius: 50%;
+            border-width: 2px;
+            border-style: solid;
+            box-shadow: 0 0 5px #006;
+            -webkit-animation: anim2-kf-f1 4s ease-in-out infinite;
+            -moz-animation: anim2-kf-f1 4s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f1 {
+            from {
+                -webkit-transform: rotateZ(0deg);
+                opacity: 1.0;
+                border-color: #006;
+            }
+
+            10% {
+                -webkit-transform: rotateZ(30deg);
+                opacity: 1.0;
+                border-color: #06F;
+            }
+
+            /* ... resto de keyframes ... */
+            to {
+                -webkit-transform: rotateZ(0deg);
+                opacity: 1.0;
+                border-color: #006;
+            }
+        }
+
+        @-moz-keyframes anim2-kf-f1 {
+            from {
+                -moz-transform: rotateZ(0deg);
+                opacity: 1.0;
+                border-color: #006;
+            }
+
+            10% {
+                -moz-transform: rotateZ(30deg);
+                opacity: 1.0;
+                border-color: #06F;
+            }
+
+            /* ... resto de keyframes ... */
+            to {
+                -moz-transform: rotateZ(0deg);
+                opacity: 1.0;
+                border-color: #006;
+            }
+        }
+
+        #anim2-f1 span {
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -4px;
+            /* ajustado */
+            height: 8px;
+            /* ajustado */
+            width: 2px;
+            /* ajustado */
+            background: #006;
+            box-shadow: 0 0 3px #006;
+            -webkit-animation: anim2-kf-f1div 4s ease-in-out infinite;
+            -moz-animation: anim2-kf-f1div 4s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f1div {
+            from {
+                background: #006;
+            }
+
+            /* ... */
+            to {
+                background: #006;
+            }
+        }
+
+        @-moz-keyframes anim2-kf-f1div {
+            from {
+                background: #006;
+            }
+
+            /* ... */
+            to {
+                background: #006;
+            }
+        }
+
+        #anim2-f2 {
+            height: 100%;
+            width: 100%;
+            -webkit-animation: anim2-kf-f2 20s linear infinite;
+            -moz-animation: anim2-kf-f2 20s linear infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f2 {
+            from {
+                -webkit-transform: translateZ(-5px) rotateZ(0deg);
+            }
+
+            to {
+                -webkit-transform: translateZ(-5px) rotateZ(360deg);
+            }
+        }
+
+        @-moz-keyframes anim2-kf-f2 {
+            from {
+                -moz-transform: translateZ(-5px) rotateZ(0deg);
+            }
+
+            to {
+                -moz-transform: translateZ(-5px) rotateZ(360deg);
+            }
+        }
+
+        #anim2-f2 span {
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -3px;
+            height: 6px;
+            width: 2px;
+            background: #666;
+        }
+
+        /* Continuar renombrando y ajustando #f3, #f4, #f5, #f6, #f7, #f8, #f9 y sus animaciones/elementos internos */
+        /* Por brevedad, no se listan todos los cambios de prefijo aquí, pero se deben aplicar */
+
+        #anim2-f3 {
+            top: 10px;
+            left: 10px;
+            height: calc(100% - 40px);
+            width: calc(100% - 40px);
+            /* ajustado */
+            border-radius: 50%;
+            border-width: 5px;
+            /* ajustado */
+            border-style: solid;
+            border-color: #03C;
+            box-shadow: 0 0 5px #03C;
+            -webkit-transform: translateZ(10px);
+            -webkit-animation: anim2-kf-f3 6s ease-in-out infinite;
+            -moz-animation: anim2-kf-f3 6s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f3 {
+            /* ... keyframes renombrados ... */
+        }
+
+        @-moz-keyframes anim2-kf-f3 {
+            /* ... keyframes renombrados ... */
+        }
+
+        #anim2-f31 {
+            width: 30px;
+            background: #000;
+            top: -8px;
+            left: calc(50% - 15px);
+            bottom: -8px;
+        }
+
+        #anim2-f31 span {
+            left: 8px;
+            height: 10px;
+            width: 10px;
+        }
+
+        .anim2-f311 {}
+
+        .anim2-f312 {
+            bottom: 0;
+        }
+
+        #anim2-f31 span b {
+            height: 6px;
+            width: 6px;
+            -webkit-animation: anim2-kf-f31span 2s ease-in-out infinite;
+            -moz-animation: anim2-kf-f31span 2s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f31span {
+            /* ... */
+        }
+
+        @-moz-keyframes anim2-kf-f31span {
+            /* ... */
+        }
+
+        #anim2-f32 {
+            height: 30px;
+            background: #000;
+            top: calc(50% - 15px);
+            left: -10px;
+            right: -10px;
+        }
+
+        #anim2-f32 span {
+            height: 5px;
+            width: 5px;
+            top: 12px;
+        }
+
+        .anim2-f321 {
+            left: 4px;
+        }
+
+        .anim2-f322 {
+            right: 4px;
+        }
+
+        #anim2-f33 {
+            width: 2px;
+            background: #000;
+            top: -7px;
+            left: calc(50% - 1px);
+            bottom: -7px;
+            -webkit-transform: translateZ(1px) rotateZ(45deg);
+            -moz-transform: translateZ(1px) rotateZ(45deg);
+        }
+
+        #anim2-f34 {
+            width: 2px;
+            background: #000;
+            top: -7px;
+            left: calc(50% - 1px);
+            bottom: -7px;
+            -webkit-transform: translateZ(1px) rotateZ(-45deg);
+            -moz-transform: translateZ(1px) rotateZ(-45deg);
+        }
+
+        #anim2-f4 {
+            top: 20%;
+            left: 20%;
+            height: 60%;
+            width: 60%;
+            border: 1px solid #09F;
+            -webkit-transform: translateZ(15px);
+            -webkit-animation: anim2-kf-f4 6s ease-in-out infinite;
+            -moz-animation: anim2-kf-f4 6s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f4 {
+            /* ... */
+        }
+
+        @-moz-keyframes anim2-kf-f4 {
+            /* ... */
+        }
+
+        #anim2-f41 {
+            left: calc(50% - 4px);
+            top: -2px;
+            bottom: -2px;
+            width: 8px;
+        }
+
+        #anim2-f42 {
+            top: calc(50% - 4px);
+            left: -2px;
+            right: -2px;
+            height: 8px;
+        }
+
+        #anim2-f43 {
+            top: calc(50% - 3px);
+            left: calc(50% - 1px);
+            height: 6px;
+            width: 2px;
+        }
+
+        .anim2-f431 {
+            -webkit-transform: rotateZ(45deg) translateY(35px);
+            -moz-transform: rotateZ(45deg) translateY(35px);
+        }
+
+        /* Ajustar translateY */
+        .anim2-f432 {
+            -webkit-transform: rotateZ(-45deg) translateY(35px);
+            -moz-transform: rotateZ(-45deg) translateY(35px);
+        }
+
+        .anim2-f433 {
+            -webkit-transform: rotateZ(135deg) translateY(35px);
+            -moz-transform: rotateZ(135deg) translateY(35px);
+        }
+
+        .anim2-f434 {
+            -webkit-transform: rotateZ(225deg) translateY(35px);
+            -moz-transform: rotateZ(225deg) translateY(35px);
+        }
+
+        #anim2-f5 {
+            left: 25%;
+            top: 25%;
+            height: 50%;
+            width: 50%;
+            -webkit-animation: anim2-kf-f5 20s linear infinite;
+            -moz-animation: anim2-kf-f5 20s linear infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f5 {
+            /* ... */
+        }
+
+        @-moz-keyframes anim2-kf-f5 {
+            /* ... */
+        }
+
+        #anim2-f5 span {
+            margin-top: -2px;
+            height: 4px;
+            width: 1px;
+            font-size: 30%;
+        }
+
+        #anim2-f5 span b {
+            bottom: 150%;
+            width: 5px;
+            left: -2px;
+        }
+
+        #anim2-f6 {
+            top: 35%;
+            left: 35%;
+            height: 30%;
+            width: 30%;
+            border: 1px solid #06F;
+            -webkit-transform: translateZ(25px);
+            -moz-transform: translateZ(25px);
+        }
+
+        #anim2-f7 {
+            top: 38%;
+            left: 38%;
+            height: 24%;
+            width: 24%;
+            border: 1px solid #06F;
+            -webkit-transform: translateZ(28px);
+            -webkit-animation: anim2-kf-f7 6s linear infinite;
+            -moz-animation: anim2-kf-f7 6s linear infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f7 {
+            /* ... */
+        }
+
+        @-moz-keyframes anim2-kf-f7 {
+            /* ... */
+        }
+
+        #anim2-f71 {
+            top: -20%;
+            left: calc(50% - 1px);
+            height: 140%;
+            width: 2px;
+        }
+
+        #anim2-f72 {
+            top: -20%;
+            left: calc(50% - 1px);
+            height: 140%;
+            width: 2px;
+            -webkit-transform: translateZ(-1px) rotateZ(90deg);
+            -moz-transform: translateZ(-1px) rotateZ(90deg);
+        }
+
+        #anim2-f8 {
+            top: 40%;
+            left: 40%;
+            height: 20%;
+            width: 20%;
+            border: 1px solid #009;
+            -webkit-transform: translateZ(32px);
+            -webkit-animation: anim2-kf-f8 8s linear infinite;
+            -moz-animation: anim2-kf-f8 8s linear infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f8 {
+            /* ... */
+        }
+
+        @-moz-keyframes anim2-kf-f8 {
+            /* ... */
+        }
+
+        #anim2-f81 {
+            top: -25%;
+            left: calc(50% - 20%);
+            height: 150%;
+            width: 40%;
+            border-radius: 3px;
+            -webkit-animation: anim2-kf-f8div 8s linear infinite;
+            -moz-animation: anim2-kf-f8div 8s linear infinite;
+        }
+
+        #anim2-f82 {
+            top: -25%;
+            left: calc(50% - 20%);
+            height: 150%;
+            width: 40%;
+            border-radius: 3px;
+            -webkit-transform: translateZ(-1px) rotateZ(90deg);
+            -moz-transform: translateZ(-1px) rotateZ(90deg);
+            -webkit-animation: anim2-kf-f8div 8s linear infinite;
+            -moz-animation: anim2-kf-f8div 8s linear infinite;
+        }
+
+        @-webkit-keyframes anim2-kf-f8div {
+            /* ... */
+        }
+
+        @-moz-keyframes anim2-kf-f8div {
+            /* ... */
+        }
+
+        #anim2-f9 {
+            top: 45%;
+            left: 45%;
+            height: 10%;
+            width: 10%;
+            border: 1px solid #06F;
+            -webkit-transform: translateZ(40px);
+            -moz-transform: translateZ(40px);
+        }
+
+        #anim2-f9 span {
+            top: 30%;
+            left: 30%;
+            height: 40%;
+            width: 40%;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <div class="signin">
+            <div class="content">
+                <div id="animacion-hud-wrapper">
+                    <div id="anim2-container">
+                        <div id="anim2-figure">
+                          
+                            <div id="anim2-f1"></div>
+                            <div id="anim2-f2"></div>
+                            <div id="anim2-f3">
+                                <div id="anim2-f31"><span class="anim2-f311"><b></b></span><span
+                                        class="anim2-f312"><b></b></span></div>
+                                <div id="anim2-f32"><span class="anim2-f321"></span><span class="anim2-f322"></span>
+                                </div>
+                                <div id="anim2-f33"></div>
+                                <div id="anim2-f34"></div>
+                            </div>
+                            <div id="anim2-f4">
+                                <div id="anim2-f41"></div>
+                                <div id="anim2-f42"></div>
+                                <div id="anim2-f43" class="anim2-f431"></div>
+                                <div id="anim2-f43" class="anim2-f432"></div>
+                                <div id="anim2-f43" class="anim2-f433"></div>
+                                <div id="anim2-f43" class="anim2-f434"></div>
+                            </div>
+                            <div id="anim2-f5"></div>
+                            <div id="anim2-f6"></div>
+                            <div id="anim2-f7">
+                                <div id="anim2-f71"></div>
+                                <div id="anim2-f72"></div>
+                            </div>
+                            <div id="anim2-f8">
+                                <div id="anim2-f81"></div>
+                                <div id="anim2-f82"></div>
+                            </div>
+                            <div id="anim2-f9"><span></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Iniciar Sesión</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <form class="form" method="POST" action="{{ url_for('login') }}">
+                    <div class="inputBox">
+                        <input type="text" id="username" name="username" required>
+                        <i>Usuario</i>
+                    </div>
+                    <div class="inputBox">
+                        <input type="password" id="password" name="password" required>
+                        <i>Contraseña</i>
+                    </div>
+                    <div class="links">
+                        <a href="#">¿Olvidaste tu contraseña?</a>
+                        <a href="#">Registrarse</a>
+                    </div>
+                    <div class="inputBox">
+                        <input type="submit" value="Entrar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Script para Animación 01 (fondo de cuadrados rojos)
+        for (let i = 0; i < 256; i++) { // Aumentado número para mejor cobertura en pantallas grandes
+            let span = document.createElement('span');
+            document.querySelector('section').appendChild(span);
+        }
+
+        // Script para Animación HUD (Animación 02 - renombrado y adaptado)
+        $(document).ready(function () {
+            // Selectores renombrados para la Animación HUD
+            const anim2_a3_placeholder = $('#anim2-a3-placeholder'); // Contenedor para números aleatorios
+            const anim2_a4 = $('#anim2-a4');
+            const anim2_a5 = $('#anim2-a5');
+            const anim2_a8 = $('#anim2-a8');
+            const anim2_a9 = $('#anim2-a9');
+            const anim2_f1 = $('#anim2-f1');
+            const anim2_f2 = $('#anim2-f2');
+            const anim2_f5 = $('#anim2-f5');
+            const anim2_b1 = $('#anim2-b1'); // Contenedor para las barras b1
+
+            // Código original del script de Animación 02, adaptado con prefijos
+            // (Rotaciones aleatorias iniciales para f1, f2 - no estaban en tu script pero eran comunes en ejemplos)
+            // $('.anim2-f1x, ...').css(...); // si f1 tuviera sub-elementos con clases como .anim2-f11
+
+            // Generación de números aleatorios para #anim2-a3-placeholder
+            if (anim2_a3_placeholder.length) { // Verificar que el elemento exista
+                for (let i = 1; i < 11; i++) {
+                    anim2_a3_placeholder.append('<span class="anim2-num-span' + i + '"></span>');
+                    $('.anim2-num-span' + i).css({
+                        '-webkit-animation': 'anim2-kf-opacity 1s ' + (Math.random() * 2) + 's infinite',
+                        '-moz-animation': 'anim2-kf-opacity 1s ' + (Math.random() * 2) + 's infinite',
+                        'color': '#ff0000' // Color rojo para los números
+                    });
+                }
+                setInterval(function () {
+                    $('#anim2-a3-placeholder span').each(function () {
+                        $(this).text(Math.ceil(Math.random() * 999));
+                    });
+                }, 100);
+            }
+
+            // Animación para #anim2-a4
+            if (anim2_a4.length) {
+                for (let i = 1; i < 31; i++) {
+                    anim2_a4.append('<span class="anim2-a4-bar' + i + '"></span>'); // Clases únicas
+                }
+                setInterval(function () {
+                    $('#anim2-a4 span').each(function () {
+                        $(this).width((Math.random() * 15));
+                    });
+                }, 500);
+            }
+
+            // Animación para #anim2-a5
+            if (anim2_a5.length) {
+                for (let i = 1; i < 16; i++) {
+                    anim2_a5.append('<span><b class="anim2-a5-block' + i + '"></b></span>'); // Clases únicas
+                    $('.anim2-a5-block' + i).css({
+                        '-webkit-animation': 'anim2-kf-a5-b 1s 0.' + i + 's infinite', // Usar keyframe renombrado
+                        '-moz-animation': 'anim2-kf-a5-b 1s 0.' + i + 's infinite'
+                    });
+                }
+            }
+
+            // Actualización de hora y fecha en #anim2-a7 (dentro de #anim2-figure)
+            setInterval(function () {
+                var h = new Date().getHours(); // Usar hora actual
+                var m = new Date().getMinutes(); // Usar minutos actuales
+                if (h < 10) { $('.anim2-a731').text('0' + h + ':'); }
+                else { $('.anim2-a731').text(h + ':'); }
+                if (m < 10) { $('.anim2-a732').text('0' + m); }
+                else { $('.anim2-a732').text(m); }
+            }, 1000); // Actualizar cada segundo
+
+            // Fecha actual (estática o actualizada)
+            var currentDate = new Date();
+            var d = currentDate.getDate();
+            var mo = currentDate.getMonth() + 1; // Meses son 0-indexados
+            var y = currentDate.getFullYear();
+            if (d < 10) { $('.anim2-a741').text('0' + d + '/'); } else { $('.anim2-a741').text(d + '/'); }
+            if (mo < 10) { $('.anim2-a742').text('0' + mo + '/'); } else { $('.anim2-a742').text(mo + '/'); }
+            $('.anim2-a743').text(y);
+
+            // Animación para #anim2-a8
+            if (anim2_a8.length) {
+                for (let i = 1; i < 21; i++) {  // Reducido número de spans para #anim2-a8 dada su altura reducida    
+                    anim2_a8.append('<span></span>');
+                }
+            }
+
+            // Animación para #anim2-a9
+            if (anim2_a9.length) {
+                setInterval(function () {
+                    var mino = 10000, maxo = 99999;
+                    var rand = mino - 0.5 + Math.random() * (maxo - mino + 1);
+                    rand = Math.round(rand);
+                    var mine = 100000000, maxe = 999999999;
+                    var ran = mine - 0.5 + Math.random() * (maxe - mine + 1);
+                    ran = Math.round(ran);
+                    $('#anim2-a9 span:odd').text(rand);
+                    $('#anim2-a9 span:even').text(ran);
+                }, 100);
+            }
+
+            // Generación de elementos para #anim2-f1, #anim2-f2, #anim2-f5
+            if (anim2_f1.length) {
+                for (let i = 1; i < 13; i++) {
+                    anim2_f1.append('<span class="anim2-f1-item' + i + '"></span>');
+                    $('.anim2-f1-item' + i).css({
+                        '-webkit-transform': 'rotateZ(' + i * 30 + 'deg) translateY(45px)', /* translateY ajustado para figure más pequeño */
+                        '-moz-transform': 'rotateZ(' + i * 30 + 'deg) translateY(45px)'
+                    });
+                }
+            }
+            if (anim2_f2.length) {
+                for (let i = 1; i < 37; i++) {
+                    anim2_f2.append('<span class="anim2-f2-item' + i + '"></span>');
+                    $('.anim2-f2-item' + i).css({
+                        '-webkit-transform': 'rotateZ(' + i * 10 + 'deg) translateY(48px)', /* translateY ajustado */
+                        '-moz-transform': 'rotateZ(' + i * 10 + 'deg) translateY(48px)'
+                    });
+                }
+            }
+            if (anim2_f5.length) {
+                for (let i = 1; i < 19; i++) {
+                    anim2_f5.append('<span class="anim2-f5-item' + i + '"><b>' + (Math.random() * 30).toFixed(0) + '</b></span>');
+                    $('.anim2-f5-item' + i).css({
+                        '-webkit-transform': 'rotateZ(' + i * 20 + 'deg) translateY(25px)', /* translateY ajustado */
+                        '-moz-transform': 'rotateZ(' + i * 20 + 'deg) translateY(25px)'
+                    });
+                }
+            }
+
+            // Generación de barras para #anim2-b1
+            if (anim2_b1.length) {
+                for (let i = 1; i <= 10; i++) {
+                    anim2_b1.append('<span class="anim2-b1' + i + '"></span>');
+                    $('.anim2-b1' + i).css({
+                        'right': (i * 10 - 5) + 'px', // Espaciado de las barras
+                        '-webkit-animation': 'anim2-kf-b1 ' + (1 + Math.random()) + 's ease-in-out infinite alternate',
+                        '-moz-animation': 'anim2-kf-b1 ' + (1 + Math.random()) + 's ease-in-out infinite alternate'
+                    });
+                }
+            }
+
+        });
+    </script>
+</body>
+
+</html>==== templates/index.html ====
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panthera Strike - Web Scanner</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0a0a0a;
+            color: #ffffff; /* Cambiado a blanco */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: #1a1a1a;
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px #ff0000; /* Cambiado de verde a rojo */
+            width: 80%;
+            max-width: 900px;
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff; /* Cambiado a blanco */
+            text-shadow: 0 0 5px #ff0000; /* Cambiado de verde a rojo */
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: calc(100% - 22px); /* Ajustar por padding y borde */
+            height: 150px;
+            background-color: #000;
+            color: #ffffff; /* Cambiado a blanco */
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            padding: 10px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        button {
+            background-color: #330000; /* Cambiado de verde a rojo */
+            color: #ffffff; /* Cambiado a blanco */
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1em;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        button:hover {
+            background-color: #660000; /* Cambiado de verde a rojo */
+            box-shadow: 0 0 10px #ff0000; /* Cambiado de verde a rojo */
+        }
+        #statusArea, #logsArea {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #000;
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            min-height: 100px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap; /* Para mantener saltos de línea y espacios */
+            word-wrap: break-word;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #330000; /* Cambiado de verde a rojo */
+            padding-bottom: 5px;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        .error {
+            color: #ff0000;
+        }
+        .warn {
+            color: #ffff00;
+        }
+        .info {
+            color: #ffffff; /* Cambiado a blanco */
+        }
+        .job-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px dashed #660000; /* Cambiado de verde a rojo */
+            background-color: #050505;
+        }
+        .jobs-list {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #000;
+            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .jobs-list h3 {
+            margin-top: 0;
+        }
+        .jobs-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .jobs-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #330000; /* Cambiado de verde a rojo */
+            cursor: pointer;
+        }
+        .jobs-list li:hover {
+            background-color: #330000; /* Cambiado de verde a rojo */
+        }
+        .jobs-list li:last-child {
+            border-bottom: none;
+        }
+        .tool-selection-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #101010; /* Slightly lighter than container for distinction */
+            border: 1px solid #cc0000; /* Cambiado de verde a rojo */
+            border-radius: 5px;
+        }
+        .tool-selection-container h3 {
+            margin-top: 0;
+            color: #ffffff; /* Cambiado a blanco */
+        }
+        .tool-category {
+            margin-bottom: 15px;
+        }
+        .tool-category h4 {
+            color: #dd0000; /* Cambiado de verde a rojo */
+            border-bottom: 1px solid #660000; /* Cambiado de verde a rojo */
+            padding-bottom: 5px;
+        }
+        .tool-item {
+            margin-bottom: 8px;
+        }
+        .tool-item label {
+            display: flex;
+            align-items: center;
+        }
+        .tool-item input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: #ff0000; /* Style the checkbox color */ /* Cambiado de verde a rojo */
+        }
+        .tool-description {
+            font-size: 0.8em;
+            color: #ffffff; /* Cambiado a blanco */
+            margin-left: 25px; /* Align with checkbox text */
+        }
+        .preset-buttons button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Panthera Strike - Web Scanner</h1>
+        
+        <label for="targets">Targets (FQDN, IPv4, IPv6, URL - uno por línea):</label>
+        <textarea id="targets" placeholder="ejemplo.com\n192.168.1.1\nhttps://sitio.seguro"></textarea>
+
+        <div class="tool-selection-container">
+            <h3>Seleccionar Herramientas de Escaneo</h3>
+            <div class="preset-buttons">
+                <button onclick="applyToolPreset('none')">Desmarcar Todas</button>
+                <button onclick="applyToolPreset('full_scan')">Escaneo Robusto (Marcar Todas Seguras)</button>
+                <button onclick="applyToolPreset('quick_scan')">Escaneo Rápido</button>
+                <button id="downloadZip" style="background-color:#006600;color:white;margin-left:10px;">Descargar Resultados (ZIP)</button>
+                <button onclick="applyToolPreset('discovery_only')">Solo Descubrimiento</button>
+            </div>
+            <div id="toolList">Cargando herramientas...</div>
+        </div>
+
+        <button onclick="startScan()">Enviar Ataque</button>
+
+        <div class="jobs-list">
+            <h3>Historial de Trabajos</h3>
+            <ul id="jobsListArea">
+                <li>Cargando trabajos anteriores...</li>
+            </ul>
+        </div>
+
+        <div id="currentJobInfo" class="job-info" style="display:none;">
+            <h3>Información del Trabajo Actual:</h3>
+            <p><strong>Job ID:</strong> <span id="jobIdDisplay"></span></p>
+            <p><strong>Estado:</strong> <span id="jobStatusDisplay"></span></p>
+            <p><button onclick="refreshStatus()">Actualizar Estado</button></p>
+        </div>
+
+        <h2>Estado/Logs del Escaneo:</h2>
+        <div id="statusArea">
+            #statusArea {
+                margin-top: 20px;
+                padding: 0;
+                background: none;
+                border: none;
+                min-height: 100px;
+                max-height: 400px;
+                overflow: visible;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+            .terminal {
+                width: 100%;
+                background: #1e1e1e;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+                display: flex;
+                flex-direction: column;
+                font-family: 'Ubuntu Mono', 'Courier New', Courier, monospace;
+                border: 1px solid #444;
+            }
+            .terminal__bar {
+                display: flex;
+                align-items: center;
+                padding: 0 12px;
+                height: 32px;
+                background: linear-gradient(to bottom, #3c3b37, #2e2d2a);
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                box-shadow: inset 0 -1px 0 rgba(255,255,255,0.05);
+            }
+            .terminal__buttons {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .terminal__button {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                border: none;
+                background: linear-gradient(to bottom, #7d7871, #595953);
+                box-shadow: 0 0 1px #41403A, 0 1px 1px #474642;
+                margin-right: 2px;
+            }
+            .terminal__button--exit { background: linear-gradient(to bottom, #ff5f56, #e0443e); }
+            .terminal__button--min { background: linear-gradient(to bottom, #ffbd2e, #dea123); }
+            .terminal__button--max { background: linear-gradient(to bottom, #27c93f, #12ac28); }
+            .terminal__user {
+                margin-left: 12px;
+                font-size: 13px;
+                color: #d5d0ce;
+                font-weight: 500;
+            }
+            .terminal__body {
+                flex: 1;
+                background: rgba(0,0,0,0.93);
+                padding: 16px;
+                font-family: 'Ubuntu Mono', 'Courier New', Courier, monospace;
+                color: #e0e0e0;
+                font-size: 1em;
+                overflow-y: auto;
+                min-height: 100px;
+                max-height: 400px;
+            }
+            .terminal__body .error { color: #ff5f56; }
+            .terminal__body .warn { color: #ffe066; }
+            .terminal__body .info { color: #7eda28; }
+            @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700');
+        </div>
+    </div>
+
+    <script>
+        let currentJobId = null;
+        let statusInterval = null;
+        let availableTools = [];
+        let toolPresets = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTools();
+            fetchJobs();
+        });
+
+        async function fetchTools() {
+            try {
+                const response = await fetch('/tools');
+                const data = await response.json();
+                if (response.ok) {
+                    availableTools = data.tools;
+                    toolPresets = data.presets;
+                    renderToolList(availableTools);
+                } else {
+                    document.getElementById('toolList').innerHTML = `<span class="error">Error cargando herramientas: ${data.error || response.statusText}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('toolList').innerHTML = `<span class="error">Error de red o servidor al cargar herramientas: ${error.message}</span>`;
+            }
+        }
+
+        function renderToolList(tools) {
+            const toolListDiv = document.getElementById('toolList');
+            toolListDiv.innerHTML = ''; // Limpiar contenido anterior
+
+            const toolsByCategory = tools.reduce((acc, tool) => {
+                acc[tool.category] = acc[tool.category] || [];
+                acc[tool.category].push(tool);
+                return acc;
+            }, {});
+
+            for (const category in toolsByCategory) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'tool-category';
+                
+                const categoryTitle = document.createElement('h4');
+                categoryTitle.textContent = category;
+                categoryDiv.appendChild(categoryTitle);
+
+                toolsByCategory[category].forEach(tool => {
+                    const toolItemDiv = document.createElement('div');
+                    toolItemDiv.className = 'tool-item';
+                    
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `tool-${tool.id}`;
+                    checkbox.value = tool.id;
+                    checkbox.checked = tool.default_enabled; // Marcar por defecto según configuración
+                    if (tool.dangerous) {
+                        label.title = "PELIGROSO: Esta herramienta puede tener efectos no deseados.";
+                        label.style.color = "#ff6600";
+                    }
+                    if (tool.requires_api_token) {
+                        label.title = "Requiere configuración de API token en el backend.";
+                        // checkbox.disabled = true; // Opcional: deshabilitar si no está configurada
+                    }
+
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(` ${tool.name}`));
+                    
+                    const description = document.createElement('div');
+                    description.className = 'tool-description';
+                    description.textContent = tool.description;
+                    if (tool.dangerous) description.innerHTML += ' <strong style="color:red;">[PELIGROSO]</strong>';
+                    if (tool.requires_api_token) description.innerHTML += ' <strong style="color:orange;">[REQUIERE API TOKEN]</strong>';
+
+
+                    toolItemDiv.appendChild(label);
+                    toolItemDiv.appendChild(description);
+                    categoryDiv.appendChild(toolItemDiv);
+                });
+                toolListDiv.appendChild(categoryDiv);
+            }
+        }
+
+        function applyToolPreset(presetName) {
+            const checkboxes = document.querySelectorAll('#toolList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false); // Desmarcar todos primero
+
+            if (presetName === 'none') {
+                return; // Ya están todos desmarcados
+            }
+
+            const presetToolIds = toolPresets[presetName];
+            if (presetToolIds) {
+                presetToolIds.forEach(toolId => {
+                    const checkbox = document.getElementById(`tool-${toolId}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+        }
+
+        function getSelectedToolIds() {
+            const selectedTools = [];
+            const checkboxes = document.querySelectorAll('#toolList input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                selectedTools.push(checkbox.value);
+            });
+            return selectedTools;
+        }
+
+        async function fetchJobs() {
+            try {
+                const response = await fetch('/jobs');
+                const jobs = await response.json();
+                const jobsListArea = document.getElementById('jobsListArea');
+                jobsListArea.innerHTML = ''; // Limpiar
+                if (jobs.length === 0) {
+                    jobsListArea.innerHTML = '<li>No hay trabajos anteriores.</li>';
+                    return;
+                }
+                jobs.forEach(job => {
+                    const li = document.createElement('li');
+                    li.textContent = `Job ID: ${job.id} - Estado: ${job.status} - Targets: ${job.targets.join(', ') || 'N/A'} - Inicio: ${job.start_time}`;
+                    li.onclick = () => {
+                        currentJobId = job.id;
+                        document.getElementById('jobIdDisplay').textContent = job.id;
+                        document.getElementById('jobStatusDisplay').textContent = job.status;
+                        document.getElementById('currentJobInfo').style.display = 'block';
+                        fetchStatus(job.id); // Cargar logs e info detallada
+                        if(statusInterval) clearInterval(statusInterval);
+                        // Solo reiniciar intervalo si el job no está finalizado
+                        if (job.status !== 'completed' && job.status !== 'failed' && job.status !== 'cancelled' && job.status !== 'error') {
+                           statusInterval = setInterval(() => fetchStatus(job.id), 5000);
+                        }
+                    };
+                    jobsListArea.appendChild(li);
+                });
+            } catch (error) {
+                document.getElementById('jobsListArea').innerHTML = `<li><span class="error">Error cargando trabajos: ${error.message}</span></li>`;
+            }
+        }
+
+
+        async function startScan() {
+            const targetsText = document.getElementById('targets').value;
+            if (!targetsText.trim()) {
+                alert('Por favor, ingrese al menos un objetivo.');
+                return;
+            }
+            const targetsArray = targetsText.split('\n').map(t => t.trim()).filter(t => t);
+            const selectedTools = getSelectedToolIds();
+
+            if (selectedTools.length === 0) {
+                if (!confirm('No ha seleccionado ninguna herramienta. ¿Desea continuar con un escaneo predeterminado (rápido)?')) {
+                    return;
+                }
+                // Si el usuario confirma, selectedTools se queda vacío y el backend usará el default.
+            }
+
+            document.getElementById('statusArea').innerHTML = 'Iniciando escaneo...';
+            document.getElementById('currentJobInfo').style.display = 'none';
+            if(statusInterval) clearInterval(statusInterval);
+
+            try {
+                const response = await fetch('/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ targets: targetsArray, tools: selectedTools }), // Enviar herramientas seleccionadas
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    currentJobId = data.job_id;
+                    document.getElementById('statusArea').innerHTML = `Escaneo iniciado. Job ID: ${data.job_id}.<br>Consultando estado...`;
+                    document.getElementById('jobIdDisplay').textContent = data.job_id;
+                    document.getElementById('jobStatusDisplay').textContent = 'pending';
+                    document.getElementById('currentJobInfo').style.display = 'block';
+                    fetchStatus(currentJobId);
+                    statusInterval = setInterval(() => fetchStatus(currentJobId), 5000); // Actualizar cada 5 segundos
+                    fetchJobs(); // Actualizar lista de jobs
+                } else {
+                    document.getElementById('statusArea').innerHTML = `<span class="error">Error iniciando escaneo: ${data.error || response.statusText}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('statusArea').innerHTML = `<span class="error">Error de red o servidor: ${error.message}</span>`;
+            }
+        }
+
+        async function fetchStatus(jobId) {
+            if (!jobId) return;
+            try {
+                const response = await fetch(`/status/${jobId}`);
+                const data = await response.json();
+                const statusArea = document.getElementById('statusArea');
+                const jobStatusDisplay = document.getElementById('jobStatusDisplay');
+
+                if (response.ok) {
+                    jobStatusDisplay.textContent = data.status;
+                    let logsHtml = `<strong>Estado del Job ${jobId}: ${data.status}</strong><br>`;
+                    logsHtml += `Hora de inicio: ${data.start_time || 'N/A'}<br>`;
+                    if(data.end_time) logsHtml += `Hora de finalización: ${data.end_time}<br>`;
+                    logsHtml += `Objetivos: ${data.targets ? data.targets.join(', ') : 'N/A'}<br>`;
+                    logsHtml += `Resultados en: ${data.results_path || 'N/A'}<br><hr>`;
+                    
+                    if (data.logs && data.logs.length > 0) {
+                        logsHtml += data.logs.map(log => {
+                            let logClass = 'info';
+                            if (log.includes('[ERROR]')) logClass = 'error';
+                            else if (log.includes('[WARN]')) logClass = 'warn';
+                            return `<div class="log-entry ${logClass}">${escapeHtml(log)}</div>`;
+                        }).join('');
+                    } else {
+                        logsHtml += 'No hay logs detallados disponibles aún.';
+                    }
+                    statusArea.innerHTML = logsHtml;
+
+                    if (data.status === 'completed' || data.status === 'failed' || data.status === 'cancelled' || data.status === 'error') {
+                        if(statusInterval) clearInterval(statusInterval);
+                        statusInterval = null;
+                        jobStatusDisplay.textContent += ` (Finalizado)`;
+                    }
+                } else {
+                    statusArea.innerHTML += `<br><span class="error">Error obteniendo estado para ${jobId}: ${data.error || response.statusText}</span>`;
+                    if(statusInterval) clearInterval(statusInterval);
+                }
+            } catch (error) {
+                document.getElementById('statusArea').innerHTML += `<br><span class="error">Error de red o servidor al obtener estado: ${error.message}</span>`;
+                if(statusInterval) clearInterval(statusInterval);
+            }
+        }
+
+        function refreshStatus(){
+            if(currentJobId){
+                fetchStatus(currentJobId);
+            }
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+    </script>
+</body>
+</html>
