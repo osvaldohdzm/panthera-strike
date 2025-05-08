@@ -5,13 +5,14 @@
 
    #animacion-hud-wrapper {
     width: 100%;           /* Ocupa todo el ancho disponible en .content */
-    max-width: 340px;      /* Ancho máximo de la HUD */
-    height: 180px;         /* Altura de la animación HUD */
+    max-width: 380px;      /* Ancho máximo aumentado de 340px a 380px */
+    height: 210px;         /* Altura aumentada de 180px a 210px */
     position: relative;    /* Se mantiene en el flujo, no absolute */
-    margin-bottom: 20px;   /* Espacio antes del título "Iniciar Sesión" */
+    margin-bottom: 25px;   /* Más espacio antes del título "Iniciar Sesión" */
     background: #1A1A1A;   /* Fondo oscuro para la HUD */
     overflow: hidden;
-    border: 1px solid #440000; /* Borde rojo oscuro */
+    border: 1px solid #550000; /* Borde rojo más visible */
+    border-radius: 6px;   /* Redondeo ligero para el contenedor */
     color: #CCCCCC;        /* Color de texto por defecto (blanco/gris claro) */
     font-family: 'Courier New', Courier, monospace; /* Fuente más "tech" */
 }
@@ -112,10 +113,13 @@
 
 /* --- Estilos de #anim2-figure y sus hijos --- */
 #anim2-figure {
-    top: 50%; left: 50%; width: 140px; height: 140px;
-    margin-top: -70px; margin-left: -70px;
-    -webkit-transform: rotateY(-30deg) rotateX(10deg) scale(0.8);
-    -moz-transform: rotateY(-30deg) rotateX(10deg) scale(0.8);
+    top: 50%; left: 50%; 
+    width: 200px;  /* Aumentado para ocupar más espacio */
+    height: 200px; /* Aumentado proporcionalmente */
+    margin-top: -100px; /* Ajustado a la mitad de la nueva altura */
+    margin-left: -100px;/* Ajustado a la mitad del nuevo ancho */
+    -webkit-transform: rotateY(-30deg) rotateX(10deg) scale(0.85);
+    -moz-transform: rotateY(-30deg) rotateX(10deg) scale(0.85);
     -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d;
     -webkit-animation: anim2-kf-figure 8s ease-in-out infinite;
     -moz-animation: anim2-kf-figure 8s ease-in-out infinite;

@@ -28,34 +28,17 @@ section {
     overflow: hidden;
 }
 
-section::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(#000, #ff0000, #000); /* Gradiente que se mueve */
-    animation: animate-bg-glow 5s linear infinite;
-    z-index: 1; /* Aseguramos que esté detrás de los spans del mosaico */
-}
 
-@keyframes animate-bg-glow {
-    0% {
-        transform: translateY(-100%);
-    }
-    100% {
-        transform: translateY(100%);
-    }
-}
 
 /* Estilos de la Animación 01 (cuadrados de fondo) */
 section span {
-    position: relative; /* Necesario para que z-index funcione */
+    position: relative; /* Sigue siendo buena práctica */
     display: block;
     width: calc(6.25vw - 2px); /* Tamaño de cada mosaico */
     height: calc(6.25vw - 2px); /* Tamaño de cada mosaico */
     background: #181818;       /* Color base GRIS OSCURO de los mosaicos */
-    z-index: 2;                /* Aseguramos que los mosaicos estén SOBRE section::before */
-    transition: background-color 1.5s; /* Transición para el color de fondo */
+    z-index: 2;
+    transition: background-color 1.5s;
 }
 
 section span:hover {
@@ -65,16 +48,19 @@ section span:hover {
 
 /* Formulario de Inicio de Sesión */
 section .signin {
-    position: relative; /* Ajustado para que la animación HUD se posicione bien dentro */
-    width: 400px;
+    position: absolute; /* Ya lo tienes, es correcto */
+    top: 50%;           /* Nuevo: para centrado vertical */
+    left: 50%;          /* Nuevo: para centrado horizontal */
+    transform: translate(-50%, -50%); /* Nuevo: ajusta la posición basada en su propio tamaño */
+    width: 420px; /* Ligeramente más ancho para acomodar un HUD más grande */
     background: #222;
     z-index: 1000;
     display: flex;
-    flex-direction: column; /* Para que el HUD y el form se apilen */
-    align-items: center; /* Para centrar el contenido */
-    padding: 30px; /* Reducido ligeramente para mejor ajuste con HUD */
-    border-radius: 4px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9); /* Mantenido de animation-2.css */
+    flex-direction: column;
+    align-items: center;
+    padding: 25px; /* Ajustar padding si es necesario */
+    border-radius: 8px; /* Un poco más redondeado para estética */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
 }
 
 section .signin .content {

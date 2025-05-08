@@ -105,8 +105,8 @@ $(document).ready(function () {
         for (let i = 1; i < 13; i++) { // 12 items
             anim2_f1.append('<span class="anim2-f1-item' + i + '"></span>');
             $('.anim2-f1-item' + i).css({
-                '-webkit-transform': 'rotateZ(' + i * 30 + 'deg) translateY(60px)', // translateY ajustado para figure
-                '-moz-transform': 'rotateZ(' + i * 30 + 'deg) translateY(60px)'
+                '-webkit-transform': 'rotateZ(' + i * 30 + 'deg) translateY(75px)', // translateY ajustado para figure
+                '-moz-transform': 'rotateZ(' + i * 30 + 'deg) translateY(75px)'
             });
         }
     }
@@ -115,8 +115,8 @@ $(document).ready(function () {
         for (let i = 1; i < 37; i++) { // 36 items
             anim2_f2.append('<span class="anim2-f2-item' + i + '"></span>');
             $('.anim2-f2-item' + i).css({
-                '-webkit-transform': 'rotateZ(' + i * 10 + 'deg) translateY(65px)', // translateY ajustado
-                '-moz-transform': 'rotateZ(' + i * 10 + 'deg) translateY(65px)'
+                '-webkit-transform': 'rotateZ(' + i * 10 + 'deg) translateY(80px)', // translateY ajustado
+                '-moz-transform': 'rotateZ(' + i * 10 + 'deg) translateY(80px)'
             });
         }
     }
@@ -125,8 +125,8 @@ $(document).ready(function () {
         for (let i = 1; i < 19; i++) { // 18 items
             anim2_f5.append('<span class="anim2-f5-item' + i + '"><b>' + (Math.random() * 30).toFixed(0) + '</b></span>');
             $('.anim2-f5-item' + i).css({
-                '-webkit-transform': 'rotateZ(' + i * 20 + 'deg) translateY(30px)', // translateY ajustado
-                '-moz-transform': 'rotateZ(' + i * 20 + 'deg) translateY(30px)'
+                '-webkit-transform': 'rotateZ(' + i * 20 + 'deg) translateY(40px)', // translateY ajustado
+                '-moz-transform': 'rotateZ(' + i * 20 + 'deg) translateY(40px)'
             });
         }
     }

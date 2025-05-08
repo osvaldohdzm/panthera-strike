@@ -2,8 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sectionElement = document.querySelector('section');
 
     if (sectionElement) {
-        const numberOfSpans = 256; // Puedes ajustar este número para más o menos mosaicos
-                                   // 256 (16x16) es un buen valor de inicio.
+        const numberOfSpans = 500; // Aumentado para mejor cobertura en diferentes aspect ratios
         for (let i = 0; i < numberOfSpans; i++) {
             let span = document.createElement('span');
             sectionElement.appendChild(span);
