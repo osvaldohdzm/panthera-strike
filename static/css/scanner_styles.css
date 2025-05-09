@@ -1,0 +1,69 @@
+/* En scanner_styles.css */
+.hidden {
+    display: none !important; /* !important para asegurar que sobreescriba estilos inline si los hubiera */
+}
+.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+.tool-dangerous-indicator {
+    color: orange;
+    font-weight: bold;
+    margin-left: 5px;
+    cursor: help;
+}
+.jobs-list-container li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #330000;
+}
+.jobs-list-container li:last-child {
+    border-bottom: none;
+}
+.jobs-list-container li:hover {
+    background-color: #2a0000;
+}
+.job-summary {
+    flex-grow: 1;
+}
+.job-actions button, .job-actions a {
+    margin-left: 10px;
+    padding: 6px 10px;
+    font-size: 0.9em;
+}
+.job-status-running { color: #ffae42; } /* Naranja */
+.job-status-completed { color: #7eda28; } /* Verde */
+.job-status-error { color: #ff5f56; } /* Rojo */
+.job-status-cancelled { color: #aaaaaa; } /* Gris */
+.job-status-pending { color: #f0e68c; } /* Amarillo claro */
+
+/* Estilos para grupos de parámetros CLI */
+.tool-cli-params-group {
+    background-color: #101010; /* Fondo ligeramente más oscuro que el item */
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 3px;
+    border: 1px solid #300000;
+}
+.tool-cli-params-group label {
+    display: inline-block;
+    width: auto; /* Ajustar según sea necesario */
+    margin-right: 5px;
+    margin-bottom: 3px;
+    color: #ddd;
+    font-size: 0.85em;
+}
+.tool-cli-params-group input[type="text"],
+.tool-cli-params-group input[type="number"],
+.tool-cli-params-group select {
+    width: calc(100% - 100px); /* Ajustar según el ancho del label */
+    padding: 4px;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #ff0000;
+    margin-bottom: 5px;
+    font-size: 0.85em;
+    display: inline-block; /* Para que se alinee con el label */
+}

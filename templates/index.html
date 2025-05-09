@@ -5,292 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panthera Strike - Web Scanner</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700');
-
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #0a0a0a;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            background-color: #1a1a1a;
-            border: 1px solid #ff0000;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 15px #ff0000;
-            width: 80%;
-            max-width: 1000px; /* Aumentado para más contenido */
-        }
-
-        h1 {
-            text-align: center;
-            color: #ffffff;
-            text-shadow: 0 0 5px #ff0000;
-            margin-bottom: 20px;
-        }
-
-        textarea {
-            width: calc(100% - 22px);
-            height: 100px; /* Reducido un poco */
-            background-color: #000;
-            color: #ffffff;
-            border: 1px solid #ff0000;
-            padding: 10px;
-            margin-bottom: 10px;
-            font-family: inherit;
-        }
-
-        button, .button-like {
-            background-color: #330000;
-            color: #ffffff;
-            border: 1px solid #ff0000;
-            padding: 10px 15px; /* Ajustado */
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9em; /* Ajustado */
-            transition: background-color 0.3s, box-shadow 0.3s;
-            margin: 5px; /* Añadido margen */
-            text-decoration: none; /* Para button-like */
-            display: inline-block; /* Para button-like */
-        }
-
-        button:hover, .button-like:hover {
-            background-color: #660000;
-            box-shadow: 0 0 10px #ff0000;
-        }
-        
-        .terminal-container {
-            margin-top: 20px;
-        }
-
-        .terminal {
-            width: 100%;
-            background: #1e1e1e;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            display: flex;
-            flex-direction: column;
-            font-family: 'Ubuntu Mono', 'Courier New', Courier, monospace;
-            border: 1px solid #444;
-            min-height: 200px;
-        }
-
-        .terminal__bar {
-            display: flex;
-            align-items: center;
-            padding: 0 12px;
-            height: 32px;
-            background: linear-gradient(to bottom, #3c3b37, #2e2d2a);
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.05);
-            flex-shrink: 0;
-        }
-
-        .terminal__buttons {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .terminal__button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(to bottom, #7d7871, #595953);
-            box-shadow: 0 0 1px #41403A, 0 1px 1px #474642;
-            padding: 0;
-            flex-shrink: 0;
-            cursor: default;
-            outline: none;
-        }
-
-        .terminal__button--exit { background: linear-gradient(to bottom, #ff5f56, #e0443e); }
-        .terminal__button--min { background: linear-gradient(to bottom, #ffbd2e, #dea123); }
-        .terminal__button--max { background: linear-gradient(to bottom, #27c93f, #12ac28); }
-
-        .terminal__user { margin-left: auto; padding-right: 10px; font-size: 13px; color: #d5d0ce; font-weight: 500; }
-        .terminal__body {
-            flex-grow: 1;
-            background: rgba(0, 0, 0, 0.93);
-            padding: 16px;
-            color: #e0e0e0;
-            font-size: 1em;
-            overflow-y: auto;
-            max-height: 300px; /* Ajustado */
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .terminal__body .log-entry { margin-bottom: 5px; border-bottom: 1px dashed #333; padding-bottom: 5px; line-height: 1.4; }
-        .terminal__body .log-entry:last-child { border-bottom: none; }
-        .terminal__body .error { color: #ff5f56; }
-        .terminal__body .warn { color: #ffe066; }
-        .terminal__body .info { color: #7eda28; }
-        .terminal__body strong { color: #ffffff; font-weight: bold; }
-
-        .tool-selection-container, .advanced-options-container, .jobs-list-container {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #101010;
-            border: 1px solid #cc0000;
-            border-radius: 5px;
-        }
-        .tool-selection-container h3, .advanced-options-container h3, .jobs-list-container h3 {
-            margin-top: 0;
-            color: #ffffff;
-        }
-
-        .pentest-phase {
-            margin-bottom: 20px;
-            border-left: 3px solid #ff0000;
-            padding-left: 10px;
-        }
-        .pentest-phase-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .pentest-phase-header input[type="checkbox"] {
-            margin-right: 10px;
-            accent-color: #ff0000;
-        }
-        .pentest-phase-header h4 {
-            color: #dd0000;
-            margin: 0;
-            font-size: 1.1em;
-        }
-        .tool-category {
-            margin-left: 20px; /* Indent categories */
-            margin-bottom: 10px;
-        }
-        .tool-category-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        .tool-category-header input[type="checkbox"] {
-            margin-right: 8px;
-            accent-color: #ff0000;
-        }
-        .tool-category-header h5 {
-            color: #f05050; /* Lighter red for category */
-            margin: 0;
-            font-size: 1em;
-        }
-        .tool-item {
-            margin-left: 40px; /* Indent tools */
-            margin-bottom: 5px;
-        }
-        .tool-item label { display: flex; align-items: center; font-size: 0.9em; }
-        .tool-item input[type="checkbox"] { margin-right: 8px; accent-color: #ff0000; }
-        .tool-description { font-size: 0.8em; color: #aaa; margin-left: 25px; }
-        .tool-cli-params input[type="text"] {
-            background-color: #000;
-            color: #fff;
-            border: 1px solid #ff0000;
-            padding: 5px;
-            margin-left: 5px;
-            font-size: 0.9em;
-        }
-
-        .scan-profiles button, .preset-buttons button { margin-right: 10px; margin-bottom: 10px; }
-
-        .jobs-list-container ul {
-            list-style-type: none;
-            padding: 0;
-            max-height: 250px; /* Ajustado */
-            overflow-y: auto;
-        }
-        .jobs-list-container li {
-            padding: 8px;
-            border-bottom: 1px solid #330000;
-            cursor: pointer;
-            display: flex; /* For layout */
-            justify-content: space-between; /* For layout */
-            align-items: center; /* For layout */
-        }
-        .jobs-list-container li:hover { background-color: #330000; }
-        .jobs-list-container li:last-child { border-bottom: none; }
-        .job-actions button, .job-actions a {
-            font-size: 0.8em;
-            padding: 5px 8px;
-            margin-left: 5px;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            background-color: #333;
-            border-radius: 5px;
-            margin: 5px 0;
-            height: 20px;
-            position: relative;
-        }
-        .progress-bar {
-            width: 0%; /* Actual progress */
-            height: 100%;
-            background-color: #ff0000;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 20px;
-            color: white;
-            font-size: 0.8em;
-            transition: width 0.5s ease-in-out;
-        }
-        .progress-bar-nessus-like {
-            display: flex;
-            height: 10px;
-            border-radius: 3px;
-            overflow: hidden;            
-        }
-        .progress-segment {
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-        .progress-critical { background-color: #dc3545; }
-        .progress-high { background-color: #fd7e14; }
-        .progress-medium { background-color: #ffc107; }
-        .progress-low { background-color: #28a745; }
-        .progress-info { background-color: #17a2b8; }
-
-        .advanced-options-container details {
-            border: 1px solid #440000;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .advanced-options-container summary {
-            cursor: pointer;
-            font-weight: bold;
-            color: #ff4444;
-        }
-        .advanced-options-container label {
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            color: #ccc;
-        }
-        .advanced-options-container input[type="text"],
-        .advanced-options-container input[type="number"],
-        .advanced-options-container select {
-            width: calc(100% - 12px);
-            padding: 5px;
-            background-color: #000;
-            color: #fff;
-            border: 1px solid #ff0000;
-            margin-bottom: 10px;
-        }
-
-    </style>
-</head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scanner_styles.css') }}">
+    </head>
 
 <body>
     <h1>Panthera Strike - Vulnerability Scanner</h1>
@@ -301,9 +17,7 @@
 
         <div class="scan-profiles">
             <h3>Perfiles de Escaneo</h3>
-            <button onclick="applyScanProfile('Light Scan')">🚀 Light Scan</button>
-            <button onclick="applyScanProfile('Deep Scan')">🔬 Deep Scan</button>
-            <button onclick="applyToolPreset('none')">🧹 Desmarcar Todas</button>
+            <button onclick="deselectAllTools()">🧹 Desmarcar Todas</button>
         </div>
 
         <div class="tool-selection-container">
@@ -314,9 +28,16 @@
         <div class="advanced-options-container">
             <details>
                 <summary>⚙️ Opciones Avanzadas de Escaneo</summary>
-                <div>
-                    <label for="customScanTime">Tiempo de escaneo personalizado (ej: Nmap -T<valor>):</label>
-                    <input type="number" id="customScanTime" name="customScanTime" min="0" max="5" placeholder="4 (Agresivo)">
+                <div id="globalAdvancedOptions">
+                    <label for="customScanTime">Plantilla de Tiempo Nmap Global (-T):</label>
+                    <select id="customScanTime" name="customScanTime">
+                        <option value="-T0">Paranoid (-T0)</option>
+                        <option value="-T1">Sneaky (-T1)</option>
+                        <option value="-T2">Polite (-T2)</option>
+                        <option value="-T3" selected>Normal (-T3)</option>
+                        <option value="-T4">Aggressive (-T4)</option>
+                        <option value="-T5">Insane (-T5)</option>
+                    </select>
                     
                     <label for="followRedirects">Seguir redirecciones (para herramientas web):</label>
                     <select id="followRedirects" name="followRedirects">
@@ -324,13 +45,15 @@
                         <option value="true">Sí</option>
                         <option value="false">No</option>
                     </select>
-
-                    <div id="toolSpecificCliParams"></div>
+                    </div>
+                <h4>Parámetros CLI Específicos por Herramienta:</h4>
+                <div id="toolSpecificCliParamsContainer">
+                    <p>Seleccione herramientas para ver opciones específicas.</p>
                 </div>
             </details>
         </div>
 
-        <button onclick="startScan()" style="font-size: 1.2em; padding: 12px 25px;">⚡ Iniciar Escaneo ⚡</button>
+        <button id="startScanButton" style="font-size: 1.2em; padding: 12px 25px;">⚡ Iniciar Escaneo ⚡</button>
 
         <div class="jobs-list-container">
             <h3>Historial de Trabajos</h3>
@@ -339,21 +62,19 @@
             </ul>
         </div>
 
-        <div id="currentJobInfo" class="job-info" style="display:none; padding: 15px; margin-top:15px; border: 1px solid #ff0000;">
-            <h3>Información del Trabajo Actual: <span id="jobIdDisplay" style="color:#ffcc00;"></span></h3>
+        <div id="currentJobInfo" class="job-info hidden"> <h3>Información del Trabajo Actual: <span id="jobIdDisplay" style="color:#ffcc00;"></span></h3>
             <p><strong>Estado:</strong> <span id="jobStatusDisplay" style="font-weight:bold;"></span></p>
             <div id="overallProgressBarContainer" class="progress-bar-container" style="height: 25px; margin-bottom:10px;">
-                 <div id="overallProgressBar" class="progress-bar" style="height: 25px; line-height:25px;">0%</div>
+                <div id="overallProgressBar" class="progress-bar" style="height: 25px; line-height:25px;">0%</div>
             </div>
-            <!-- Conceptual Nessus-like progress per target -->
             <div id="targetProgressArea"></div>
 
             <p>
-                <button onclick="refreshStatus()">🔄 Actualizar Estado</button>
-                <button id="cancelJobButton" onclick="cancelScan()" style="background-color:#cc0000; color:white; display:none;">
+                <button id="refreshStatusButton">🔄 Actualizar Estado</button>
+                <button id="cancelJobButton" class="hidden" style="background-color:#cc0000; color:white;">
                     🛑 Cancelar Escaneo
                 </button>
-                <a id="downloadJobZip" class="button-like" href="#" target="_blank" style="background-color:#006600;color:white; display:none;">💾 Descargar ZIP</a>
+                <a id="downloadJobZip" class="button-like hidden disabled" href="#" target="_blank" style="background-color:#006600;color:white;">💾 Descargar ZIP</a>
             </p>
         </div>
 
@@ -368,471 +89,18 @@
                     </div>
                     <div class="terminal__user">user@panthera</div>
                 </div>
-                <div id="scanOutput" class="terminal__body">
+                <div id="scanOutput" class="terminal__body" data-current-job-log="">
                     Bienvenido a Panthera Strike. Seleccione sus objetivos y herramientas, luego inicie el escaneo.
                 </div>
             </div>
         </div>
 
-    </div> <!-- Cierre de .container -->
-
-    <script>
-        const toolListDiv = document.getElementById('toolList');
-        const scanOutput = document.getElementById('scanOutput');
-        const targetsTextarea = document.getElementById('targets');
-        const jobIdDisplay = document.getElementById('jobIdDisplay');
-        const jobStatusDisplay = document.getElementById('jobStatusDisplay');
-        const overallProgressBar = document.getElementById('overallProgressBar');
-        const overallProgressBarContainer = document.getElementById('overallProgressBarContainer');
-        const currentJobInfoDiv = document.getElementById('currentJobInfo');
-        const cancelJobButton = document.getElementById('cancelJobButton');
-        const downloadJobZipLink = document.getElementById('downloadJobZip');
-        const jobsListArea = document.getElementById('jobsListArea');
-        const toolSpecificCliParamsDiv = document.getElementById('toolSpecificCliParams');
-
-        // Definición de Herramientas y Perfiles (Ejemplo)
-
-        function applyScanProfile(profileName) {
-            const profile = scanProfiles[profileName];
-            if (profile) {
-                // Clear all tool selections
-                document.querySelectorAll('.tool-item-checkbox').forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-
-                // Select tools from profile
-                profile.tools.forEach(toolName => {
-                    const toolCheckbox = document.querySelector(`input[value="${toolName}"]`);
-                    if (toolCheckbox) {
-                        toolCheckbox.checked = true;
-                    }
-                });
-
-                // Apply parameters
-                for (const [toolName, params] of Object.entries(profile.params)) {
-                    const inputField = document.querySelector(`input[name="cli_params_${toolName}"]`);
-                    if (inputField) {
-                        inputField.value = params;
-                    }
-                }
-            }
-        }
-
-        function applyToolPreset(presetName) {
-            if (presetName === 'none') {
-                // Clear all tool selections
-                document.querySelectorAll('.tool-item-checkbox').forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-            }
-        }
-        const toolsData = {
-            "Reconocimiento": {
-                "Recopilación de Información Pasiva": {
-                    "theHarvester": { description: "Recopila emails, subdominios, hosts, etc.", cli_param_placeholder: "-d example.com -l 500 -b google"},
-                    "Photon": { description: "Crawler OSINT rápido para extraer URLs, emails, archivos, etc.", cli_param_placeholder: "-u example.com --keys"}
-                },
-                "Escaneo de Red y Puertos": {
-                    "Nmap": { description: "Escáner de puertos y descubridor de redes.", cli_param_placeholder: "-sV -T4"},
-                    "Masscan": { description: "Escáner de puertos TCP masivo y rápido.", cli_param_placeholder: "-p80,443 --rate 1000"}
-                }
-            },
-            "Identificacion de Vulnerabilidades": {
-                "Escáneres Web": {
-                    "Nikto": { description: "Escáner de vulnerabilidades web.", cli_param_placeholder: "-h example.com"},
-                    "Nuclei": { description: "Escáner de vulnerabilidades basado en plantillas.", cli_param_placeholder: "-u example.com -t cves/"}
-                },
-                "Escáneres de Infraestructura": {
-                    "OpenVAS/GVM": { description: "Framework de escaneo de vulnerabilidades completo.", cli_param_placeholder: "(Configuración vía UI externa)"}
-                }
-            },
-            "Explotación": {
-                "Frameworks de Explotación": {
-                    "Metasploit Framework": { description: "Plataforma de explotación avanzada.", cli_param_placeholder: "(Uso interactivo o vía msfrpc)"}
-                }
-            }
-        };
-
-        const scanProfiles = {
-            "Light Scan": {
-                tools: ["Nmap", "Nikto"],
-                params: {
-                    "Nmap": "-T4 -F", // Fast scan
-                    "Nikto": "-h {target}"
-                }
-            },
-            "Deep Scan": {
-                tools: ["Nmap", "Masscan", "theHarvester", "Photon", "Nikto", "Nuclei"],
-                params: {
-                    "Nmap": "-sV -sC -A -T4", // Comprehensive scan
-                    "Masscan": "-p1-65535 --rate 1000",
-                    "theHarvester": "-d {target} -l 500 -b all",
-                    "Photon": "-u {target} --level 3 -t 10",
-                    "Nikto": "-h {target} -C all",
-                    "Nuclei": "-u {target} -t technologies/,cves/,vulnerabilities/"
-                }
-            }
-        };
-
-        function populateToolSelection() {
-            toolListDiv.innerHTML = ''; // Limpiar contenido anterior
-            let toolIdCounter = 0;
-
-            for (const phaseName in toolsData) {
-                const phaseId = `phase-${toolIdCounter++}`;
-                const phaseDiv = document.createElement('div');
-                phaseDiv.className = 'pentest-phase';
-                phaseDiv.innerHTML = `
-                    <div class="pentest-phase-header">
-                        <input type="checkbox" id="${phaseId}" onchange="toggleChildrenCheckboxes(this, '.tool-category-checkbox, .tool-item-checkbox')">
-                        <h4>${phaseName}</h4>
-                    </div>
-                `;
-
-                for (const categoryName in toolsData[phaseName]) {
-                    const categoryId = `category-${toolIdCounter++}`;
-                    const categoryDiv = document.createElement('div');
-                    categoryDiv.className = 'tool-category';
-                    categoryDiv.innerHTML = `
-                        <div class="tool-category-header">
-                            <input type="checkbox" id="${categoryId}" class="tool-category-checkbox" data-phase-parent="${phaseId}" onchange="toggleChildrenCheckboxes(this, '.tool-item-checkbox'); updateParentCheckbox('${phaseId}', '.tool-category-checkbox')">
-                            <h5>${categoryName}</h5>
-                        </div>
-                    `;
-
-                    for (const toolName in toolsData[phaseName][categoryName]) {
-                        const toolDetails = toolsData[phaseName][categoryName][toolName];
-                        const toolItemId = `tool-${toolName.replace(/\s+/g, '-')}-${toolIdCounter++}`;
-                        const toolItemDiv = document.createElement('div');
-                        toolItemDiv.className = 'tool-item';
-                        toolItemDiv.innerHTML = `
-                            <label for="${toolItemId}">
-                                <input type="checkbox" id="${toolItemId}" name="selected_tools" value="${toolName}" class="tool-item-checkbox" data-category-parent="${categoryId}" onchange="updateParentCheckbox('${categoryId}', '.tool-item-checkbox')">
-                                ${toolName}
-                            </label>
-                            <div class="tool-description">${toolDetails.description}</div>
-                            <div class="tool-cli-params">
-                                <label for="cli-${toolItemId}">Parámetros CLI:</label>
-                                <input type="text" id="cli-${toolItemId}" name="cli_params_${toolName}" placeholder="${toolDetails.cli_param_placeholder || 'Predeterminados'}">
-                            </div>
-                        `;
-                        categoryDiv.appendChild(toolItemDiv);
-                    }
-                    phaseDiv.appendChild(categoryDiv);
-                }
-                toolListDiv.appendChild(phaseDiv);
-            }
-        }
-
-        function toggleChildrenCheckboxes(parentCheckbox, childrenSelector) {
-            const parentContainer = parentCheckbox.closest('.pentest-phase, .tool-category');
-            const children = parentContainer.querySelectorAll(childrenSelector + '[data-phase-parent="'+parentCheckbox.id+'"], ' + childrenSelector + '[data-category-parent="'+parentCheckbox.id+'"]');
-            children.forEach(child => {
-                child.checked = parentCheckbox.checked;
-                // Si es un checkbox de categoría, también actualiza sus hijos (herramientas)
-                if (child.classList.contains('tool-category-checkbox')) {
-                    toggleChildrenCheckboxes(child, '.tool-item-checkbox');
-                }
-            });
-            // Si el padre es un checkbox de fase, actualiza sus categorías hijas
-            if (parentCheckbox.id.startsWith('phase-')) {
-                 const categoryCheckboxes = parentContainer.querySelectorAll('.tool-category-checkbox');
-                 categoryCheckboxes.forEach(catChild => {
-                    updateParentCheckbox(parentCheckbox.id, '.tool-category-checkbox');
-                 });
-            }
-        }
-
-        function updateParentCheckbox(parentId, childrenSelector) {
-            const parentCheckbox = document.getElementById(parentId);
-            if (!parentCheckbox) return;
-
-            const parentContainer = parentCheckbox.closest('.pentest-phase, .tool-category');
-            if (!parentContainer) return;
-
-            const children = parentContainer.querySelectorAll(childrenSelector + '[data-phase-parent="'+parentId+'"], ' + childrenSelector + '[data-category-parent="'+parentId+'"]');
-            const allChecked = Array.from(children).every(child => child.checked);
-            const someChecked = Array.from(children).some(child => child.checked);
-
-            parentCheckbox.checked = allChecked;
-            parentCheckbox.indeterminate = !allChecked && someChecked;
-
-            // Propagar el cambio hacia arriba (si es una categoría, actualizar su fase padre)
-            if (parentCheckbox.dataset.phaseParent) {
-                updateParentCheckbox(parentCheckbox.dataset.phaseParent, '.tool-category-checkbox');
-            }
-        }
-
-        function applyScanProfile(profileName) {
-            applyToolPreset('none'); // Primero desmarcar todo
-            const profile = scanProfiles[profileName];
-            if (profile) {
-                profile.tools.forEach(toolName => {
-                    const toolCheckbox = document.querySelector(`input[name="selected_tools"][value="${toolName}"]`);
-                    if (toolCheckbox) {
-                        toolCheckbox.checked = true;
-                        // Actualizar padres
-                        const categoryParentId = toolCheckbox.dataset.categoryParent;
-                        if (categoryParentId) updateParentCheckbox(categoryParentId, '.tool-item-checkbox');
-                        
-                        // Aplicar parámetros CLI específicos del perfil
-                        const cliInput = document.getElementById(`cli-${toolCheckbox.id}`);
-                        if (cliInput && profile.params && profile.params[toolName]) {
-                            cliInput.value = profile.params[toolName].replace('{target}', 'OBJETIVO_GENERICO'); // Placeholder
-                        }
-                    }
-                });
-            }
-        }
-
-        function applyToolPreset(presetName) {
-            const allToolCheckboxes = document.querySelectorAll('input[name="selected_tools"], .tool-category-checkbox, .pentest-phase input[type="checkbox"]');
-            if (presetName === 'none') {
-                allToolCheckboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                    checkbox.indeterminate = false;
-                    // Limpiar parámetros CLI si se desmarcan todas
-                    if (checkbox.name === 'selected_tools') {
-                        const cliInput = document.getElementById(`cli-${checkbox.id}`);
-                        if (cliInput) cliInput.value = '';
-                    }
-                });
-            }
-            // Aquí se podrían añadir más presets si se desea
-        }
-
-        async function startScan() {
-            const targets = targetsTextarea.value.trim().split('\n').filter(t => t.trim() !== '');
-            if (targets.length === 0) {
-                logToTerminal("Por favor, ingrese al menos un objetivo.", "error");
-                return;
-            }
-
-            const selectedTools = Array.from(document.querySelectorAll('input[name="selected_tools"]:checked'))
-                                     .map(cb => {
-                                         const cliInput = document.getElementById(`cli-${cb.id}`);
-                                         return {
-                                             name: cb.value,
-                                             cli_params: cliInput ? cliInput.value : ''
-                                         };
-                                     });
-
-            if (selectedTools.length === 0) {
-                logToTerminal("Por favor, seleccione al menos una herramienta de escaneo.", "error");
-                return;
-            }
-
-            // Mostrar comandos completos que se ejecutarán
-            const commandsInfo = selectedTools.map(tool => {
-                const toolName = tool.name;
-                const toolCliParams = tool.cli_params.replace('{target}', targets.join(', ')) || 'Predeterminados';
-                return `• ${toolName} ${toolCliParams}`;
-            }).join('\n');
-            
-            logToTerminal(`Iniciando escaneo para objetivo(s): ${targets.join(', ')} con herramientas: ${selectedTools.map(tool => {
-                const params = document.getElementById(`cli-tool-${tool.replace(/\\s+/g, '-')}`)?.value || '';
-                return `${tool}(${params})`;
-            }).join(', ')}`, 'info');
-            currentJobInfoDiv.style.display = 'block';
-            jobIdDisplay.textContent = 'Generando...';
-            jobStatusDisplay.textContent = 'Iniciando...';
-            overallProgressBar.style.width = '0%';
-            overallProgressBar.textContent = '0%';
-            cancelJobButton.style.display = 'inline-block';
-            downloadJobZipLink.style.display = 'none';
-
-            // TODO: Implementar la llamada al backend para iniciar el escaneo
-            // Ejemplo de cómo podría ser la llamada:
-            try {
-                const response = await fetch('/api/scan/start', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ targets, tools: selectedTools /*, advanced_options */ }),
-                });
-                
-                // Verificar si la respuesta es JSON válido
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    logToTerminal(`Respuesta del servidor no es JSON: ${text.substring(0, 200)}`, 'error');
-                    return;
-                }
-                
-                const data = await response.json();
-                if (response.ok) {
-                    jobIdDisplay.textContent = data.job_id;
-                    logToTerminal(`Escaneo iniciado con Job ID: ${data.job_id}`, "info");
-                    localStorage.setItem('currentJobId', data.job_id);
-                    refreshStatus(data.job_id);
-                } else {
-                    logToTerminal(`Error al iniciar escaneo (HTTP ${response.status}): ${data.error || 'Error desconocido'}`, "error");
-                    currentJobInfoDiv.style.display = 'none';
-                }
-                
-                const responseData = await response.json();
-                if (response.ok) {
-                    jobIdDisplay.textContent = data.job_id;
-                    logToTerminal(`Escaneo iniciado con Job ID: ${data.job_id}`, "info");
-                    localStorage.setItem('currentJobId', data.job_id);
-                    refreshStatus(data.job_id);
-                } else {
-                    logToTerminal(`Error al iniciar escaneo: ${data.error || 'Error desconocido'}`, "error");
-                    currentJobInfoDiv.style.display = 'none';
-                }
-            } catch (error) {
-                logToTerminal(`Error al iniciar escaneo: ${error.message || error}`, "error");
-                currentJobInfoDiv.style.display = 'none';
-            }
-        }
-
-        function logToTerminal(message, type = 'info') {
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${type}`;
-            const timestamp = new Date().toLocaleTimeString();
-            
-            // Mejorar formato de mensajes de error
-            let formattedMessage = message;
-            if (type === 'error') {
-                formattedMessage = `❌ ERROR: ${message}`;
-            } else if (type === 'warn') {
-                formattedMessage = `⚠️ WARNING: ${message}`;
-            } else if (type === 'info') {
-                formattedMessage = `ℹ️ INFO: ${message}`;
-            } else if (type === 'command') {
-                formattedMessage = `🛠️ COMMAND: ${message}`;
-            } else if (type === 'command') {
-                formattedMessage = `🛠️ COMMAND: ${message}`;
-            }
-            
-            entry.innerHTML = `<strong>[${timestamp}]</strong> ${formattedMessage.replace(/\n/g, '<br>')}`;
-            scanOutput.appendChild(entry);
-            scanOutput.scrollTop = scanOutput.scrollHeight; // Auto-scroll
-        }
-
-        async function refreshStatus(jobId = null) {
-            const currentJobId = jobId || localStorage.getItem('currentJobId');
-            if (!currentJobId) {
-                // logToTerminal("No hay un trabajo activo para actualizar.", "warn");
-                currentJobInfoDiv.style.display = 'none';
-                return;
-            }
-
-            jobIdDisplay.textContent = currentJobId;
-            currentJobInfoDiv.style.display = 'block';
-            cancelJobButton.style.display = 'inline-block'; // Mostrar siempre si hay job ID
-
-            // TODO: Implementar la llamada al backend para obtener el estado del trabajo
-            try {
-                const response = await fetch(`/api/scan/status/${currentJobId}`);
-                const data = await response.json();
-
-                if (response.ok) {
-                    jobStatusDisplay.textContent = data.status;
-                    overallProgressBar.style.width = `${data.overall_progress || 0}%`;
-                    overallProgressBar.textContent = `${data.overall_progress || 0}%`;
-
-                    if (data.logs && data.logs.length > 0) {
-                        data.logs.forEach(log => logToTerminal(log.message, log.type));
-                    }
-
-                    if (data.status === 'COMPLETED' || data.status === 'CANCELLED' || data.status === 'ERROR') {
-                        cancelJobButton.style.display = 'none';
-                        if (data.zip_path) {
-                            downloadJobZipLink.href = data.zip_path;
-                            downloadJobZipLink.style.display = 'inline-block';
-                        }
-                        localStorage.removeItem('currentJobId');
-                        // Podríamos dejar de hacer polling aquí
-                    } else {
-                        // Continuar actualizando si está en progreso
-                        setTimeout(() => refreshStatus(currentJobId), 5000); // Poll cada 5 segundos
-                    }
-                } else {
-                    logToTerminal(`Error al obtener estado: ${data.error || 'Error desconocido'}`, "error");
-                    if (response.status === 404) { // Job no encontrado, quizás ya no existe
-                        localStorage.removeItem('currentJobId');
-                        currentJobInfoDiv.style.display = 'none';
-                    }
-                }
-            } catch (error) {
-                logToTerminal(`Error de red al obtener estado: ${error}`, "error");
-            }
-        }
-
-        async function cancelScan() {
-            const currentJobId = localStorage.getItem('currentJobId');
-            if (!currentJobId) {
-                logToTerminal("No hay un trabajo activo para cancelar.", "warn");
-                return;
-            }
-            if (!confirm(`¿Está seguro de que desea cancelar el trabajo ${currentJobId}?`)) {
-                return;
-            }
-            // TODO: Implementar la llamada al backend para cancelar el escaneo
-            try {
-                const response = await fetch(`/api/scan/cancel/${currentJobId}`, { method: 'POST' });
-                const data = await response.json();
-                if (response.ok) {
-                    logToTerminal(`Solicitud de cancelación enviada para el trabajo ${currentJobId}.`, "info");
-                    jobStatusDisplay.textContent = "Cancelando...";
-                    cancelJobButton.style.display = 'none';
-                } else {
-                    logToTerminal(`Error al cancelar escaneo: ${data.error || 'Error desconocido'}`, "error");
-                }
-            } catch (error) {
-                logToTerminal(`Error de red al cancelar escaneo: ${error}`, "error");
-            }
-        }
-
-        async function loadJobs() {
-            jobsListArea.innerHTML = '<li>Cargando trabajos...</li>';
-            // TODO: Implementar la llamada al backend para cargar el historial de trabajos
-            try {
-                const response = await fetch('/api/jobs');
-                const jobs = await response.json();
-                jobsListArea.innerHTML = ''; // Limpiar
-                if (jobs.length === 0) {
-                    jobsListArea.innerHTML = '<li>No hay trabajos anteriores.</li>';
-                    return;
-                }
-                jobs.forEach(job => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <span><strong>ID:</strong> ${job.id} (${job.status}) - ${new Date(job.timestamp).toLocaleString()}</span>
-                        <div class="job-actions">
-                            <button onclick="viewJobDetails('${job.id}')">Ver Detalles</button>
-                            ${job.zip_path ? `<a href="${job.zip_path}" class="button-like" target="_blank">Descargar</a>` : ''}
-                        </div>
-                    `;
-                    li.onclick = () => viewJobDetails(job.id); // Cargar detalles al hacer clic
-                    jobsListArea.appendChild(li);
-                });
-            } catch (error) {
-                logToTerminal(`Error al cargar historial de trabajos: ${error}`, "error");
-                jobsListArea.innerHTML = '<li>Error al cargar trabajos.</li>';
-            }
-        }
-
-        function viewJobDetails(jobId) {
-            logToTerminal(`Cargando detalles para el trabajo ${jobId}...`, "info");
-            localStorage.setItem('currentJobId', jobId);
-            refreshStatus(jobId);
-            // Idealmente, esto también podría cargar logs específicos del trabajo si no están ya en la terminal principal
-        }
-
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', () => {
-            populateToolSelection();
-            loadJobs();
-            const lastJobId = localStorage.getItem('currentJobId');
-            if (lastJobId) {
-                refreshStatus(lastJobId); // Intenta recargar el estado del último trabajo activo
-            }
-        });
-
+    </div> <script>
+        // Define SCRIPT_ROOT para que scanner_logic.js pueda usarlo si es necesario
+        // Esto es útil si tu aplicación no está en la raíz del dominio.
+        // Si está en la raíz, SCRIPT_ROOT puede ser "".
+        const SCRIPT_ROOT = "{{ request.script_root|tojson|safe }}"; 
     </script>
+    <script src="{{ url_for('static', filename='js/scanner_logic.js') }}"></script>
 </body>
-
 </html>

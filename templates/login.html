@@ -11,20 +11,33 @@
 
 <body>
     <section>
-        <!-- Los spans para la animación de fondo serán generados por login_background_animation.js -->
         <div class="signin">
             <div class="content">
-                <!-- Contenedor de la Animación HUD (Animación 02) -->
                 <div id="animacion-hud-wrapper">
                     <div id="anim2-container">
-                        <!-- Figura Central de la HUD -->
+                        <div id="anim2-a1"><div id="anim2-a11"></div></div>
+                        <div id="anim2-a2"><div id="anim2-a21"></div></div>
+                        <div id="anim2-a3-placeholder">
+                            </div>
+                        <div id="anim2-a4">
+                            </div>
+                        <div id="anim2-a6">PANTHERA STRIKE</div>
+                        <div id="anim2-a7"> <span class="anim2-a73 anim2-a731">00:</span><span class="anim2-a73 anim2-a732">00</span>
+                            <span class="anim2-a74 anim2-a741">01/</span><span class="anim2-a74 anim2-a742">01/</span><span class="anim2-a74 anim2-a743">2025</span>
+                        </div>
+                        <div id="anim2-a8">
+                            <div id="anim2-a81"></div>
+                            </div>
+                         <div id="anim2-a9">
+                            </div>
+                        <div id="anim2-a10">TARGET LOCK <span></span></div>
+
+                        <div id="anim2-b1">
+                            </div>
+                        
                         <div id="anim2-figure">
-                            <div id="anim2-f1">
-                                <!-- Spans internos generados por JS -->
-                            </div>
-                            <div id="anim2-f2">
-                                <!-- Spans internos generados por JS -->
-                            </div>
+                            <div id="anim2-f1"></div>
+                            <div id="anim2-f2"></div>
                             <div id="anim2-f3">
                                 <div id="anim2-f31">
                                     <span class="anim2-f311"><b></b></span>
@@ -45,9 +58,7 @@
                                 <div id="anim2-f43" class="anim2-f433"></div>
                                 <div id="anim2-f43" class="anim2-f434"></div>
                             </div>
-                            <div id="anim2-f5">
-                                <!-- Spans internos generados por JS -->
-                            </div>
+                            <div id="anim2-f5"></div>
                             <div id="anim2-f6"></div>
                             <div id="anim2-f7">
                                 <div id="anim2-f71"></div>
@@ -58,7 +69,8 @@
                                 <div id="anim2-f82"></div>
                             </div>
                             <div id="anim2-f9"><span></span></div>
-                        </div>
+                            </div>
+                         <div id="anim2-a5"> </div>
                     </div>
                 </div>
 
@@ -69,7 +81,7 @@
                 <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                     {{ message }}
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 {% endfor %}
@@ -96,12 +108,9 @@
         </div>
     </section>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script src="{{ url_for('static', filename='js/login_background_animation.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/login_hud_animation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/login_combined_animations.js') }}"></script>
 </body>
-
 </html>
