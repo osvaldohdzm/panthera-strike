@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
         container.classList.add('container');
         sectionElement.appendChild(container);
 
-        const hexWidth = 100; // Ancho del hexágono en px (de .hexagon CSS)
-        const hexHeight = 110; // Alto del hexágono en px (de .hexagon CSS)
-        const rowMarginTop = -32; // Margen superior negativo para solapar filas (de .row CSS)
+        const hexWidth = 50; // Ancho del hexágono en px (de .hexagon CSS)
+        const hexHeight = 55; // Alto del hexágono en px (de .hexagon CSS)
+        const rowMarginTop = -16; // Margen superior negativo para solapar filas (de .row CSS)
         const effectiveHexHeight = hexHeight + rowMarginTop; // Altura efectiva que ocupa una fila con solapamiento
 
         const screenWidth = window.innerWidth;
