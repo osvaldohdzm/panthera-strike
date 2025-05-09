@@ -1,0 +1,63 @@
+# Nmap 7.95 scan initiated Fri May  9 01:37:34 2025 as: /usr/lib/nmap/nmap --privileged -sV -T4 --top-ports 1000 -oA "/home/arya/panthera-strike/results/20250509_013734_112474/Port Scan/Nmap Top Ports_20250509_013734/output_faebook.com.txt" faebook.com
+Nmap scan report for faebook.com (31.13.89.19)
+Host is up (0.0084s latency).
+Other addresses for faebook.com (not scanned): 2a03:2880:f035:12:face:b00c:0:2
+rDNS record for 31.13.89.19: edge-star-shv-01-qro1.facebook.com
+Not shown: 997 filtered tcp ports (no-response)
+PORT    STATE SERVICE   VERSION
+53/tcp  open  domain    (generic dns response: NOTIMP)
+80/tcp  open  http      proxygen-bolt
+443/tcp open  ssl/https
+3 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port53-TCP:V=7.95%I=7%D=5/9%Time=681D94AE%P=x86_64-pc-linux-gnu%r(DNSSt
+SF:atusRequestTCP,E,"\0\x0c\0\0\x90\x84\0\0\0\0\0\0\0\0");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port80-TCP:V=7.95%I=7%D=5/9%Time=681D94A9%P=x86_64-pc-linux-gnu%r(GetRe
+SF:quest,B3,"HTTP/1\.1\x20301\x20Moved\x20Permanently\r\nLocation:\x20http
+SF:s:///\r\nContent-Type:\x20text/plain\r\nServer:\x20proxygen-bolt\r\nDat
+SF:e:\x20Fri,\x2009\x20May\x202025\x2005:37:45\x20GMT\r\nConnection:\x20cl
+SF:ose\r\nContent-Length:\x200\r\n\r\n")%r(HTTPOptions,B3,"HTTP/1\.1\x2030
+SF:1\x20Moved\x20Permanently\r\nLocation:\x20https:///\r\nContent-Type:\x2
+SF:0text/plain\r\nServer:\x20proxygen-bolt\r\nDate:\x20Fri,\x2009\x20May\x
+SF:202025\x2005:37:45\x20GMT\r\nConnection:\x20close\r\nContent-Length:\x2
+SF:00\r\n\r\n");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port443-TCP:V=7.95%T=SSL%I=7%D=5/9%Time=681D94AF%P=x86_64-pc-linux-gnu%
+SF:r(GetRequest,1C72,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nVary:\x20Accep
+SF:t-Encoding\r\nPragma:\x20no-cache\r\nCache-Control:\x20private,\x20no-c
+SF:ache,\x20no-store,\x20must-revalidate\r\nExpires:\x20Sat,\x2001\x20Jan\
+SF:x202000\x2000:00:00\x20GMT\r\ncontent-security-policy-report-only:\x20d
+SF:efault-src\x20'self'\x20blob:\x20\*;script-src\x20'nonce-FSWrelVh'\x20'
+SF:report-sample'\x20\*\.facebook\.com\x20\*\.fbcdn\.net\x20\*\.facebook\.
+SF:net\x20127\.0\.0\.1:\*\x20blob:\x20'self'\x20data:\x20https://\*\.googl
+SF:e-analytics\.com\x20\*\.google\.com;style-src\x20'self'\x20data:\x20blo
+SF:b:\x20'unsafe-inline';connect-src\x20'self'\x20data:\x20blob:\x20\*\.fa
+SF:cebook\.com\x20facebook\.com\x20\*\.fbcdn\.net\x20\*\.facebook\.net\x20
+SF:wss://\*\.facebook\.com:\*\x20wss://\*\.whatsapp\.com:\*\x20wss://\*\.f
+SF:bcdn\.net\x20attachment\.fbsbx\.com\x20ws://localhost:\*\x20\*\.cdninst
+SF:agram\.com\x20https://\*\.google-analytics\.com;font-src\x20'self'\x20d
+SF:ata:\x20blob:\x20\*;img-src\x20'self'\x20data:\x20blob:\x20\*\x20https:
+SF://\*\.google-analytics\.com;media-src\x20'self'\x20data:\x20blob:\x20\*
+SF:;child-src\x20'self'\x20data:\x20blob:\x20\*;frame-src\x20'self'\x20dat
+SF:a:\x20blob:\x20\*;manifest-src\x20'self'\x20data:\x20blob:\x20\*;object
+SF:-")%r(HTTPOptions,1BED,"HTTP/1\.1\x20500\x20Internal\x20Server\x20Error
+SF:\r\nVary:\x20Accept-Encoding\r\nerror-mid:\x20c7c8b69fe9b6faa81409f2037
+SF:67d7880\r\nPragma:\x20no-cache\r\nCache-Control:\x20private,\x20no-cach
+SF:e,\x20no-store,\x20must-revalidate\r\nExpires:\x20Sat,\x2001\x20Jan\x20
+SF:2000\x2000:00:00\x20GMT\r\ncontent-security-policy-report-only:\x20defa
+SF:ult-src\x20'self'\x20blob:\x20\*;script-src\x20'nonce-ZbI6BSUe'\x20'rep
+SF:ort-sample'\x20\*\.facebook\.com\x20\*\.fbcdn\.net\x20\*\.facebook\.net
+SF:\x20127\.0\.0\.1:\*\x20blob:\x20'self'\x20data:\x20https://\*\.google-a
+SF:nalytics\.com\x20\*\.google\.com;style-src\x20'self'\x20data:\x20blob:\
+SF:x20'unsafe-inline';connect-src\x20'self'\x20data:\x20blob:\x20\*\.faceb
+SF:ook\.com\x20facebook\.com\x20\*\.fbcdn\.net\x20\*\.facebook\.net\x20wss
+SF:://\*\.facebook\.com:\*\x20wss://\*\.whatsapp\.com:\*\x20wss://\*\.fbcd
+SF:n\.net\x20attachment\.fbsbx\.com\x20ws://localhost:\*\x20\*\.cdninstagr
+SF:am\.com\x20https://\*\.google-analytics\.com;font-src\x20'self'\x20data
+SF::\x20blob:\x20\*;img-src\x20'self'\x20data:\x20blob:\x20\*\x20https://\
+SF:*\.google-analytics\.com;media-src\x20'self'\x20data:\x20blob:\x20\*;ch
+SF:ild-src\x20'self'\x20data:\x20blob:\x20\*;frame-src\x20'self'\x20");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Fri May  9 01:38:00 2025 -- 1 IP address (1 host up) scanned in 26.13 seconds

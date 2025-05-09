@@ -14,7 +14,7 @@ body {
     align-items: center;
     min-height: 100vh;
     background: #000;
-    overflow: hidden;
+    overflow: hidden; 
 }
 
 /* Contenedor Animación Fondo Hexagonal */
@@ -23,121 +23,138 @@ section {
     width: 100vw;
     height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Center lines of hexagons */
+    align-content: center; /* Center the whole block of lines vertically */
     flex-wrap: wrap;
     overflow: hidden;
-    padding: 10px;
+    gap: 0; /* Ensure no extra gap from flex container */
+    /* padding-top: 2vw; */ /* Removed, let align-content handle vertical centering */
+    /* padding-left: 1vw; */ /* Removed, let justify-content handle horizontal centering of lines */
+    /* padding-right: 1vw; */ /* Removed */
     z-index: 1;
+    /* background-color: #0a0a0a; */ /* Optional: slightly different background for the section */
 }
-
-
 
 /* Estilos para cada HEXÁGONO */
 section span {
     position: relative;
     z-index: 2;
+    display: block; 
+
+    /* --- Hexagon Size and Gap Variables --- */
+    /* --hex-width is the CSS width of the hexagon (vertex to vertex distance for pointy-top) */
+    /* --hex-gap is the visual separation between hexagons */
     
-    --hex-width: 80px;
-    --hex-rect-height: calc(var(--hex-width) * 0.866);
-    --hex-triangle-height: calc(var(--hex-rect-height) / 2);
+    /* Default for larger screens */
+    --hex-width: 60px; 
+    --hex-gap: 1px;  
+
+    /* Calculated height based on width for a regular hexagon (H = W * sqrt(3)/2) */
+    --hex-height: calc(var(--hex-width) * 0.8660254); 
 
     width: var(--hex-width);
-    height: var(--hex-rect-height);
-    background-color: #181818;
+    height: var(--hex-height);
     
-    margin: calc(var(--hex-triangle-height) * 0.8) 4px;
-    margin-bottom: calc(var(--hex-triangle-height) * 0.8 + 2px);
+    background-color: #181818; /* Hexagon fill color */
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 
-    transition: background-color 0.2s ease-out, transform 0.2s ease-out;
+    /* --- Margins for Honeycomb-like Tiling --- */
+    /* Horizontal margin: half gap on each side */
+    margin-left: calc(var(--hex-gap) / 2);
+    margin-right: calc(var(--hex-gap) / 2);
+    
+    /* Vertical margin:
+       For pointy-top hexagons, rows overlap by 1/4 of their height.
+       The vertical distance between centers of hexagons in adjacent rows is H * 0.75.
+       So, margin-bottom should be (H * 0.75 + gap) - H = (H * -0.25 + gap).
+       This pulls the next row up to interlock vertically.
+    */
+    margin-bottom: calc(var(--hex-height) * -0.25 + var(--hex-gap));
+    
+    transition: background-color 0.1s ease-out, 
+                transform 0.1s ease-out, 
+                filter 0.1s ease-out;
 }
 
-section span::before,
-section span::after {
-    content: "";
-    position: absolute;
-    width: 0;
-    left: 0;
-    border-left: calc(var(--hex-width) / 2) solid transparent;
-    border-right: calc(var(--hex-width) / 2) solid transparent;
-    transition: border-color 0.2s ease-out;
-    z-index: 1;
+/* Staggering attempt for even rows - this can be tricky with justify-content: center */
+/* To make this work more predictably, you'd often need a fixed width container */
+/* or more complex nth-child selectors based on items per row. */
+/* For now, this provides a slight alternating offset. */
+/*
+section span:nth-child(odd) {
+    margin-left: calc(var(--hex-width) * 0.25 + var(--hex-gap)); 
 }
+*/
+/* A simpler approach for the current flex setup is to accept non-staggered rows, */
+/* focusing on vertical tessellation and gaps. */
 
-section span::before {
-    bottom: 100%;
-    border-bottom: var(--hex-triangle-height) solid #181818;
-}
-
-section span::after {
-    top: 100%;
-    border-top: var(--hex-triangle-height) solid #181818;
-}
 
 section span:hover {
-    background-color: #ff0000;
-    transform: scale(1.1);
-    z-index: 3;
-    transition: background-color 0s, transform 0.1s ease-in;
+    background-color: #ff0000; /* Red hover color */
+    transform: scale(1.15);    /* Slightly larger scale for more impact */
+    z-index: 3;                /* Bring hovered hexagon to the front */
+    
+    /* Glow effect using filter: drop-shadow() which respects clip-path */
+    /* Multiple shadows can create a softer, more prominent glow */
+    filter: drop-shadow(0 0 6px rgba(255, 50, 50, 0.9)) 
+            drop-shadow(0 0 12px rgba(255, 0, 0, 0.7));
+            
+    transition-duration: 0.05s; /* Faster reaction on hover */
 }
 
-section span:hover::before {
-    border-bottom-color: #ff0000;
-    transition: border-color 0s;
+
+/* --- Media Queries for Responsive Hexagon Sizes --- */
+@media (min-width: 1600px) { /* Very large screens */
+    section span {
+        --hex-width: 70px;
+        --hex-gap: 2px;
+    }
 }
 
-section span:hover::after {
-    border-top-color: #ff0000;
-    transition: border-color 0s;
+@media (max-width: 1200px) { /* Desktops */
+    section span {
+        --hex-width: 60px;
+        --hex-gap: 1px;
+    }
 }
 
-/* --- Inicio: Corrección para botón de cierre de alerta --- */
-
-/* Asegura que el botón 'close' no tenga fondo ni tamaño extraños */
-.alert .close {
-    padding: 0.5rem 1rem;
-    margin: -0.75rem -1.25rem -0.75rem auto;
-    background-color: transparent;
-    border: none;
-    width: auto;
-    height: auto;
-    box-shadow: none;
-    font-size: 1.5rem;
-    line-height: 1;
-    float: right;
-    color: #000;
-    opacity: 0.7;
-    text-shadow: none;
-    position: relative;
-    top: 0;
-    right: 0;
+@media (max-width: 900px) { /* Tablets */
+    section span {
+        --hex-width: 50px; 
+        --hex-gap: 1px;  
+    }
 }
 
-.alert .close:hover {
-    opacity: 1;
-    color: #000;
+@media (max-width: 600px) { /* Mobile phones */
+    section span {
+        --hex-width: 40px; 
+        --hex-gap: 1px;  
+    }
+    section .signin {
+        width: 90%;
+        padding: 20px;
+    }
+    section .signin .content h2 {
+        font-size: 1.5em;
+    }
 }
+/* ... (Rest of the .signin, .alert, .close styles remain unchanged) ... */
 
-.alert .close span {
-    display: inline;
-}
-
-/* --- Fin: Corrección para botón de cierre de alerta --- */
 
 /* Formulario de Inicio de Sesión */
 section .signin {
-    position: absolute; /* Ya lo tienes, es correcto */
-    top: 50%;           /* Nuevo: para centrado vertical */
-    left: 50%;          /* Nuevo: para centrado horizontal */
-    transform: translate(-50%, -50%); /* Nuevo: ajusta la posición basada en su propio tamaño */
-    width: 420px; /* Ligeramente más ancho para acomodar un HUD más grande */
+    position: absolute; 
+    top: 50%;          
+    left: 50%;         
+    transform: translate(-50%, -50%); 
+    width: 420px; 
     background: #222;
     z-index: 1000;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 25px; /* Ajustar padding si es necesario */
-    border-radius: 8px; /* Un poco más redondeado para estética */
+    padding: 25px; 
+    border-radius: 8px; 
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
 }
 
@@ -146,15 +163,15 @@ section .signin .content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0px; /* El espacio lo dará el margin de animacion-hud-wrapper y h2 */
+    gap: 0px; 
 }
 
 section .signin .content h2 {
     font-size: 2em;
     color: #ff0000;
     text-transform: uppercase;
-    margin-top: 15px; /* Espacio después de la HUD */
-    margin-bottom: 25px; /* Espacio antes del formulario */
+    margin-top: 15px; 
+    margin-bottom: 25px; 
     text-align: center;
 }
 
@@ -238,10 +255,39 @@ input[type="submit"]:active {
     margin-bottom: 1rem;
     border: 1px solid transparent;
     border-radius: .25rem;
-    color: #fff; /* Color de texto general para alertas */
-    z-index: 1001; /* Por encima de la animación HUD si se superponen */
-    width: 100%; /* Para que la alerta ocupe el ancho del form */
+    color: #fff; 
+    z-index: 1001; 
+    width: 100%; 
 }
+/* --- Inicio: Corrección para botón de cierre de alerta --- */
+.alert .close {
+    padding: 0.5rem 1rem;
+    margin: -0.75rem -1.25rem -0.75rem auto;
+    background-color: transparent;
+    border: none;
+    width: auto;
+    height: auto;
+    box-shadow: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    float: right;
+    color: #000;
+    opacity: 0.7;
+    text-shadow: none;
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.alert .close:hover {
+    opacity: 1;
+    color: #000;
+}
+
+.alert .close span {
+    display: inline;
+}
+/* --- Fin: Corrección para botón de cierre de alerta --- */
 
 .alert-danger {
     color: #721c24;
@@ -259,42 +305,4 @@ input[type="submit"]:active {
     color: #0c5460;
     background-color: #d1ecf1;
     border-color: #bee5eb;
-}
-
-.close { /* Para el botón de cerrar la alerta */
-    float: right;
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1;
-    color: #000;
-    text-shadow: 0 1px 0 #fff;
-    opacity: .5;
-}
-
-.close:hover {
-    color: #000;
-    text-decoration: none;
-    opacity: .75;
-}
-
-/* Media Queries */
-@media (max-width: 900px) {
-    section span {
-        width: calc(10vw - 2px);
-        height: calc(10vw - 2px);
-    }
-}
-
-@media (max-width: 600px) {
-    section span {
-        width: calc(20vw - 2px);
-        height: calc(20vw - 2px);
-    }
-    section .signin {
-        width: 90%;
-        padding: 20px;
-    }
-    section .signin .content h2 {
-        font-size: 1.5em;
-    }
 }
