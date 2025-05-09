@@ -1,3 +1,0 @@
-www.bim.mx:80
-www.bim.mx:443
-www.bim.mx:53

@@ -120,24 +120,21 @@ section {
 
 .row {
     display: inline-flex; /* Cambiado de flex a inline-flex para que las filas se ajusten al contenido */
-    margin-top: -32px; /* Ajuste para superponer filas, (hexagon height * 0.866 * 0.25) + (border / 2) approx */
-    /* (100px * 0.866 * 0.25) = 21.65px. Con borde de 2px, sería ~22.65px.  */
-    /* Si el hexágono es de 100px de alto, y el clip-path lo hace 86.6px, 1/4 de eso es 21.65px */
-    /* Para 120px de alto (100 * 1.2), sería 120 * 0.866 * 0.25 = 25.98px. */
-    /* Ajustar este valor según el tamaño del hexágono y el borde */
+    margin-top: -16px; /* Ajuste para superponer filas, (hexagon height * 0.866 * 0.25) + (border / 2) approx */
+    /* (50px * 0.866 * 0.25) = 10.825px. Con borde de 1px, sería ~11.325px.  */
 }
 
 .row:nth-child(even) {
-    margin-left: 51px; /* (hexagon width / 2) + (border / 2) approx */
-    /* (100px / 2) + 1px = 51px */
+    margin-left: 25.5px; /* (hexagon width / 2) + (border / 2) approx */
+    /* (50px / 2) + 0.5px = 25.5px */
 }
 
 .hexagon {
     position: relative;
-    width: 100px;
-    height: 110px; /* Altura un poco mayor que width * sqrt(3)/2 para acomodar el clip-path y borde */
+    width: 50px;
+    height: 55px; /* Altura un poco mayor que width * sqrt(3)/2 para acomodar el clip-path y borde */
     background: #111;
-    margin: 1px;
+    margin: 0.5px;
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     transition: 2s;
 }

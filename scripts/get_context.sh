@@ -4,7 +4,7 @@
 OUTPUT_FILE="code_context.txt"
 
 # Directories to search
-DIRS=("static" "utils" "templates")
+DIRS=("static" "templates")
 
 # Truncate the output file if it exists
 > "$OUTPUT_FILE"

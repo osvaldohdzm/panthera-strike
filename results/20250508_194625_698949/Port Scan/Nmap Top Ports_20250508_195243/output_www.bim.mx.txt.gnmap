@@ -1,4 +1,0 @@
-# Nmap 7.95 scan initiated Thu May  8 19:52:43 2025 as: /usr/lib/nmap/nmap --privileged -sV -T4 --top-ports 1000 -oA "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195243/output_www.bim.mx.txt" www.bim.mx
-Host: 54.237.94.205 (ec2-54-237-94-205.compute-1.amazonaws.com)	Status: Up
-Host: 54.237.94.205 (ec2-54-237-94-205.compute-1.amazonaws.com)	Ports: 53/open/tcp//domain//(generic dns response: NOTIMP)/, 80/open/tcp//http//Apache httpd/, 443/open/tcp//ssl|http//Apache httpd/	Ignored State: filtered (997)
-# Nmap done at Thu May  8 19:53:12 2025 -- 1 IP address (1 host up) scanned in 29.18 seconds

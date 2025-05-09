@@ -1,5 +1,0 @@
-COMMAND: wpscan --ignore-main-redirect --url www.bim.mx --enumerate vp,vt,u --random-user-agent --api-token YOUR_WPSCAN_API_TOKEN -o '/home/arya/panthera-strike/results/20250508_194625_698949/CMS Scan/WPScan_20250508_201332/output_www.bim.mx.txt' -f cli-no-color
-RETURN_CODE: 4
-STDOUT:
-
-STDERR:

@@ -1,6 +1,0 @@
-COMMAND: naabu -host https://mail.bim.mx/owa -silent -o '/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Naabu_20250508_195242/output_https___mail.bim.mx_owa.txt'
-RETURN_CODE: 1
-STDOUT:
-
-STDERR:
-[[1;31mFTL[0m] Could not run enumeration: no valid ipv4 or ipv6 targets were found

@@ -1,4 +1,0 @@
-# Nmap 7.95 scan initiated Thu May  8 19:53:13 2025 as: /usr/lib/nmap/nmap --privileged -sV -T4 --top-ports 1000 -oA "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195313/output_https__cuentadigital.bim.mx_.txt" https:/cuentadigital.bim.mx/
-Unable to split netmask from target expression: "https:/cuentadigital.bim.mx/"
-WARNING: No targets were specified, so 0 hosts scanned.
-# Nmap done at Thu May  8 19:53:13 2025 -- 0 IP addresses (0 hosts up) scanned in 0.14 seconds

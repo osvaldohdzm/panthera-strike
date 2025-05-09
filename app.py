@@ -185,6 +185,33 @@ def start_scan_route():
 
     return jsonify({'message': 'Scan job started', 'job_id': job_id, 'status_url': f'/status/{job_id}'}), 202
 
+@app.route('/api/jobs', methods=['GET'])
+def api_get_jobs():
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR, exist_ok=True)
+        return jsonify([])
+
+    job_ids = list_all_jobs(RESULTS_DIR)
+    jobs_with_details = []
+    for job_id in job_ids:
+        status_info = get_scan_status(job_id, active_jobs, RESULTS_DIR)
+        if status_info:
+            jobs_with_details.append({
+                "id": job_id,
+                "status": status_info.get("status", "unknown"),
+                "timestamp": status_info.get("start_time", "N/A"),
+                "zip_path": f"/api/results/download/{job_id}" if status_info.get("status") == "COMPLETED" else None
+            })
+        else:
+            jobs_with_details.append({
+                "id": job_id,
+                "status": "unknown (no summary)",
+                "timestamp": "N/A",
+                "zip_path": None
+            })
+
+    return jsonify(jobs_with_details)
+
 @app.route('/status/<job_id>', methods=['GET'])
 def get_status_route(job_id):
     status_info = get_scan_status(job_id, active_jobs, RESULTS_DIR)

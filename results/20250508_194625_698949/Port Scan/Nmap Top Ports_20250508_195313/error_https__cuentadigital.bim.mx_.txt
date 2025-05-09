@@ -1,2 +1,0 @@
-Unable to split netmask from target expression: "https:/cuentadigital.bim.mx/"
-WARNING: No targets were specified, so 0 hosts scanned.

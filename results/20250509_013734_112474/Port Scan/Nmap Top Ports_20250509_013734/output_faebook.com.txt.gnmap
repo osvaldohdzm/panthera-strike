@@ -1,4 +1,0 @@
-# Nmap 7.95 scan initiated Fri May  9 01:37:34 2025 as: /usr/lib/nmap/nmap --privileged -sV -T4 --top-ports 1000 -oA "/home/arya/panthera-strike/results/20250509_013734_112474/Port Scan/Nmap Top Ports_20250509_013734/output_faebook.com.txt" faebook.com
-Host: 31.13.89.19 (edge-star-shv-01-qro1.facebook.com)	Status: Up
-Host: 31.13.89.19 (edge-star-shv-01-qro1.facebook.com)	Ports: 53/open/tcp//domain//(generic dns response: NOTIMP)/, 80/open/tcp//http//proxygen-bolt/, 443/open/tcp//ssl|https///	Ignored State: filtered (997)
-# Nmap done at Fri May  9 01:38:00 2025 -- 1 IP address (1 host up) scanned in 26.13 seconds

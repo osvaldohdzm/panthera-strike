@@ -1,1 +1,0 @@
-[1m[31mERROR Opening: https://www.facebook.com/?_fb_noscript=1 - execution expired[0m
