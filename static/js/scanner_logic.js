@@ -14,7 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const advancedOptionsDetails = document.querySelector('.advanced-options-container details');
     const toolSpecificCliParamsContainer = document.getElementById('toolSpecificCliParamsContainer'); // Nuevo contenedor para CLI
 
-    let SCRIPT_ROOT = ""; // Será establecido por Flask en el HTML si es necesario, o puedes hardcodear si es fijo.
+    // SCRIPT_ROOT será establecido por Flask en el HTML (en index.html).
+    // La declaración let SCRIPT_ROOT = ""; que estaba aquí se ha eliminado para evitar errores de redeclaración.
+    // Si SCRIPT_ROOT no está definido globalmente por alguna razón, se puede manejar así:
+    if (typeof SCRIPT_ROOT === 'undefined') {
+        console.error("SCRIPT_ROOT no fue definido globalmente por el HTML. Usando '' por defecto.");
+        // En este caso, SCRIPT_ROOT se volvería una variable global implícita si se asigna sin 'const', 'let' o 'var'.
+        // Es mejor asegurar que el HTML lo defina siempre. Si se necesita un fallback:
+        // window.SCRIPT_ROOT = ""; // O manejar el error de otra forma.
+        // Sin embargo, el <script> en index.html DEBE definirlo.
+    }
+
     let appConfig = { tools: {}, profiles: {}, phases: {} }; // Para almacenar la configuración del backend
     let currentJobId = localStorage.getItem('currentJobId');
     let statusPollInterval;
@@ -68,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             button.dataset.profileName = profileName;
             button.onclick = () => applyScanProfile(profileName);
             // Insertar antes del botón "Desmarcar Todas"
-            const deselectAllButton = profilesContainer.querySelector('button[onclick*="applyToolPreset(\'none\')"]');
+            const deselectAllButton = profilesContainer.querySelector('button[onclick*="deselectAllTools()"]'); // Ajustado para ser más específico
             if (deselectAllButton) {
                 profilesContainer.insertBefore(button, deselectAllButton);
             } else {
@@ -188,10 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         // Asegurar que los parámetros CLI se muestren si la herramienta está marcada inicialmente
-        if (type === 'tool' && checkbox.checked) {
-            const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
-            if (cliGroup) cliGroup.style.display = 'block';
-        }
+        // (Esta parte ya está cubierta por updateAllParentCheckboxes al final de populate y por la lógica de 'tool' arriba)
+        // if (type === 'tool' && checkbox.checked) {
+        // const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
+        // if (cliGroup) cliGroup.style.display = 'block';
+        // }
     }
     
     function toggleChildren(parentCheckbox, childrenSelector, isChecked) {
@@ -201,8 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
             child.indeterminate = false;
             // Visibilidad de CLI params para herramientas individuales
             if (child.dataset.type === 'tool') {
-                 const cliGroup = document.getElementById(`cli-group-${child.value}`);
-                 if (cliGroup) cliGroup.style.display = isChecked ? 'block' : 'none';
+                const cliGroup = document.getElementById(`cli-group-${child.value}`);
+                if (cliGroup) cliGroup.style.display = isChecked ? 'block' : 'none';
             }
         });
     }
@@ -212,31 +223,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const parentCheckbox = document.getElementById(parentId);
         if (!parentCheckbox) return;
 
-        const parentContainer = parentCheckbox.closest('.pentest-phase, .tool-category');
-        const children = parentContainer.querySelectorAll(`${childrenSelectorClass}[data-${parentCheckbox.dataset.type}-parent-id="${parentId}"]`);
+        // Determinar el tipo de hijos a buscar (categorías para una fase, o herramientas para una categoría)
+        let actualChildrenSelector = '';
+        if (parentCheckbox.dataset.type === 'phase') {
+            actualChildrenSelector = `.tool-category-checkbox[data-phase-parent-id="${parentId}"]`;
+        } else if (parentCheckbox.dataset.type === 'category') {
+            actualChildrenSelector = `.tool-item-checkbox[data-category-parent-id="${parentId}"]`;
+        } else {
+            return; // No es un padre conocido
+        }
         
-        const allChecked = Array.from(children).every(child => child.checked);
-        const someChecked = Array.from(children).some(child => child.checked || child.indeterminate);
+        const children = Array.from(toolListDiv.querySelectorAll(actualChildrenSelector));
+        if (children.length === 0 && parentCheckbox.dataset.type === 'phase') { // Si una fase no tiene categorías (raro), basarse en herramientas directas (si existieran)
+             // Esta lógica puede necesitar ajuste si hay herramientas directas bajo fases, lo cual no es la estructura actual.
+        }
 
-        parentCheckbox.checked = allChecked;
+
+        const allChecked = children.every(child => child.checked);
+        const someChecked = children.some(child => child.checked || child.indeterminate);
+
+        parentCheckbox.checked = allChecked && children.length > 0; // Solo 'checked' si hay hijos y todos están marcados
         parentCheckbox.indeterminate = !allChecked && someChecked;
 
-        // Propagate upwards
-        if (parentCheckbox.dataset.phaseParentId) {
-            updateParentCheckboxState(parentCheckbox.dataset.phaseParentId, '.tool-category-checkbox');
+        // Propagate upwards (de categoría a fase)
+        if (parentCheckbox.dataset.type === 'category' && parentCheckbox.dataset.phaseParentId) {
+            updateParentCheckboxState(parentCheckbox.dataset.phaseParentId, '.tool-category-checkbox'); // El selector aquí es para los hijos del padre (fase)
         }
     }
 
     function updateAllParentCheckboxes() {
         // Actualizar categorías basadas en herramientas
         toolListDiv.querySelectorAll('.tool-category-checkbox').forEach(catCb => {
-            updateParentCheckboxState(catCb.id, '.tool-item-checkbox');
+            updateParentCheckboxState(catCb.id, '.tool-item-checkbox'); // Los hijos de una categoría son .tool-item-checkbox
         });
         // Actualizar fases basadas en categorías
         toolListDiv.querySelectorAll('input[data-type="phase"]').forEach(phaseCb => {
-            updateParentCheckboxState(phaseCb.id, '.tool-category-checkbox');
+            updateParentCheckboxState(phaseCb.id, '.tool-category-checkbox'); // Los hijos de una fase son .tool-category-checkbox
         });
-         // Asegurar que los CLI params de las herramientas marcadas por defecto se muestren
+        // Asegurar que los CLI params de las herramientas marcadas por defecto se muestren
         toolListDiv.querySelectorAll('.tool-item-checkbox:checked').forEach(toolCb => {
             const cliGroup = document.getElementById(`cli-group-${toolCb.value}`);
             if (cliGroup) cliGroup.style.display = 'block';
@@ -252,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (toolCheckbox) {
                     toolCheckbox.checked = true;
                     // Disparar evento change para actualizar padres y mostrar CLI
-                    toolCheckbox.dispatchEvent(new Event('change')); 
+                    toolCheckbox.dispatchEvent(new Event('change', { bubbles: true })); // Asegurar que el evento burbujee
                 }
             });
 
@@ -268,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            updateAllParentCheckboxes();
+            updateAllParentCheckboxes(); // Re-evaluar estado de checkboxes padres
         }
     }
 
@@ -283,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+        // Podrías añadir más presets aquí (ej: 'all', 'safe', etc.)
     }
 
     async function startScan() {
@@ -362,7 +387,22 @@ document.addEventListener('DOMContentLoaded', () => {
             currentJobInfoDiv.style.display = 'none';
         }
     }
-    document.querySelector('button[onclick="startScan()"]').onclick = startScan; // Reasignar para evitar problemas de scope
+    const scanButton = document.getElementById('startScanButton');
+    // CORRECCIÓN: Usar getElementById para 'refreshStatusButton'
+    const refreshButton = document.getElementById('refreshStatusButton'); 
+    
+    if(scanButton) {
+        scanButton.onclick = startScan;
+    } else {
+        console.error('No se encontró el botón startScanButton');
+    }
+    
+    if(refreshButton) {
+        refreshButton.onclick = () => refreshStatus(); // No necesita argumento, refreshStatus lo maneja
+    } else {
+        // Mensaje actualizado para reflejar que se busca por ID
+        console.error('No se encontró el botón con ID refreshStatusButton'); 
+    }
 
     async function refreshStatus(jobIdToRefresh = null, initialCall = false) {
         const effectiveJobId = jobIdToRefresh || currentJobId;
@@ -378,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (initialCall) {
             jobIdDisplay.textContent = effectiveJobId;
             currentJobInfoDiv.style.display = 'block';
-            cancelJobButton.style.display = 'inline-block';
+            cancelJobButton.style.display = 'inline-block'; // O 'none' si el job ya podría estar completo
             downloadJobZipLink.style.display = 'none';
             downloadJobZipLink.classList.add('disabled');
         }
@@ -410,9 +450,8 @@ document.addEventListener('DOMContentLoaded', () => {
             currentJobInfoDiv.style.display = 'block'; // Asegurar que esté visible
 
             // Limpiar logs antiguos de la terminal si el job es diferente o está iniciando
-            // Esta lógica podría ser más sofisticada
-            if (scanOutput.dataset.currentJobLog !== data.job_id) {
-                // scanOutput.innerHTML = ''; // Opcional: limpiar logs al ver un nuevo job
+            if (scanOutput.dataset.currentJobLog !== data.job_id && initialCall) { // Limpiar solo en llamada inicial de un nuevo job
+                scanOutput.innerHTML = ''; 
                 logToTerminal(`Mostrando logs para Job ID: ${data.job_id}`, 'info');
                 scanOutput.dataset.currentJobLog = data.job_id;
             }
@@ -420,10 +459,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Mostrar logs del job (el backend debería enviar solo logs nuevos o un subconjunto)
             if (data.logs && Array.isArray(data.logs)) {
                 data.logs.forEach(log => {
-                    // Evitar duplicados si el backend reenvía logs (mejorar en backend)
-                    if (!scanOutput.innerHTML.includes(log.message)) {
-                         logToTerminal(log.message, log.type || 'info', log.is_html || false);
-                    }
+                    // Una forma simple de evitar duplicados si el backend reenvía todos los logs
+                    // Lo ideal es que el backend envíe solo logs nuevos desde el último poll.
+                    // Esta comprobación puede ser costosa si hay muchos logs.
+                    // if (!scanOutput.innerHTML.includes(log.message)) { // Esta comprobación puede ser ineficiente
+                        logToTerminal(log.message, log.type || 'info', log.is_html || false);
+                    // }
                 });
             }
 
@@ -437,12 +478,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 }
                 if (effectiveJobId === currentJobId) { // Si el job "activo" ha terminado
-                    localStorage.removeItem('currentJobId'); // Ya no es el "actual" para auto-recarga
-                    currentJobId = null; // Para que la próxima recarga no intente este job
+                    // No remover currentJobId de localStorage aquí, para que la UI pueda mostrarlo hasta que el usuario seleccione otro.
+                    // currentJobId = null; // No establecer a null para que refreshStatus manual aún funcione
                 }
                 clearTimeout(statusPollInterval); // Detener sondeo
                 loadJobs(); // Actualizar la lista para reflejar el estado final
-            } else {
+            } else { // PENDING, RUNNING
                 cancelJobButton.style.display = 'inline-block'; // Mantener visible si está en curso
                 downloadJobZipLink.style.display = 'none';
                 downloadJobZipLink.classList.add('disabled');
@@ -452,12 +493,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             logToTerminal(`Error de red al obtener estado: ${error.message || error}`, "error");
-            // Podríamos intentar reanudar el sondeo después de un retraso
-             clearTimeout(statusPollInterval);
-             statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 10000); // Reintentar tras 10s
+            clearTimeout(statusPollInterval);
+            statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 10000); // Reintentar tras 10s
         }
     }
-    document.querySelector('button[onclick="refreshStatus()"]').onclick = () => refreshStatus();
+    // ELIMINADA: La siguiente línea es redundante y causaba el error TypeError debido al selector incorrecto.
+    // La asignación de onclick para refreshButton ya se hace arriba de forma segura.
+    // document.querySelector('button[onclick="refreshStatus()"]').onclick = () => refreshStatus();
 
 
     async function cancelScan() {
@@ -486,7 +528,10 @@ document.addEventListener('DOMContentLoaded', () => {
             logToTerminal(`Error de red al cancelar escaneo: ${error.message || error}`, "error");
         }
     }
-    cancelJobButton.onclick = cancelScan;
+    if (cancelJobButton) { // Asegurarse que el botón existe antes de asignar
+        cancelJobButton.onclick = cancelScan;
+    }
+
 
     async function loadJobs() {
         jobsListArea.innerHTML = '<li>Cargando trabajos...</li>';
@@ -518,11 +563,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
                 li.querySelector('.view-details-btn').onclick = (e) => {
-                    e.stopPropagation(); // Evitar que el click en el li también se dispare si hay otro listener
+                    e.stopPropagation(); 
                     viewJobDetails(job.id);
                 };
-                // Opcional: hacer todo el <li> clickeable para ver detalles
-                // li.onclick = () => viewJobDetails(job.id); 
                 jobsListArea.appendChild(li);
             });
         } catch (error) {
@@ -536,12 +579,13 @@ document.addEventListener('DOMContentLoaded', () => {
         currentJobId = jobId; // Actualizar el currentJobId global del frontend
         localStorage.setItem('currentJobId', jobId); // Guardar para futuras recargas de página
         clearTimeout(statusPollInterval); // Detener cualquier sondeo anterior
-        refreshStatus(jobId, true); // Iniciar sondeo para este job
-        scanOutput.innerHTML = ''; // Limpiar terminal para logs del nuevo job
+        // Limpiar terminal para logs del nuevo job ANTES de llamar a refreshStatus
+        scanOutput.innerHTML = ''; 
         scanOutput.dataset.currentJobLog = jobId; // Marcar la terminal
+        refreshStatus(jobId, true); // Iniciar sondeo para este job, es una llamada inicial
     }
     
-    // Función global para desmarcar todas las herramientas
+    // Función global para desmarcar todas las herramientas, referenciada desde index.html
     window.deselectAllTools = function() {
         applyToolPreset('none');
     }
@@ -552,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentJobId) {
             viewJobDetails(currentJobId); // Cargar detalles del último job activo si existe
         } else {
-             currentJobInfoDiv.style.display = 'none'; // Ocultar si no hay job activo
+            currentJobInfoDiv.style.display = 'none'; // Ocultar si no hay job activo
         }
     });
 });

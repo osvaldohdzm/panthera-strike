@@ -1,0 +1,2328 @@
+===== static/js/scanner_logic.js =====
+// static/js/scanner_logic.js
+document.addEventListener('DOMContentLoaded', () => {
+    const toolListDiv = document.getElementById('toolList');
+    const scanOutput = document.getElementById('scanOutput');
+    const targetsTextarea = document.getElementById('targets');
+    const jobIdDisplay = document.getElementById('jobIdDisplay');
+    const jobStatusDisplay = document.getElementById('jobStatusDisplay');
+    const overallProgressBar = document.getElementById('overallProgressBar');
+    // const overallProgressBarContainer = document.getElementById('overallProgressBarContainer'); // Ya no se usa directamente aquí
+    const currentJobInfoDiv = document.getElementById('currentJobInfo');
+    const cancelJobButton = document.getElementById('cancelJobButton');
+    const downloadJobZipLink = document.getElementById('downloadJobZip');
+    const jobsListArea = document.getElementById('jobsListArea');
+    const advancedOptionsDetails = document.querySelector('.advanced-options-container details');
+    const toolSpecificCliParamsContainer = document.getElementById('toolSpecificCliParamsContainer'); // Nuevo contenedor para CLI
+
+    // SCRIPT_ROOT será establecido por Flask en el HTML (en index.html).
+    // La declaración let SCRIPT_ROOT = ""; que estaba aquí se ha eliminado para evitar errores de redeclaración.
+    // Si SCRIPT_ROOT no está definido globalmente por alguna razón, se puede manejar así:
+    if (typeof SCRIPT_ROOT === 'undefined') {
+        console.error("SCRIPT_ROOT no fue definido globalmente por el HTML. Usando '' por defecto.");
+        // En este caso, SCRIPT_ROOT se volvería una variable global implícita si se asigna sin 'const', 'let' o 'var'.
+        // Es mejor asegurar que el HTML lo defina siempre. Si se necesita un fallback:
+        // window.SCRIPT_ROOT = ""; // O manejar el error de otra forma.
+        // Sin embargo, el <script> en index.html DEBE definirlo.
+    }
+
+    let appConfig = { tools: {}, profiles: {}, phases: {} }; // Para almacenar la configuración del backend
+    let currentJobId = localStorage.getItem('currentJobId');
+    let statusPollInterval;
+
+
+    function logToTerminal(message, type = 'info', isHtml = false) {
+        const entry = document.createElement('div');
+        entry.classList.add('log-entry', type);
+        const timestamp = new Date().toLocaleTimeString();
+        let icon = 'ℹ️';
+        if (type === 'error') icon = '❌';
+        else if (type === 'warn') icon = '⚠️';
+        else if (type === 'success') icon = '✅';
+        else if (type === 'command') icon = '🛠️';
+
+        if (isHtml) {
+            entry.innerHTML = `<strong>[${timestamp}] ${icon}</strong> ${message}`;
+        } else {
+            entry.textContent = `[${timestamp}] ${icon} ${message}`;
+        }
+        scanOutput.appendChild(entry);
+        scanOutput.scrollTop = scanOutput.scrollHeight;
+    }
+
+    async function fetchAppConfig() {
+        try {
+            const response = await fetch(`${SCRIPT_ROOT}/api/config`); // Asume un endpoint /api/config
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            appConfig = await response.json();
+            populateToolSelection();
+            populateScanProfiles();
+            populateAdvancedOptions(); // Para opciones globales y CLI dinámicas
+        } catch (error) {
+            logToTerminal(`Error al cargar la configuración de la aplicación: ${error}`, 'error');
+            toolListDiv.innerHTML = '<p class="error">Error al cargar herramientas. Intente recargar la página.</p>';
+        }
+    }
+    
+    function populateScanProfiles() {
+        const profilesContainer = document.querySelector('.scan-profiles');
+        const existingButtons = profilesContainer.querySelectorAll('button[data-profile-name]');
+        existingButtons.forEach(btn => btn.remove()); // Limpiar botones de perfiles previos si se regenera
+
+        Object.keys(appConfig.profiles).forEach(profileName => {
+            const profile = appConfig.profiles[profileName];
+            const button = document.createElement('button');
+            button.textContent = `${profile.icon || '🚀'} ${profileName}`;
+            button.title = profile.description;
+            button.dataset.profileName = profileName;
+            button.onclick = () => applyScanProfile(profileName);
+            // Insertar antes del botón "Desmarcar Todas"
+            const deselectAllButton = profilesContainer.querySelector('button[onclick*="deselectAllTools()"]'); // Ajustado para ser más específico
+            if (deselectAllButton) {
+                profilesContainer.insertBefore(button, deselectAllButton);
+            } else {
+                profilesContainer.appendChild(button);
+            }
+        });
+    }
+
+
+    function populateToolSelection() {
+        toolListDiv.innerHTML = '';
+        let toolIdCounter = 0;
+
+        // Agrupar herramientas por fase y luego por categoría
+        const toolsByPhaseAndCategory = {};
+        for (const toolKey in appConfig.tools) {
+            const tool = appConfig.tools[toolKey];
+            const phaseName = tool.phase; // 'phase' ya viene resuelto desde helpers.py
+            const categoryName = tool.category;
+
+            if (!toolsByPhaseAndCategory[phaseName]) {
+                toolsByPhaseAndCategory[phaseName] = {};
+            }
+            if (!toolsByPhaseAndCategory[phaseName][categoryName]) {
+                toolsByPhaseAndCategory[phaseName][categoryName] = [];
+            }
+            toolsByPhaseAndCategory[phaseName][categoryName].push({ ...tool, id: toolKey });
+        }
+
+        for (const phaseName in toolsByPhaseAndCategory) {
+            const phaseId = `phase-${toolIdCounter++}`;
+            const phaseDiv = document.createElement('div');
+            phaseDiv.className = 'pentest-phase';
+            phaseDiv.innerHTML = `
+                <div class="pentest-phase-header">
+                    <input type="checkbox" id="${phaseId}" data-type="phase">
+                    <h4>${phaseName}</h4>
+                </div>`;
+
+            for (const categoryName in toolsByPhaseAndCategory[phaseName]) {
+                const categoryId = `category-${toolIdCounter++}`;
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'tool-category';
+                categoryDiv.innerHTML = `
+                    <div class="tool-category-header">
+                        <input type="checkbox" id="${categoryId}" class="tool-category-checkbox" data-phase-parent-id="${phaseId}" data-type="category">
+                        <h5>${categoryName}</h5>
+                    </div>`;
+
+                toolsByPhaseAndCategory[phaseName][categoryName].forEach(tool => {
+                    const toolItemId = `tool-${tool.id}-${toolIdCounter++}`;
+                    const toolItemDiv = document.createElement('div');
+                    toolItemDiv.className = 'tool-item';
+                    
+                    let cliParamsHtml = '';
+                    if (tool.cli_params_config && tool.cli_params_config.length > 0) {
+                        cliParamsHtml += `<div class="tool-cli-params-group" id="cli-group-${tool.id}" style="display:none; margin-left: 25px; padding: 5px; border-left: 2px solid #440000;">`;
+                        tool.cli_params_config.forEach(paramConf => {
+                            cliParamsHtml += `<label for="cli-${tool.id}-${paramConf.name}">${paramConf.label}:</label>`;
+                            if (paramConf.type === 'select') {
+                                cliParamsHtml += `<select id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}">`;
+                                paramConf.options.forEach(opt => {
+                                    cliParamsHtml += `<option value="${opt}" ${opt === paramConf.default ? 'selected' : ''}>${opt}</option>`;
+                                });
+                                cliParamsHtml += `</select><br>`;
+                            } else { // text, number
+                                cliParamsHtml += `<input type="${paramConf.type || 'text'}" id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}" placeholder="${paramConf.placeholder || ''}" value="${paramConf.default || ''}"><br>`;
+                            }
+                        });
+                        cliParamsHtml += `</div>`;
+                    }
+
+                    toolItemDiv.innerHTML = `
+                        <label for="${toolItemId}">
+                            <input type="checkbox" id="${toolItemId}" name="selected_tools" value="${tool.id}" class="tool-item-checkbox" data-category-parent-id="${categoryId}" data-type="tool" ${tool.default_enabled ? 'checked' : ''}>
+                            ${tool.name} ${tool.dangerous ? '<span class="tool-dangerous-indicator" title="Esta herramienta puede ser intrusiva o disruptiva">⚠️</span>' : ''}
+                        </label>
+                        <div class="tool-description">${tool.description}</div>
+                        ${cliParamsHtml}
+                    `;
+                    categoryDiv.appendChild(toolItemDiv);
+                });
+                phaseDiv.appendChild(categoryDiv);
+            }
+            toolListDiv.appendChild(phaseDiv);
+        }
+        addCheckboxEventListeners();
+        updateAllParentCheckboxes(); // Ensure correct initial state of parent checkboxes
+    }
+
+    function addCheckboxEventListeners() {
+        toolListDiv.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', handleCheckboxChange);
+        });
+    }
+
+    function handleCheckboxChange(event) {
+        const checkbox = event.target;
+        const type = checkbox.dataset.type;
+
+        if (type === 'phase') {
+            const phaseId = checkbox.id;
+            toolListDiv.querySelectorAll(`.tool-category-checkbox[data-phase-parent-id="${phaseId}"]`).forEach(catCb => {
+                catCb.checked = checkbox.checked;
+                catCb.indeterminate = false;
+                toggleChildren(catCb, '.tool-item-checkbox', checkbox.checked);
+            });
+        } else if (type === 'category') {
+            toggleChildren(checkbox, '.tool-item-checkbox', checkbox.checked);
+            updateParentCheckboxState(checkbox.dataset.phaseParentId, '.tool-category-checkbox');
+        } else if (type === 'tool') {
+            updateParentCheckboxState(checkbox.dataset.categoryParentId, '.tool-item-checkbox');
+            // Mostrar/ocultar CLI params para esta herramienta
+            const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
+            if (cliGroup) {
+                cliGroup.style.display = checkbox.checked ? 'block' : 'none';
+            }
+        }
+        // Asegurar que los parámetros CLI se muestren si la herramienta está marcada inicialmente
+        // (Esta parte ya está cubierta por updateAllParentCheckboxes al final de populate y por la lógica de 'tool' arriba)
+        // if (type === 'tool' && checkbox.checked) {
+        // const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
+        // if (cliGroup) cliGroup.style.display = 'block';
+        // }
+    }
+    
+    function toggleChildren(parentCheckbox, childrenSelector, isChecked) {
+        const parentContainer = parentCheckbox.closest('.pentest-phase, .tool-category');
+        parentContainer.querySelectorAll(childrenSelector + `[data-category-parent-id="${parentCheckbox.id}"]`).forEach(child => {
+            child.checked = isChecked;
+            child.indeterminate = false;
+            // Visibilidad de CLI params para herramientas individuales
+            if (child.dataset.type === 'tool') {
+                const cliGroup = document.getElementById(`cli-group-${child.value}`);
+                if (cliGroup) cliGroup.style.display = isChecked ? 'block' : 'none';
+            }
+        });
+    }
+
+    function updateParentCheckboxState(parentId, childrenSelectorClass) {
+        if (!parentId) return;
+        const parentCheckbox = document.getElementById(parentId);
+        if (!parentCheckbox) return;
+
+        // Determinar el tipo de hijos a buscar (categorías para una fase, o herramientas para una categoría)
+        let actualChildrenSelector = '';
+        if (parentCheckbox.dataset.type === 'phase') {
+            actualChildrenSelector = `.tool-category-checkbox[data-phase-parent-id="${parentId}"]`;
+        } else if (parentCheckbox.dataset.type === 'category') {
+            actualChildrenSelector = `.tool-item-checkbox[data-category-parent-id="${parentId}"]`;
+        } else {
+            return; // No es un padre conocido
+        }
+        
+        const children = Array.from(toolListDiv.querySelectorAll(actualChildrenSelector));
+        if (children.length === 0 && parentCheckbox.dataset.type === 'phase') { // Si una fase no tiene categorías (raro), basarse en herramientas directas (si existieran)
+             // Esta lógica puede necesitar ajuste si hay herramientas directas bajo fases, lo cual no es la estructura actual.
+        }
+
+
+        const allChecked = children.every(child => child.checked);
+        const someChecked = children.some(child => child.checked || child.indeterminate);
+
+        parentCheckbox.checked = allChecked && children.length > 0; // Solo 'checked' si hay hijos y todos están marcados
+        parentCheckbox.indeterminate = !allChecked && someChecked;
+
+        // Propagate upwards (de categoría a fase)
+        if (parentCheckbox.dataset.type === 'category' && parentCheckbox.dataset.phaseParentId) {
+            updateParentCheckboxState(parentCheckbox.dataset.phaseParentId, '.tool-category-checkbox'); // El selector aquí es para los hijos del padre (fase)
+        }
+    }
+
+    function updateAllParentCheckboxes() {
+        // Actualizar categorías basadas en herramientas
+        toolListDiv.querySelectorAll('.tool-category-checkbox').forEach(catCb => {
+            updateParentCheckboxState(catCb.id, '.tool-item-checkbox'); // Los hijos de una categoría son .tool-item-checkbox
+        });
+        // Actualizar fases basadas en categorías
+        toolListDiv.querySelectorAll('input[data-type="phase"]').forEach(phaseCb => {
+            updateParentCheckboxState(phaseCb.id, '.tool-category-checkbox'); // Los hijos de una fase son .tool-category-checkbox
+        });
+        // Asegurar que los CLI params de las herramientas marcadas por defecto se muestren
+        toolListDiv.querySelectorAll('.tool-item-checkbox:checked').forEach(toolCb => {
+            const cliGroup = document.getElementById(`cli-group-${toolCb.value}`);
+            if (cliGroup) cliGroup.style.display = 'block';
+        });
+    }
+    
+    window.applyScanProfile = function(profileName) {
+        applyToolPreset('none'); // Desmarcar todo primero
+        const profile = appConfig.profiles[profileName];
+        if (profile && profile.tools) {
+            profile.tools.forEach(toolId => {
+                const toolCheckbox = toolListDiv.querySelector(`input[name="selected_tools"][value="${toolId}"]`);
+                if (toolCheckbox) {
+                    toolCheckbox.checked = true;
+                    // Disparar evento change para actualizar padres y mostrar CLI
+                    toolCheckbox.dispatchEvent(new Event('change', { bubbles: true })); // Asegurar que el evento burbujee
+                }
+            });
+
+            // Aplicar parámetros específicos del perfil
+            if (profile.params_override) {
+                for (const toolId in profile.params_override) {
+                    const toolParams = profile.params_override[toolId];
+                    for (const paramName in toolParams) {
+                        const inputField = document.getElementById(`cli-${toolId}-${paramName}`);
+                        if (inputField) {
+                            inputField.value = toolParams[paramName];
+                        }
+                    }
+                }
+            }
+            updateAllParentCheckboxes(); // Re-evaluar estado de checkboxes padres
+        }
+    }
+
+    window.applyToolPreset = function(presetName) {
+        if (presetName === 'none') {
+            toolListDiv.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.indeterminate = false;
+                if (checkbox.dataset.type === 'tool') { // Ocultar CLI params si se desmarca
+                    const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
+                    if (cliGroup) cliGroup.style.display = 'none';
+                }
+            });
+        }
+        // Podrías añadir más presets aquí (ej: 'all', 'safe', etc.)
+    }
+
+    async function startScan() {
+        const targets = targetsTextarea.value.trim().split('\n').filter(t => t.trim() !== '');
+        if (targets.length === 0) {
+            logToTerminal("Por favor, ingrese al menos un objetivo.", "error");
+            return;
+        }
+
+        const selectedToolsPayload = [];
+        document.querySelectorAll('input[name="selected_tools"]:checked').forEach(cb => {
+            const toolId = cb.value;
+            const toolConfig = appConfig.tools[toolId];
+            let params = {};
+            if (toolConfig && toolConfig.cli_params_config) {
+                toolConfig.cli_params_config.forEach(pConf => {
+                    const inputField = document.getElementById(`cli-${toolId}-${pConf.name}`);
+                    if (inputField && inputField.value.trim() !== '') {
+                        params[pConf.name] = inputField.value;
+                    } else if (pConf.default) {
+                        params[pConf.name] = pConf.default; // Usar default si está vacío
+                    }
+                });
+            }
+            selectedToolsPayload.push({ id: toolId, cli_params: params });
+        });
+
+        if (selectedToolsPayload.length === 0) {
+            logToTerminal("Por favor, seleccione al menos una herramienta de escaneo.", "error");
+            return;
+        }
+        
+        const advancedScanOptions = {
+            customScanTime: document.getElementById('customScanTime') ? document.getElementById('customScanTime').value : null,
+            followRedirects: document.getElementById('followRedirects') ? document.getElementById('followRedirects').value : null,
+            // Añadir más opciones avanzadas globales aquí
+        };
+
+
+        logToTerminal(`Iniciando escaneo para objetivo(s): ${targets.join(', ')}...`, 'info');
+        currentJobInfoDiv.style.display = 'block';
+        jobIdDisplay.textContent = 'Generando...';
+        jobStatusDisplay.textContent = 'Iniciando...';
+        overallProgressBar.style.width = '0%';
+        overallProgressBar.textContent = '0%';
+        cancelJobButton.style.display = 'inline-block';
+        downloadJobZipLink.style.display = 'none';
+        downloadJobZipLink.classList.add('disabled');
+
+
+        try {
+            const response = await fetch(`${SCRIPT_ROOT}/api/scan/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    targets, 
+                    tools: selectedToolsPayload,
+                    advanced_options: advancedScanOptions 
+                }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                currentJobId = data.job_id;
+                jobIdDisplay.textContent = currentJobId;
+                logToTerminal(`Escaneo iniciado con Job ID: ${currentJobId}`, "success");
+                localStorage.setItem('currentJobId', currentJobId);
+                clearTimeout(statusPollInterval); // Limpiar sondeo anterior
+                refreshStatus(currentJobId, true); // Iniciar sondeo para el nuevo job
+                loadJobs(); // Actualizar lista de historial
+            } else {
+                logToTerminal(`Error al iniciar escaneo (HTTP ${response.status}): ${data.error || 'Error desconocido'}`, "error");
+                currentJobInfoDiv.style.display = 'none';
+            }
+        } catch (error) {
+            logToTerminal(`Error de red al iniciar escaneo: ${error.message || error}`, "error");
+            currentJobInfoDiv.style.display = 'none';
+        }
+    }
+    const scanButton = document.getElementById('startScanButton');
+    // CORRECCIÓN: Usar getElementById para 'refreshStatusButton'
+    const refreshButton = document.getElementById('refreshStatusButton'); 
+    
+    if(scanButton) {
+        scanButton.onclick = startScan;
+    } else {
+        console.error('No se encontró el botón startScanButton');
+    }
+    
+    if(refreshButton) {
+        refreshButton.onclick = () => refreshStatus(); // No necesita argumento, refreshStatus lo maneja
+    } else {
+        // Mensaje actualizado para reflejar que se busca por ID
+        console.error('No se encontró el botón con ID refreshStatusButton'); 
+    }
+
+    async function refreshStatus(jobIdToRefresh = null, initialCall = false) {
+        const effectiveJobId = jobIdToRefresh || currentJobId;
+        if (!effectiveJobId) {
+            currentJobInfoDiv.style.display = 'none';
+            cancelJobButton.style.display = 'none';
+            downloadJobZipLink.style.display = 'none';
+            downloadJobZipLink.classList.add('disabled');
+            return;
+        }
+
+        // Si es una llamada inicial para un nuevo job, mostrar info inmediatamente
+        if (initialCall) {
+            jobIdDisplay.textContent = effectiveJobId;
+            currentJobInfoDiv.style.display = 'block';
+            cancelJobButton.style.display = 'inline-block'; // O 'none' si el job ya podría estar completo
+            downloadJobZipLink.style.display = 'none';
+            downloadJobZipLink.classList.add('disabled');
+        }
+
+
+        try {
+            const response = await fetch(`${SCRIPT_ROOT}/api/scan/status/${effectiveJobId}`);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    logToTerminal(`Job ID ${effectiveJobId} no encontrado. Pudo haber sido eliminado o nunca existió.`, "warn");
+                    if (effectiveJobId === currentJobId) { // Solo limpiar si es el job "activo" actual
+                        localStorage.removeItem('currentJobId');
+                        currentJobId = null;
+                        currentJobInfoDiv.style.display = 'none';
+                        clearTimeout(statusPollInterval);
+                    }
+                } else {
+                    const errorData = await response.json().catch(() => ({ error: "Error desconocido al obtener estado." }));
+                    logToTerminal(`Error al obtener estado (HTTP ${response.status}): ${errorData.error}`, "error");
+                }
+                return;
+            }
+
+            const data = await response.json();
+            jobIdDisplay.textContent = data.job_id; // Actualizar por si acaso
+            jobStatusDisplay.textContent = data.status;
+            overallProgressBar.style.width = `${data.overall_progress || 0}%`;
+            overallProgressBar.textContent = `${data.overall_progress || 0}%`;
+            currentJobInfoDiv.style.display = 'block'; // Asegurar que esté visible
+
+            // Limpiar logs antiguos de la terminal si el job es diferente o está iniciando
+            if (scanOutput.dataset.currentJobLog !== data.job_id && initialCall) { // Limpiar solo en llamada inicial de un nuevo job
+                scanOutput.innerHTML = ''; 
+                logToTerminal(`Mostrando logs para Job ID: ${data.job_id}`, 'info');
+                scanOutput.dataset.currentJobLog = data.job_id;
+            }
+            
+            // Mostrar logs del job (el backend debería enviar solo logs nuevos o un subconjunto)
+            if (data.logs && Array.isArray(data.logs)) {
+                data.logs.forEach(log => {
+                    // Una forma simple de evitar duplicados si el backend reenvía todos los logs
+                    // Lo ideal es que el backend envíe solo logs nuevos desde el último poll.
+                    // Esta comprobación puede ser costosa si hay muchos logs.
+                    // if (!scanOutput.innerHTML.includes(log.message)) { // Esta comprobación puede ser ineficiente
+                        logToTerminal(log.message, log.type || 'info', log.is_html || false);
+                    // }
+                });
+            }
+
+
+            if (data.status === 'COMPLETED' || data.status === 'CANCELLED' || data.status === 'ERROR') {
+                cancelJobButton.style.display = 'none';
+                if (data.zip_path) {
+                    downloadJobZipLink.href = `${SCRIPT_ROOT}${data.zip_path}`; // Asegurar SCRIPT_ROOT si es necesario
+                    downloadJobZipLink.style.display = 'inline-block';
+                    downloadJobZipLink.classList.remove('disabled');
+
+                }
+                if (effectiveJobId === currentJobId) { // Si el job "activo" ha terminado
+                    // No remover currentJobId de localStorage aquí, para que la UI pueda mostrarlo hasta que el usuario seleccione otro.
+                    // currentJobId = null; // No establecer a null para que refreshStatus manual aún funcione
+                }
+                clearTimeout(statusPollInterval); // Detener sondeo
+                loadJobs(); // Actualizar la lista para reflejar el estado final
+            } else { // PENDING, RUNNING
+                cancelJobButton.style.display = 'inline-block'; // Mantener visible si está en curso
+                downloadJobZipLink.style.display = 'none';
+                downloadJobZipLink.classList.add('disabled');
+                clearTimeout(statusPollInterval); // Limpiar sondeo anterior
+                statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 5000);
+            }
+
+        } catch (error) {
+            logToTerminal(`Error de red al obtener estado: ${error.message || error}`, "error");
+            clearTimeout(statusPollInterval);
+            statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 10000); // Reintentar tras 10s
+        }
+    }
+    // ELIMINADA: La siguiente línea es redundante y causaba el error TypeError debido al selector incorrecto.
+    // La asignación de onclick para refreshButton ya se hace arriba de forma segura.
+    // document.querySelector('button[onclick="refreshStatus()"]').onclick = () => refreshStatus();
+
+
+    async function cancelScan() {
+        const jobIdToCancel = jobIdDisplay.textContent; // Usar el ID mostrado en la UI
+        if (!jobIdToCancel || jobIdToCancel === 'Generando...') {
+            logToTerminal("No hay un trabajo específico seleccionado o activo para cancelar.", "warn");
+            return;
+        }
+        if (!confirm(`¿Está seguro de que desea cancelar el trabajo ${jobIdToCancel}?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${SCRIPT_ROOT}/api/scan/cancel/${jobIdToCancel}`, { method: 'POST' });
+            const data = await response.json();
+            if (response.ok) {
+                logToTerminal(`Solicitud de cancelación enviada para el trabajo ${jobIdToCancel}.`, "info");
+                jobStatusDisplay.textContent = "Cancelando...";
+                cancelJobButton.style.display = 'none'; // Ocultar inmediatamente
+                clearTimeout(statusPollInterval); // Detener sondeo temporalmente
+                statusPollInterval = setTimeout(() => refreshStatus(jobIdToCancel), 2000); // Actualizar estado pronto
+            } else {
+                logToTerminal(`Error al cancelar escaneo (HTTP ${response.status}): ${data.error || 'Error desconocido'}`, "error");
+            }
+        } catch (error) {
+            logToTerminal(`Error de red al cancelar escaneo: ${error.message || error}`, "error");
+        }
+    }
+    if (cancelJobButton) { // Asegurarse que el botón existe antes de asignar
+        cancelJobButton.onclick = cancelScan;
+    }
+
+
+    async function loadJobs() {
+        jobsListArea.innerHTML = '<li>Cargando trabajos...</li>';
+        try {
+            const response = await fetch(`${SCRIPT_ROOT}/api/jobs`);
+            if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+            const jobs = await response.json();
+            
+            jobsListArea.innerHTML = ''; // Limpiar
+            if (jobs.length === 0) {
+                jobsListArea.innerHTML = '<li>No hay trabajos anteriores.</li>';
+                return;
+            }
+            jobs.forEach(job => {
+                const li = document.createElement('li');
+                let targetsDisplay = Array.isArray(job.targets) ? job.targets.join(', ') : (job.targets || 'N/A');
+                if (targetsDisplay.length > 50) targetsDisplay = targetsDisplay.substring(0, 47) + '...';
+
+                li.innerHTML = `
+                    <div class="job-summary">
+                        <strong>ID:</strong> ${job.id} <br>
+                        <strong>Estado:</strong> <span class="job-status-${job.status.toLowerCase()}">${job.status}</span> <br>
+                        <strong>Fecha:</strong> ${job.timestamp ? new Date(job.timestamp).toLocaleString() : 'N/A'} <br>
+                        <strong>Objetivos:</strong> ${targetsDisplay}
+                    </div>
+                    <div class="job-actions">
+                        <button class="button-like view-details-btn">Ver Detalles</button>
+                        ${job.zip_path ? `<a href="${SCRIPT_ROOT}${job.zip_path}" class="button-like download-zip-btn" target="_blank">Descargar ZIP</a>` : ''}
+                    </div>
+                `;
+                li.querySelector('.view-details-btn').onclick = (e) => {
+                    e.stopPropagation(); 
+                    viewJobDetails(job.id);
+                };
+                jobsListArea.appendChild(li);
+            });
+        } catch (error) {
+            logToTerminal(`Error al cargar historial de trabajos: ${error.message || error}`, "error");
+            jobsListArea.innerHTML = '<li>Error al cargar trabajos.</li>';
+        }
+    }
+
+    function viewJobDetails(jobId) {
+        logToTerminal(`Cargando detalles para el trabajo ${jobId}...`, "info");
+        currentJobId = jobId; // Actualizar el currentJobId global del frontend
+        localStorage.setItem('currentJobId', jobId); // Guardar para futuras recargas de página
+        clearTimeout(statusPollInterval); // Detener cualquier sondeo anterior
+        // Limpiar terminal para logs del nuevo job ANTES de llamar a refreshStatus
+        scanOutput.innerHTML = ''; 
+        scanOutput.dataset.currentJobLog = jobId; // Marcar la terminal
+        refreshStatus(jobId, true); // Iniciar sondeo para este job, es una llamada inicial
+    }
+    
+    // Función global para desmarcar todas las herramientas, referenciada desde index.html
+    window.deselectAllTools = function() {
+        applyToolPreset('none');
+    }
+
+    // Inicialización
+    fetchAppConfig().then(() => {
+        loadJobs();
+        if (currentJobId) {
+            viewJobDetails(currentJobId); // Cargar detalles del último job activo si existe
+        } else {
+            currentJobInfoDiv.style.display = 'none'; // Ocultar si no hay job activo
+        }
+    });
+});
+
+
+===== static/js/login_hud_animation.js =====
+// Script para Animación HUD (Animación 02)
+$(document).ready(function () {
+    const anim2_a3_placeholder = $('#anim2-a3-placeholder');
+    const anim2_a4 = $('#anim2-a4');
+    const anim2_a5 = $('#anim2-a5');
+    const anim2_a8 = $('#anim2-a8'); // Contenedor para las líneas horizontales
+    const anim2_a9 = $('#anim2-a9'); // Contenedor para números aleatorios par/impar
+    const anim2_f1 = $('#anim2-f1');
+    const anim2_f2 = $('#anim2-f2');
+    const anim2_f5 = $('#anim2-f5');
+    const anim2_b1 = $('#anim2-b1'); // Contenedor para las barras b1
+
+    // Generación de números aleatorios para #anim2-a3-placeholder
+    if (anim2_a3_placeholder.length) {
+        for (let i = 1; i < 11; i++) { // 10 spans de números
+            anim2_a3_placeholder.append('<span class="anim2-num-span' + i + '"></span>');
+            $('.anim2-num-span' + i).css({
+                '-webkit-animation': 'anim2-kf-opacity 1s ' + (Math.random() * 2) + 's infinite',
+                '-moz-animation': 'anim2-kf-opacity 1s ' + (Math.random() * 2) + 's infinite',
+                // El color ya está definido en el CSS #anim2-a3-placeholder
+            });
+        }
+        setInterval(function () {
+            $('#anim2-a3-placeholder span').each(function () {
+                $(this).text(Math.ceil(Math.random() * 999));
+            });
+        }, 100);
+    }
+
+    // Animación para #anim2-a4 (barras verticales)
+    if (anim2_a4.length) {
+        for (let i = 1; i < 15; i++) { // Número de barras
+            anim2_a4.append('<span class="anim2-a4-bar' + i + '"></span>');
+        }
+        setInterval(function () {
+            $('#anim2-a4 span').each(function () {
+                $(this).width((Math.random() * 100) + '%'); // Ancho aleatorio en %
+            });
+        }, 500);
+    }
+
+    // Animación para #anim2-a5 (bloques en la parte inferior)
+    if (anim2_a5.length) {
+        for (let i = 1; i < 16; i++) { // Número de spans contenedores de <b>
+            anim2_a5.append('<span><b class="anim2-a5-block' + i + '"></b></span>');
+            // La animación 'anim2-kf-a5-b' se aplica a '.anim2-a5-blockX b' desde CSS
+            // Aquí se aplica al <b> directamente
+             $('.anim2-a5-block' + i).css({
+                '-webkit-animation': 'anim2-kf-a5-b 1s ' + (Math.random() * 1) + 's infinite',
+                '-moz-animation': 'anim2-kf-a5-b 1s ' + (Math.random() * 1) + 's infinite'
+            });
+        }
+    }
+
+    // Actualización de hora en #anim2-a7 (el global, no el de figure)
+    const clockTarget = $('#anim2-container > #anim2-a7'); // Seleccionar el #anim2-a7 global
+    if (clockTarget.length) {
+        setInterval(function () {
+            var h = new Date().getHours();
+            var m = new Date().getMinutes();
+            if (h < 10) { clockTarget.find('.anim2-a731').text('0' + h + ':'); }
+            else { clockTarget.find('.anim2-a731').text(h + ':'); }
+            if (m < 10) { clockTarget.find('.anim2-a732').text('0' + m); }
+            else { clockTarget.find('.anim2-a732').text(m); }
+        }, 1000);
+
+        // Fecha actual (estática o actualizada)
+        var currentDate = new Date();
+        var d = currentDate.getDate();
+        var mo = currentDate.getMonth() + 1;
+        var y = currentDate.getFullYear();
+        if (d < 10) { clockTarget.find('.anim2-a741').text('0' + d + '/'); } else { clockTarget.find('.anim2-a741').text(d + '/'); }
+        if (mo < 10) { clockTarget.find('.anim2-a742').text('0' + mo + '/'); } else { clockTarget.find('.anim2-a742').text(mo + '/'); }
+        clockTarget.find('.anim2-a743').text(y);
+    }
+
+
+    // Animación para #anim2-a8 (líneas horizontales con barrido)
+    if (anim2_a8.length && !anim2_a8.find('span').length) { // Solo agregar si no existen
+        for (let i = 1; i < 15; i++) { // Número de líneas horizontales
+            anim2_a8.append('<span></span>');
+        }
+    }
+
+    // Animación para #anim2-a9 (números aleatorios par/impar)
+    if (anim2_a9.length) {
+        // Asegurarse que los spans existen si el HTML no los provee inicialmente
+        if (anim2_a9.find('span').length < 2) {
+            anim2_a9.html('<span>00000</span><span>000000000</span>'); // Valores iniciales
+        }
+        setInterval(function () {
+            var mino = 10000, maxo = 99999;
+            var rand = mino - 0.5 + Math.random() * (maxo - mino + 1);
+            rand = Math.round(rand);
+            var mine = 100000000, maxe = 999999999;
+            var ran = mine - 0.5 + Math.random() * (maxe - mine + 1);
+            ran = Math.round(ran);
+            $('#anim2-a9 span:odd').text(rand); // El segundo span
+            $('#anim2-a9 span:even').text(ran); // El primer span
+        }, 200); // Intervalo más largo para que sea legible
+    }
+
+    // Generación de elementos para #anim2-f1 (dentro de #anim2-figure)
+    if (anim2_f1.length) {
+        for (let i = 1; i < 13; i++) { // 12 items
+            anim2_f1.append('<span class="anim2-f1-item' + i + '"></span>');
+            $('.anim2-f1-item' + i).css({
+                '-webkit-transform': 'rotateZ(' + i * 30 + 'deg) translateY(75px)', // translateY ajustado para figure
+                '-moz-transform': 'rotateZ(' + i * 30 + 'deg) translateY(75px)'
+            });
+        }
+    }
+    // Generación de elementos para #anim2-f2 (dentro de #anim2-figure)
+    if (anim2_f2.length) {
+        for (let i = 1; i < 37; i++) { // 36 items
+            anim2_f2.append('<span class="anim2-f2-item' + i + '"></span>');
+            $('.anim2-f2-item' + i).css({
+                '-webkit-transform': 'rotateZ(' + i * 10 + 'deg) translateY(80px)', // translateY ajustado
+                '-moz-transform': 'rotateZ(' + i * 10 + 'deg) translateY(80px)'
+            });
+        }
+    }
+    // Generación de elementos para #anim2-f5 (dentro de #anim2-figure)
+    if (anim2_f5.length) {
+        for (let i = 1; i < 19; i++) { // 18 items
+            anim2_f5.append('<span class="anim2-f5-item' + i + '"><b>' + (Math.random() * 30).toFixed(0) + '</b></span>');
+            $('.anim2-f5-item' + i).css({
+                '-webkit-transform': 'rotateZ(' + i * 20 + 'deg) translateY(40px)', // translateY ajustado
+                '-moz-transform': 'rotateZ(' + i * 20 + 'deg) translateY(40px)'
+            });
+        }
+    }
+
+    // Generación de barras para #anim2-b1
+    if (anim2_b1.length) {
+        for (let i = 1; i <= 10; i++) { // 10 barras
+            anim2_b1.append('<span class="anim2-b1-bar' + i + '"></span>');
+            $('.anim2-b1-bar' + i).css({
+                'left': (i * 7 - 7) + 'px', // Espaciado de las barras (5px width + 2px gap)
+                '-webkit-animation': 'anim2-kf-b1 ' + (0.5 + Math.random() * 1.5) + 's ease-in-out infinite alternate',
+                '-moz-animation': 'anim2-kf-b1 ' + (0.5 + Math.random() * 1.5) + 's ease-in-out infinite alternate'
+            });
+        }
+    }
+});
+
+
+===== static/js/login_combined_animations.js =====
+// static/js/login_combined_animations.js
+$(document).ready(function () {
+    // --- HUD Animation ---
+    const $hudWrapper = $('#animacion-hud-wrapper');
+    if ($hudWrapper.length) {
+        const $anim2Container = $('#anim2-container');
+        const $anim2_a3_placeholder = $('#anim2-a3-placeholder');
+        const $anim2_a4 = $('#anim2-a4');
+        const $anim2_a5 = $('#anim2-a5');
+        const $anim2_a8 = $('#anim2-a8');
+        const $anim2_a9 = $('#anim2-a9');
+        const $anim2_f1 = $('#anim2-f1');
+        const $anim2_f2 = $('#anim2-f2');
+        const $anim2_f5 = $('#anim2-f5');
+        const $anim2_b1 = $('#anim2-b1');
+
+        function getRandomDelay(maxSeconds = 1, minSeconds = 0) {
+            return (Math.random() * (maxSeconds - minSeconds) + minSeconds).toFixed(2) + 's';
+        }
+
+        if ($anim2_a3_placeholder.length) {
+            for (let i = 1; i <= 10; i++) {
+                $('<span></span>')
+                    .addClass('anim2-num-span' + i)
+                    .css('animation', `anim2-kf-opacity 1s ${getRandomDelay(2)} infinite`)
+                    .appendTo($anim2_a3_placeholder);
+            }
+            setInterval(() => {
+                $anim2_a3_placeholder.find('span').each(function () {
+                    $(this).text(Math.ceil(Math.random() * 999));
+                });
+            }, 150);
+        }
+
+        if ($anim2_a4.length) {
+            for (let i = 1; i <= 14; i++) {
+                $('<span></span>').addClass('anim2-a4-bar' + i).appendTo($anim2_a4);
+            }
+            setInterval(() => {
+                $anim2_a4.find('span').each(function () {
+                    $(this).css('width', (Math.random() * 100) + '%');
+                });
+            }, 500);
+        }
+
+        if ($anim2_a5.length) {
+            for (let i = 1; i <= 15; i++) {
+                $('<span></span>')
+                    .append($('<b></b>').addClass('anim2-a5-block' + i)
+                    .css('animation', `anim2-kf-a5-b 1s ${getRandomDelay(1)} infinite`))
+                    .appendTo($anim2_a5);
+            }
+        }
+
+        const $clockTarget = $anim2Container.children('#anim2-a7'); // Global clock
+        if ($clockTarget.length) {
+            const $hoursSpan = $clockTarget.find('.anim2-a731');
+            const $minutesSpan = $clockTarget.find('.anim2-a732');
+            const $daySpan = $clockTarget.find('.anim2-a741');
+            const $monthSpan = $clockTarget.find('.anim2-a742');
+            const $yearSpan = $clockTarget.find('.anim2-a743');
+
+            function updateClockTime() {
+                const now = new Date();
+                $hoursSpan.text((now.getHours() < 10 ? '0' : '') + now.getHours() + ':');
+                $minutesSpan.text((now.getMinutes() < 10 ? '0' : '') + now.getMinutes());
+            }
+            function setClockDate() {
+                const now = new Date();
+                $daySpan.text((now.getDate() < 10 ? '0' : '') + now.getDate() + '/');
+                $monthSpan.text((now.getMonth() < 9 ? '0' : '') + (now.getMonth() + 1) + '/'); // month is 0-indexed
+                $yearSpan.text(now.getFullYear());
+            }
+            setInterval(updateClockTime, 1000);
+            updateClockTime();
+            setClockDate();
+        }
+
+        if ($anim2_a8.length && !$anim2_a8.find('span').length) {
+            for (let i = 1; i <= 14; i++) {
+                $anim2_a8.append('<span></span>');
+            }
+        }
+
+        if ($anim2_a9.length) {
+            if ($anim2_a9.find('span').length < 2) {
+                $anim2_a9.html('<span>000000000</span><span>00000</span>'); // Adjusted order based on typical HUDs
+            }
+            const $span1 = $anim2_a9.find('span:first-child');
+            const $span2 = $anim2_a9.find('span:last-child');
+            setInterval(() => {
+                $span1.text(String(Math.floor(100000000 + Math.random() * 900000000)));
+                $span2.text(String(Math.floor(10000 + Math.random() * 90000)));
+            }, 250);
+        }
+
+        function populateFigureElement($element, count, rotationStep, translateY, contentGenerator) {
+            if ($element && $element.length) {
+                for (let i = 1; i <= count; i++) {
+                    const $item = $('<span></span>').addClass($element.attr('id') + '-item' + i);
+                    $item.css('transform', `rotateZ(${i * rotationStep}deg) translateY(${translateY}px)`);
+                    if (contentGenerator) {
+                        $item.html(contentGenerator(i));
+                    }
+                    $element.append($item);
+                }
+            }
+        }
+        populateFigureElement($anim2_f1, 12, 30, 75);
+        populateFigureElement($anim2_f2, 36, 10, 80);
+        populateFigureElement($anim2_f5, 18, 20, 40, () => `<b>${(Math.random() * 30).toFixed(0)}</b>`);
+
+        if ($anim2_b1.length) {
+            for (let i = 1; i <= 10; i++) {
+                $('<span></span>')
+                    .addClass('anim2-b1-bar' + i)
+                    .css({
+                        'left': (i * 7 - 7) + 'px',
+                        'animation': `anim2-kf-b1 ${getRandomDelay(1.5, 0.5)} ease-in-out infinite alternate`
+                    })
+                    .appendTo($anim2_b1);
+            }
+        }
+    } // end if $hudWrapper.length
+
+    // --- Background Hexagon Animation ---
+    const $sectionElementForHex = $('body > section'); // More specific selector if needed
+
+    if ($sectionElementForHex.length) {
+        const $container = $('<div></div>').addClass('container').appendTo($sectionElementForHex);
+        
+        const hexWidth = 50;
+        const hexHeight = 55; 
+        const rowMarginTop = -16; // From .row CSS
+        const effectiveHexHeight = hexHeight + rowMarginTop;
+
+        function createHexGrid() {
+            $container.empty(); // Clear previous grid if window resizes
+            const screenWidth = $(window).width();
+            const screenHeight = $(window).height();
+            const hexagonsPerRow = Math.ceil(screenWidth / hexWidth) + 2;
+            const numberOfRows = Math.ceil(screenHeight / effectiveHexHeight) + 2;
+
+            for (let i = 0; i < numberOfRows; i++) {
+                const $row = $('<div></div>').addClass('row').appendTo($container);
+                for (let j = 0; j < hexagonsPerRow; j++) {
+                    $('<div></div>').addClass('hexagon').appendTo($row);
+                }
+            }
+        }
+        createHexGrid();
+        // Optional: Recreate grid on window resize (debounced for performance)
+        let resizeTimeout;
+        $(window).on('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(createHexGrid, 250);
+        });
+
+    } else {
+        console.error("Error JS: No se encontr\u00F3 el elemento <section> para crear el fondo de hex\u00E1gonos.");
+    }
+});
+
+
+===== static/js/login_animation.js =====
+document.addEventListener('DOMContentLoaded', function() {
+    const sectionElement = document.querySelector('section');
+
+    if (sectionElement) {
+        const numberOfSpans = 256;
+        for (let i = 0; i < numberOfSpans; i++) {
+            let span = document.createElement('span');
+            sectionElement.appendChild(span);
+        }
+    } else {
+        console.error("Error: El elemento <section> para la animación de fondo no fue encontrado.");
+    }
+});
+
+
+===== static/js/login_background_animation.js =====
+document.addEventListener('DOMContentLoaded', function() {
+    const sectionElement = document.querySelector('section');
+
+    if (sectionElement) {
+
+        const container = document.createElement('div');
+        container.classList.add('container');
+        sectionElement.appendChild(container);
+
+        const hexWidth = 50; // Ancho del hexágono en px (de .hexagon CSS)
+        const hexHeight = 55; // Alto del hexágono en px (de .hexagon CSS)
+        const rowMarginTop = -16; // Margen superior negativo para solapar filas (de .row CSS)
+        const effectiveHexHeight = hexHeight + rowMarginTop; // Altura efectiva que ocupa una fila con solapamiento
+
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // Cálculo de hexágonos por fila y número de filas
+        // Se añade un extra para asegurar cobertura en los bordes debido a los desplazamientos y márgenes
+        const hexagonsPerRow = Math.ceil(screenWidth / hexWidth) + 2; 
+        const numberOfRows = Math.ceil(screenHeight / effectiveHexHeight) + 2;
+
+        for (let i = 0; i < numberOfRows; i++) {
+            const row = document.createElement('div');
+            row.classList.add('row');
+            for (let j = 0; j < hexagonsPerRow; j++) {
+                const hexagon = document.createElement('div');
+                hexagon.classList.add('hexagon');
+                row.appendChild(hexagon);
+            }
+            container.appendChild(row);
+        }
+    } else {
+        console.error("Error JS: No se encontró el elemento <section> para crear el fondo de hexágonos.");
+    }
+});
+
+
+===== static/js/scripts.js =====
+$(document).ready(function() {
+    const a3 = $('#animacion');
+    const a4 = $('#a4');
+    const a5 = $('#a5');
+    const a8 = $('#a8');
+    const a9 = $('#a9');
+    const f1 = $('#f1');
+    const f2 = $('#f2');
+    const f5 = $('#f5');
+    
+    $('.f11, .f12, .f13, .f14, .f15, .f16, .f17, .f18, .f19, .f110, .f111, .f112').css('transform', function() {
+        return 'rotateZ(' + (Math.random() * 360) + 'deg) translateY(91px)';
+    });
+    
+    $('.f21, .f22, .f23, .f24, .f25, .f26, .f27, .f28, .f29, .f210, .f211, .f212, .f213, .f214, .f215, .f216, .f217, .f218, .f219, .f220, .f221, .f222, .f223, .f224, .f225, .f226, .f227, .f228, .f229, .f230, .f231, .f232, .f233').css('transform', function() {
+        return 'rotateZ(' + (Math.random() * 360) + 'deg) translateY(95px)';
+    });
+    
+    for (let i = 1; i < 11; i++) {      
+        a3.append('<span class=a3'+i+'></span>'); 
+        $('.a3'+i+'').css({ 
+            '-webkit-animation': 'a3 1s '+(Math.random()*2)+'s infinite', 
+            '-moz-animation': 'a3 1s '+(Math.random()*2)+'s infinite',
+            'color': '#ff0000'
+        }); 
+    } 
+    
+    setInterval(function() { 
+        $('#animacion span').each(function() { 
+            $(this).text(Math.ceil(Math.random()*999));
+        }); 
+    }, 100);
+    
+    for (let i = 1; i < 31; i++) {      
+        a4.append('<span class=a3'+i+'></span>'); 
+    }
+    
+    setInterval(function() { 
+        $('#a4 span').each(function() { 
+            $(this).width((Math.random()*15)); 
+        }); 
+    }, 500);  
+    
+    for (let i = 1; i < 16; i++) {      
+        a5.append('<span><b class=a5'+i+'></b></span>'); 
+        $('.a5'+i+'').css({ 
+            '-webkit-animation': 'a3 1s 0.'+i+'s infinite', 
+            '-moz-animation': 'a3 1s 0.'+i+'s infinite' 
+        });   
+    } 
+    
+    setInterval(function() { 
+        var h = Math.ceil(Math.random()*24); 
+        var m = Math.ceil(Math.random()*60); 
+        if (h<10) {$('.a731').text('0'+h+':');} 
+        else {$('.a731').text(h+':');} 
+        if (m<10) {$('.a732').text('0'+m);} 
+        else {$('.a732').text(m);}  
+    }, 100); 
+    
+    setInterval(function() { 
+        var d = Math.ceil(Math.random()*30); 
+        var m = Math.ceil(Math.random()*12); 
+        var min = 1700, max = 1999; 
+        var rand = min - 0.5 + Math.random()*(max-min+1) 
+        rand = Math.round(rand); 
+        if (d<10) {$('.a741').text('0'+d+'/');} 
+        else {$('.a741').text(d+'/');} 
+        if (m<10) {$('.a742').text('0'+m+'/');} 
+        else {$('.a742').text(m+'/');} 
+        $('.a743').text(rand); 
+    }, 50); 
+    
+    for (let i = 1; i < 41; i++) {      
+        a8.append('<span></span>'); 
+    } 
+    
+    setInterval(function() { 
+        var mino = 10000, maxo = 99999; 
+        var rand = mino - 0.5 + Math.random()*(maxo-mino+1); 
+        rand = Math.round(rand); 
+        var mine = 100000000, maxe = 999999999;  
+        var ran = mine - 0.5 + Math.random()*(maxe-mine+1); 
+        ran = Math.round(ran);  
+        $('#a9 span:odd').text(rand); 
+        $('#a9 span:even').text(ran);  
+    }, 100); 
+    
+    for (let i = 1; i < 37; i++) {      
+        f2.append('<span class=f2'+i+'></span>'); 
+        $('.f2'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i+'0deg) translateY(95px)' 
+        });   
+    } 
+    
+    for (let i = 1; i < 19; i++) {      
+        f5.append('<span class=f5'+i+'><b>'+Math.random()*30+'</b></span>'); 
+        $('.f5'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i*2+'0deg) translateY(40px)' 
+        });   
+    } 
+    
+    for (let i = 1; i < 13; i++) {      
+        f1.append('<span class=f1'+i+'></span>'); 
+        $('.f1'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i*30+'deg) translateY(91px)' 
+        });   
+    }
+});
+
+// Animación de creación de spans
+for(let i=0; i<200; i++) {
+    let span = document.createElement('span');
+    document.querySelector('section').appendChild(span);
+}
+
+
+===== static/css/scanner_styles.css =====
+/* En scanner_styles.css */
+.hidden {
+    display: none !important; /* !important para asegurar que sobreescriba estilos inline si los hubiera */
+}
+.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+.tool-dangerous-indicator {
+    color: orange;
+    font-weight: bold;
+    margin-left: 5px;
+    cursor: help;
+}
+.jobs-list-container li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #330000;
+}
+.jobs-list-container li:last-child {
+    border-bottom: none;
+}
+.jobs-list-container li:hover {
+    background-color: #2a0000;
+}
+.job-summary {
+    flex-grow: 1;
+}
+.job-actions button, .job-actions a {
+    margin-left: 10px;
+    padding: 6px 10px;
+    font-size: 0.9em;
+}
+.job-status-running { color: #ffae42; } /* Naranja */
+.job-status-completed { color: #7eda28; } /* Verde */
+.job-status-error { color: #ff5f56; } /* Rojo */
+.job-status-cancelled { color: #aaaaaa; } /* Gris */
+.job-status-pending { color: #f0e68c; } /* Amarillo claro */
+
+/* Estilos para grupos de parámetros CLI */
+.tool-cli-params-group {
+    background-color: #101010; /* Fondo ligeramente más oscuro que el item */
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 3px;
+    border: 1px solid #300000;
+}
+.tool-cli-params-group label {
+    display: inline-block;
+    width: auto; /* Ajustar según sea necesario */
+    margin-right: 5px;
+    margin-bottom: 3px;
+    color: #ddd;
+    font-size: 0.85em;
+}
+.tool-cli-params-group input[type="text"],
+.tool-cli-params-group input[type="number"],
+.tool-cli-params-group select {
+    width: calc(100% - 100px); /* Ajustar según el ancho del label */
+    padding: 4px;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #ff0000;
+    margin-bottom: 5px;
+    font-size: 0.85em;
+    display: inline-block; /* Para que se alinee con el label */
+}
+
+
+===== static/css/login_hud_animation.css =====
+/* === ESTILOS PARA LA ANIMACIÓN HUD (ANIMACIÓN 02) === */
+/* Estos estilos se basan en el archivo static/css/animation-2.css proporcionado,
+   eliminando redundancias como import de fuentes, body, section, signin, etc.,
+   que ya están en login_styles.css */
+
+   #animacion-hud-wrapper {
+    width: 100%;           /* Ocupa todo el ancho disponible en .content */
+    max-width: 380px;      /* Ancho máximo aumentado de 340px a 380px */
+    height: 210px;         /* Altura aumentada de 180px a 210px */
+    position: relative;    /* Se mantiene en el flujo, no absolute */
+    margin-bottom: 25px;   /* Más espacio antes del título "Iniciar Sesión" */
+    background: #1A1A1A;   /* Fondo oscuro para la HUD */
+    overflow: hidden;
+    border: 1px solid #550000; /* Borde rojo más visible */
+    border-radius: 6px;   /* Redondeo ligero para el contenedor */
+    color: #CCCCCC;        /* Color de texto por defecto (blanco/gris claro) */
+    font-family: 'Courier New', Courier, monospace; /* Fuente más "tech" */
+}
+
+#animacion-hud-wrapper * {
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
+    box-sizing: border-box; 
+}
+
+#animacion-hud-wrapper #anim2-container > div { /* Asegura que los hijos directos de anim2-container son absolutos si lo necesitan */
+    position: absolute;
+}
+
+#anim2-container {
+    height: 100%; width: 100%; position: relative;
+    -webkit-perspective: 600px;
+    -moz-perspective: 600px;
+    -webkit-animation: anim2-start 0.8s ease-out;
+    -moz-animation: anim2-start 0.8s ease-out;
+    overflow: hidden; /* Para contener elementos que puedan desbordarse */
+}
+
+@-webkit-keyframes anim2-start {
+    from { -webkit-transform: scale(0.5); opacity: 0; }
+    to   { -webkit-transform: scale(1); opacity: 1; }
+}
+@-moz-keyframes anim2-start {
+    from { -moz-transform: scale(0.5); opacity: 0; }
+    to   { -moz-transform: scale(1); opacity: 1; }
+}
+
+/* Elementos generales de la HUD con temática roja */
+#anim2-a1 { top: 4px; left: 20px; height: 4px; width: 70px; border:1px dotted #990000; }
+#anim2-a11 { position: absolute; left: 0; top: 0; height: 100%; background:#AA0000; -webkit-animation: anim2-kf-a11 4s ease-in-out infinite; -moz-animation: anim2-kf-a11 4s ease-in-out infinite;}
+@-webkit-keyframes anim2-kf-a11 { from {width:70%;} 10% {width:20%;} 20% {width:90%;} 30% {width:60%;} 40% {width:100%;} 50% {width:10%;} 60% {width:30%;} 70% {width:20%;} 80% {width:50%;} 90% {width:10%;} to {width:70%;} }
+@-moz-keyframes anim2-kf-a11 { from {width:70%;} 10% {width:20%;} 20% {width:90%;} 30% {width:60%;} 40% {width:100%;} 50% {width:10%;} 60% {width:30%;} 70% {width:20%;} 80% {width:50%;} 90% {width:10%;} to {width:70%;} }
+
+
+#anim2-a2 { top: 18px; left: 50px; height: 30px; width: 30px; border-radius: 50%; border:1px dashed #990000; }
+#anim2-a21 { position: absolute; top: 8px; left: 13px; height: 14px; width: 4px; background:#444; border-radius: 3px; -webkit-animation: anim2-kf-a21 8s linear infinite; -moz-animation: anim2-kf-a21 8s linear infinite; }
+@-webkit-keyframes anim2-kf-a21 { from {-webkit-transform:rotateZ(0deg) translateY(50%);} to {-webkit-transform:rotateZ(360deg) translateY(50%);} }
+@-moz-keyframes anim2-kf-a21 { from {-moz-transform:rotateZ(0deg) translateY(50%);} to {-moz-transform:rotateZ(360deg) translateY(50%);} }
+
+
+#anim2-a3-placeholder { top:15px; left:5px; height:calc(100% - 70px); width:35px; font-size:10px; overflow-y: auto; color: #FF0000;}
+#anim2-a3-placeholder span { display: block; margin-bottom: 2px; text-shadow:0 0 3px #FF0000; }
+/* Keyframes para opacidad usados por JS para los spans de #anim2-a3-placeholder */
+@-webkit-keyframes anim2-kf-opacity { from { opacity:0; } 50% { opacity:1; } to { opacity:0; } }
+@-moz-keyframes anim2-kf-opacity { from { opacity:0; } 50% { opacity:1; } to { opacity:0; } }
+
+
+#anim2-a4 { top:50px; left:8px; height:calc(100% - 80px); width:12px; }
+#anim2-a4 span { display:block; height:2px; width:100%; background:#FF0000; margin-bottom:3px;}
+
+#anim2-a5 { height:30px; width:100%; bottom:0; left:0; overflow:hidden; border-top:1px solid #440000; }
+#anim2-a5 span { display:block; position:relative; float:left; height:30px; width:18px; border-right:1px solid #440000;}
+#anim2-a5 span:first-child { margin-left:6px; border-left:1px solid #440000;}
+#anim2-a5 span b { position:absolute; top:2px; left:2px; right:2px; bottom:2px; background:#AA0000; opacity:0; }
+/* Keyframes para #anim2-a5 span b usados por JS */
+@-webkit-keyframes anim2-kf-a5-b { from {opacity:0;} 50% {opacity:1;} to {opacity:0;} }
+@-moz-keyframes anim2-kf-a5-b { from {opacity:0;} 50% {opacity:1;} to {opacity:0;} }
+
+#anim2-a6 { text-transform:uppercase; left:90px; top:0; width:calc(100% - 180px); padding:2px 0; font-size:12px; text-align:center; color: #FFFFFF; }
+
+#anim2-a7 { top:5px; right:10px; width:80px; text-align:right; color: #CCCCCC; font-size: 10px; }
+#anim2-a7 span { display:block; line-height: 1.2; }
+#anim2-a7 span b { font-weight:normal; margin-left:-4px; text-shadow:0 0 2px #FF0000; }
+#anim2-a7 .anim2-a71 { font-size:70%; }
+#anim2-a7 .anim2-a72 { font-size:80%; }
+#anim2-a7 .anim2-a73 { font-size:110%; }
+#anim2-a7 .anim2-a74 { font-size:90%; }
+#anim2-a7 .anim2-a75 { font-size:80%; }
+#anim2-a7 .anim2-a76 { font-size:70%; }
+
+
+#anim2-a8 { top:80px; right:7px; height:calc(100% - 120px); width:50px; border-bottom:2px solid #AA0000; }
+#anim2-a8 span { display:block; margin-left:10%; width:80%; height:1px; background:#FF0000; margin-bottom:3px;}
+#anim2-a81 { top:0; width:100%; background:#111; -webkit-animation: anim2-kf-a81 2s ease-in-out infinite; -moz-animation: anim2-kf-a81 2s ease-in-out infinite;}
+@-webkit-keyframes anim2-kf-a81 { from {height:0;} 20% {height:25%;} 40% {height:5%;} 60% {height:60%;} 80% {height:35%;} to {height:0;} }
+@-moz-keyframes anim2-kf-a81 { from {height:0;} 20% {height:25%;} 40% {height:5%;} 60% {height:60%;} 80% {height:35%;} to {height:0;} }
+
+
+#anim2-a9 { bottom:37px; right:7px; font-size:12px; text-align:right; color: #FF0000; text-shadow:0 0 2px #FF0000; }
+#anim2-a9 span { margin-left:-4px; }
+
+#anim2-a10 { width:120px; bottom:56px; right:60px; font-size:11px; text-align:right; color: #FFFFFF; }
+#anim2-a10 span { position:absolute; top:1px; height:60%; width:70px; background:#AA0000; right:30px; -webkit-animation: anim2-kf-a10 2s ease-in-out infinite; -moz-animation: anim2-kf-a10 2s ease-in-out infinite;}
+@-webkit-keyframes anim2-kf-a10 { from {width:70px;} 20% {width:10px;} 40% {width:100px;} 60% {width:30px;} 80% {width:90px;} to {width:70px;} }
+@-moz-keyframes anim2-kf-a10 { from {width:70px;} 20% {width:10px;} 40% {width:100px;} 60% {width:30px;} 80% {width:90px;} to {width:70px;} }
+
+
+#anim2-b1 { bottom:32px; width:80px; height:40px; left:45px; } /* Ajustado left */
+#anim2-b1 span { position:absolute; bottom:0; height:100%; width:5px; background:#FF0000; }
+/* Keyframes para #anim2-b1 span usados por JS */
+@-webkit-keyframes anim2-kf-b1 { from {height:100%;} 20% {height:10%;} 40% {height:60%;} 60% {height:5%;} 80% {height:40%;} to {height:100%;} }
+@-moz-keyframes anim2-kf-b1 { from {height:100%;} 20% {height:10%;} 40% {height:60%;} 60% {height:5%;} 80% {height:40%;} to {height:100%;} }
+
+
+/* --- Estilos de #anim2-figure y sus hijos --- */
+#anim2-figure {
+    top: 50%; left: 50%; 
+    width: 200px;  /* Aumentado para ocupar más espacio */
+    height: 200px; /* Aumentado proporcionalmente */
+    margin-top: -100px; /* Ajustado a la mitad de la nueva altura */
+    margin-left: -100px;/* Ajustado a la mitad del nuevo ancho */
+    -webkit-transform: rotateY(-30deg) rotateX(10deg) scale(0.85);
+    -moz-transform: rotateY(-30deg) rotateX(10deg) scale(0.85);
+    -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d;
+    -webkit-animation: anim2-kf-figure 8s ease-in-out infinite;
+    -moz-animation: anim2-kf-figure 8s ease-in-out infinite;
+}
+@-webkit-keyframes anim2-kf-figure { from {-webkit-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} 20% {-webkit-transform:rotateY(30deg) rotateX(30deg) scale(0.8);} 40% {-webkit-transform:rotateY(30deg) rotateX(-30deg) scale(0.8);} 60% {-webkit-transform:rotateY(-10deg) rotateX(30deg) scale(0.8);} 80% {-webkit-transform:rotateY(30deg) rotateX(-10deg) scale(0.8);} to {-webkit-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} }
+@-moz-keyframes anim2-kf-figure { from {-moz-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} 20% {-moz-transform:rotateY(30deg) rotateX(30deg) scale(0.8);} 40% {-moz-transform:rotateY(30deg) rotateX(-30deg) scale(0.8);} 60% {-moz-transform:rotateY(-10deg) rotateX(30deg) scale(0.8);} 80% {-moz-transform:rotateY(30deg) rotateX(-10deg) scale(0.8);} to {-moz-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} }
+
+#anim2-figure #anim2-a7 { /* Este es un #anim2-a7 DENTRO de figure */
+    position: absolute; left:-90px; top:10px; color:#FF0000; font-size: 10px;
+    -webkit-transform:scale(0.5); -moz-transform:scale(0.5);
+    -webkit-animation:anim2-kf-fa7-red 2s ease-in-out infinite; -moz-animation:anim2-kf-fa7-red 2s ease-in-out infinite;
+}
+#anim2-figure #anim2-a7 span { display:block; line-height: 1.2; }
+#anim2-figure #anim2-a7 .anim2-a73 b { font-weight: normal; }
+
+@-webkit-keyframes anim2-kf-fa7-red { from {color:#FF0000;} 25% {color:#DD0000;} 50% {color:#FFFFFF;} 75% {color:#DD0000;} to {color:#FF0000;} }
+@-moz-keyframes anim2-kf-fa7-red { from {color:#FF0000;} 25% {color:#DD0000;} 50% {color:#FFFFFF;} 75% {color:#DD0000;} to {color:#FF0000;} }
+
+#anim2-figure div, #anim2-figure span { -webkit-transform-style:preserve-3d; -moz-transform-style:preserve-3d; position:absolute; /* Necesario para muchos elementos internos de figure */}
+
+/* Elementos F1 */
+#anim2-f1 { left: -2px; top: -2px; height: 100%; width: 100%; border-radius: 50%; border-width: 2px; border-style: solid; box-shadow:0 0 5px #AA0000; -webkit-animation:anim2-kf-f1-red 4s ease-in-out infinite; -moz-animation:anim2-kf-f1-red 4s ease-in-out infinite; }
+@-webkit-keyframes anim2-kf-f1-red { from {-webkit-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} 10% {-webkit-transform:rotateZ(30deg); opacity:1.0; border-color:#FF0000;} 50% {-webkit-transform:rotateZ(-40deg); opacity:1.0; border-color:#FFFFFF;} to {-webkit-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} }
+@-moz-keyframes anim2-kf-f1-red { from {-moz-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} 10% {-moz-transform:rotateZ(30deg); opacity:1.0; border-color:#FF0000;} 50% {-moz-transform:rotateZ(-40deg); opacity:1.0; border-color:#FFFFFF;} to {-moz-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} }
+#anim2-f1 span { display:block; position:absolute; top:50%; left:50%; margin-top:-4px; height:8px; width:2px; background:#AA0000; box-shadow:0 0 3px #AA0000; -webkit-animation:anim2-kf-f1div-red 4s ease-in-out infinite; -moz-animation:anim2-kf-f1div-red 4s ease-in-out infinite; }
+@-webkit-keyframes anim2-kf-f1div-red { from {background:#AA0000;} 10% {background:#FF0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+@-moz-keyframes anim2-kf-f1div-red { from {background:#AA0000;} 10% {background:#FF0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+
+/* Elementos F2 */
+#anim2-f2 { height:100%; width:100%; -webkit-animation:anim2-kf-f2 20s linear infinite; -moz-animation:anim2-kf-f2 20s linear infinite; }
+@-webkit-keyframes anim2-kf-f2 { from {-webkit-transform:translateZ(-5px) rotateZ(0deg);} to {-webkit-transform:translateZ(-5px) rotateZ(360deg);} }
+@-moz-keyframes anim2-kf-f2 { from {-moz-transform:translateZ(-5px) rotateZ(0deg);} to {-moz-transform:translateZ(-5px) rotateZ(360deg);} }
+#anim2-f2 span { display:block; position:absolute; top:50%; left:50%; margin-top:-3px; height:6px; width:2px; background:#999999; }
+
+/* Elementos F3 */
+#anim2-f3 { top:10px; left:10px; height:calc(100% - 20px); width:calc(100% - 20px); border-radius:50%; border-width:5px; border-style:solid; border-color:#FF0000; box-shadow:0 0 5px #FF0000; -webkit-transform:translateZ(10px); -moz-transform:translateZ(10px); -webkit-animation:anim2-kf-f3-red 6s ease-in-out infinite; -moz-animation:anim2-kf-f3-red 6s ease-in-out infinite;}
+@-webkit-keyframes anim2-kf-f3-red { from {-webkit-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} 50% {-webkit-transform:translateZ(10px) rotateZ(-120deg); border-color:#FFFFFF; opacity:1.0;} to {-webkit-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} }
+@-moz-keyframes anim2-kf-f3-red { from {-moz-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} 50% {-moz-transform:translateZ(10px) rotateZ(-120deg); border-color:#FFFFFF; opacity:1.0;} to {-moz-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} }
+#anim2-f31 { width:30px; background:#111; top:-8px; left:calc(50% - 15px); bottom:-8px; }
+#anim2-f31 span { left:8px; height:10px; width:10px; border:1px solid #FF0000; }
+#anim2-f31 span b { display:block; height:6px; width:6px; background:#FF0000; margin:1px; -webkit-animation:anim2-kf-f31span-red 2s ease-in-out infinite; -moz-animation:anim2-kf-f31span-red 2s ease-in-out infinite;}
+#anim2-f31 .anim2-f312 { bottom:0; }
+@-webkit-keyframes anim2-kf-f31span-red { from {background:#FF0000; opacity:1;} 25% {background:#DD0000; opacity:0;} 50% {background:#FFFFFF; opacity:1;} 75% {background:#DD0000; opacity:0;} to {background:#FF0000; opacity:1;} }
+@-moz-keyframes anim2-kf-f31span-red { from {background:#FF0000; opacity:1;} 25% {background:#DD0000; opacity:0;} 50% {background:#FFFFFF; opacity:1;} 75% {background:#DD0000; opacity:0;} to {background:#FF0000; opacity:1;} }
+#anim2-f32 { height:30px; background:#111; top:calc(50% - 15px); left:-10px; right:-10px; }
+#anim2-f32 span { height:5px; width:5px; top:12px; border:1px solid #AA0000; }
+#anim2-f32 .anim2-f321 {left:4px;}
+#anim2-f32 .anim2-f322 {right:4px;}
+#anim2-f33 { width:2px; background:#111; top:-7px; left:calc(50% - 1px); bottom:-7px; -webkit-transform:translateZ(1px) rotateZ(45deg); -moz-transform:translateZ(1px) rotateZ(45deg); }
+#anim2-f34 { width:2px; background:#111; top:-7px; left:calc(50% - 1px); bottom:-7px; -webkit-transform:translateZ(1px) rotateZ(-45deg); -moz-transform:translateZ(1px) rotateZ(-45deg); }
+
+/* Elementos F4 */
+#anim2-f4 { top:20%; left:20%; height:60%; width:60%; border:1px solid #FF0000; -webkit-transform:translateZ(15px); -moz-transform:translateZ(15px); -webkit-animation:anim2-kf-f4-red 6s ease-in-out infinite; -moz-animation:anim2-kf-f4-red 6s ease-in-out infinite;}
+ @-webkit-keyframes anim2-kf-f4-red { from {-webkit-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} 25% {-webkit-transform:translateZ(15px) rotateZ(120deg); opacity:1; border-color: #FFFFFF;} 50% {-webkit-transform:translateZ(15px) rotateZ(0); opacity:0; border-color: #FF0000;} 75% {-webkit-transform:translateZ(15px) rotateZ(-120deg); opacity:1; border-color: #FFFFFF;} to {-webkit-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} }
+ @-moz-keyframes anim2-kf-f4-red { from {-moz-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} 25% {-moz-transform:translateZ(15px) rotateZ(120deg); opacity:1; border-color: #FFFFFF;} 50% {-moz-transform:translateZ(15px) rotateZ(0); opacity:0; border-color: #FF0000;} 75% {-moz-transform:translateZ(15px) rotateZ(-120deg); opacity:1; border-color: #FFFFFF;} to {-moz-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} }
+#anim2-f41 { left:calc(50% - 4px); top:-2px; bottom:-2px; width:8px; background:#111; }
+#anim2-f42 { top:calc(50% - 4px); left:-2px; right:-2px; height:8px; background:#111; }
+#anim2-f43 { top:calc(50% - 3px); left:calc(50% - 1px); height:6px; width:2px; background:#FF0000; }
+#anim2-f43.anim2-f431 {-webkit-transform:rotateZ(45deg) translateY(25px); -moz-transform:rotateZ(45deg) translateY(25px);}
+#anim2-f43.anim2-f432 {-webkit-transform:rotateZ(-45deg) translateY(25px); -moz-transform:rotateZ(-45deg) translateY(25px);}
+#anim2-f43.anim2-f433 {-webkit-transform:rotateZ(135deg) translateY(25px); -moz-transform:rotateZ(135deg) translateY(25px);}
+#anim2-f43.anim2-f434 {-webkit-transform:rotateZ(225deg) translateY(25px); -moz-transform:rotateZ(225deg) translateY(25px);}
+
+
+/* Elementos F5 */
+#anim2-f5 { left:25%; top:25%; height:50%; width:50%; -webkit-animation:anim2-kf-f5 20s linear infinite; -moz-animation:anim2-kf-f5 20s linear infinite; }
+@-webkit-keyframes anim2-kf-f5 { from {-webkit-transform:translateZ(20px) rotateZ(0deg);} to {-webkit-transform:translateZ(20px) rotateZ(-360deg);} }
+@-moz-keyframes anim2-kf-f5 { from {-moz-transform:translateZ(20px) rotateZ(0deg);} to {-moz-transform:translateZ(20px) rotateZ(-360deg);} }
+#anim2-f5 span { top:50%; left:50%; margin-top:-2px; height:4px; width:1px; background:#999999; font-size:8px; color:#fff; }
+#anim2-f5 span b { position:absolute; bottom:150%; width:10px; left:-4px; text-align:center; }
+
+/* Elementos F6 */
+#anim2-f6 { top:35%; left:35%; height:30%; width:30%; border:1px solid #FF0000; -webkit-transform:translateZ(25px); -moz-transform:translateZ(25px); }
+
+/* Elementos F7 */
+#anim2-f7 { top:38%; left:38%; height:24%; width:24%; border:1px solid #FF0000; background:#111; -webkit-transform:translateZ(28px); -moz-transform:translateZ(28px); -webkit-animation:anim2-kf-f7-red 6s linear infinite; -moz-animation:anim2-kf-f7-red 6s linear infinite;}
+ @-webkit-keyframes anim2-kf-f7-red { from {-webkit-transform:translateZ(28px) rotateZ(0deg); opacity:1;} 10% {-webkit-transform:translateZ(28px) rotateZ(36deg); opacity:0;} 20% {opacity:0;} 30% {-webkit-transform:translateZ(28px) rotateZ(108deg); opacity:1;} to {-webkit-transform:translateZ(28px) rotateZ(360deg); opacity:1;} }
+ @-moz-keyframes anim2-kf-f7-red { from {-moz-transform:translateZ(28px) rotateZ(0deg); opacity:1;} 10% {-moz-transform:translateZ(28px) rotateZ(36deg); opacity:0;} 20% {opacity:0;} 30% {-moz-transform:translateZ(28px) rotateZ(108deg); opacity:1;} to {-moz-transform:translateZ(28px) rotateZ(360deg); opacity:1;} }
+#anim2-f71 { top:-20%; left:calc(50% - 1px); height:140%; width:2px; background:#FF0000; }
+#anim2-f72 { top:calc(50% - 1px); left:-20%; width:140%; height:2px; background:#FF0000; } /* Cambiado para ser horizontal */
+
+/* Elementos F8 */
+#anim2-f8 { top:40%; left:40%; height:20%; width:20%; border:1px solid #AA0000; background:#111; -webkit-transform:translateZ(32px); -moz-transform:translateZ(32px); -webkit-animation:anim2-kf-f8-red 8s linear infinite; -moz-animation:anim2-kf-f8-red 8s linear infinite;}
+@-webkit-keyframes anim2-kf-f8-red { from {-webkit-transform:translateZ(32px) rotateZ(360deg); border-color:#AA0000; opacity:1;} 50%  {-webkit-transform:translateZ(32px) rotateZ(180deg); border-color:#FFFFFF; opacity:1;} to   {-webkit-transform:translateZ(32px) rotateZ(0deg); border-color:#AA0000; opacity:1;} }
+@-moz-keyframes anim2-kf-f8-red { from {-moz-transform:translateZ(32px) rotateZ(360deg); border-color:#AA0000; opacity:1;} 50%  {-moz-transform:translateZ(32px) rotateZ(180deg); border-color:#FFFFFF; opacity:1;} to   {-moz-transform:translateZ(32px) rotateZ(0deg); border-color:#AA0000; opacity:1;} }
+#anim2-f81 { top:-25%; left:calc(50% - 20%); height:150%; width:40%; border-radius:3px; -webkit-animation:anim2-kf-f8div-red 8s linear infinite; -moz-animation:anim2-kf-f8div-red 8s linear infinite;}
+#anim2-f82 { top:calc(50% - 20%); left:-25%; width:150%; height:40%; border-radius:3px; -webkit-animation:anim2-kf-f8div-red 8s linear infinite; -moz-animation:anim2-kf-f8div-red 8s linear infinite;} /* Cambiado para ser horizontal */
+@-webkit-keyframes anim2-kf-f8div-red { from {background:#AA0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+@-moz-keyframes anim2-kf-f8div-red { from {background:#AA0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+
+/* Elementos F9 */
+#anim2-f9 { top:45%; left:45%; height:10%; width:10%; border:1px solid #FF0000; -webkit-transform:translateZ(40px); -moz-transform:translateZ(40px); }
+#anim2-f9 span { top:30%; left:30%; height:40%; width:40%; background:#FF0000; }
+
+
+===== static/css/login_styles.css =====
+/* static/css/login_styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #000;
+    overflow: hidden; 
+}
+
+/* Contenedor Animación Fondo Hexagonal (Antiguo - Comentado) */
+/*
+section {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center; 
+    align-content: center; 
+    flex-wrap: wrap;
+    overflow: hidden;
+    gap: 0; 
+    z-index: 1;
+}
+*/
+
+/* Estilos para cada HEXÁGONO (Antiguo - Comentado) */
+/*
+section span {
+    position: relative;
+    z-index: 2;
+    display: block; 
+    --hex-width: 60px; 
+    --hex-gap: 1px;  
+    --hex-height: calc(var(--hex-width) * 0.8660254); 
+    width: var(--hex-width);
+    height: var(--hex-height);
+    background-color: #181818; 
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    margin-left: calc(var(--hex-gap) / 2);
+    margin-right: calc(var(--hex-gap) / 2);
+    margin-bottom: calc(var(--hex-height) * -0.25 + var(--hex-gap));
+    transition: background-color 0.1s ease-out, 
+                transform 0.1s ease-out, 
+                filter 0.1s ease-out;
+}
+section span:nth-child(odd) {
+    transform: translateX(calc(var(--hex-width) / 2));
+}
+section span:hover {
+    background-color: #ff0000; 
+    transform: scale(1.15);    
+    z-index: 3;                
+    filter: drop-shadow(0 0 6px rgba(255, 50, 50, 0.9)) 
+            drop-shadow(0 0 12px rgba(255, 0, 0, 0.7));
+    transition-duration: 0.05s; 
+}
+*/
+
+/* --- Media Queries for Responsive Hexagon Sizes (Antiguo - Comentado) --- */
+/*
+@media (min-width: 1600px) { 
+    section span {
+        --hex-width: 70px;
+        --hex-gap: 2px;
+    }
+}
+@media (max-width: 1200px) { 
+    section span {
+        --hex-width: 60px;
+        --hex-gap: 1px;
+    }
+}
+@media (max-width: 900px) { 
+    section span {
+        --hex-width: 50px; 
+        --hex-gap: 1px;  
+    }
+}
+@media (max-width: 600px) { 
+    section span {
+        --hex-width: 40px; 
+        --hex-gap: 1px;  
+    }
+    section .signin {
+        width: 90%;
+        padding: 20px;
+    }
+    section .signin .content h2 {
+        font-size: 1.5em;
+    }
+}
+*/
+
+/* NUEVOS ESTILOS PARA EL FONDO DE HEXÁGONOS */
+section {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #111;
+    z-index: 1; /* Asegura que el fondo esté detrás del formulario */
+}
+
+.container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.row {
+    display: flex;
+    margin-top: -16px;
+    width: 100%;
+    justify-content: center;
+}
+
+.row:nth-child(even) {
+    margin-left: 0;
+    transform: translateX(25px);
+}
+
+.hexagon {
+    position: relative;
+    width: 50px;
+    height: 55px;
+    background: #111;
+    margin: 0.5px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    transition: 2s;
+    flex-shrink: 0;
+}
+
+.hexagon:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    pointer-events: none;
+    background: rgba(255,255,255,0.02);
+}
+
+.hexagon:hover {
+    transition: 0s;
+    background: #ff0000; /* Cambiado a rojo */
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.7))
+            drop-shadow(0 0 10px rgba(255, 0, 0, 0.5))
+            drop-shadow(0 0 15px rgba(255, 0, 0, 0.3)); /* Sombra roja */
+    /* Animación de rotación de color eliminada */
+}
+
+/* @keyframes hue-rotate ya no es necesario y se puede eliminar o comentar si se prefiere */
+/*
+@keyframes hue-rotate {
+    0% {
+        filter: hue-rotate(0deg) drop-shadow(0 0 10px #0f0) drop-shadow(0 0 20px #0f0) drop-shadow(0 0 30px #0f0);
+    }
+    100% {
+        filter: hue-rotate(360deg) drop-shadow(0 0 10px #0f0) drop-shadow(0 0 20px #0f0) drop-shadow(0 0 30px #0f0);
+    }
+}
+*/
+
+/* Ajustes para que el formulario de login esté por encima */
+section .signin {
+    position: relative; /* Asegurar que z-index funcione correctamente */
+    z-index: 1000; /* Debe ser mayor que el z-index de la sección de hexágonos */
+}
+
+/* Media queries para la nueva estructura si fueran necesarias, por ahora no se añaden */
+
+/* ... (Rest of the .signin, .alert, .close styles remain unchanged) ... */
+
+
+/* Formulario de Inicio de Sesión */
+section .signin {
+    position: absolute; 
+    top: 50%;          
+    left: 50%;         
+    transform: translate(-50%, -50%); 
+    width: 420px; 
+    background: #222;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px; 
+    border-radius: 8px; 
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
+}
+
+section .signin .content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0px; 
+}
+
+section .signin .content h2 {
+    font-size: 2em;
+    color: #ff0000;
+    text-transform: uppercase;
+    margin-top: 15px; 
+    margin-bottom: 25px; 
+    text-align: center;
+}
+
+section .signin .content .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+section .signin .content .form .inputBox {
+    position: relative;
+    width: 100%;
+}
+
+section .signin .content .form .inputBox input {
+    position: relative;
+    width: 100%;
+    background: #333;
+    border: none;
+    outline: none;
+    padding: 25px 10px 7.5px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1em;
+}
+
+section .signin .content .form .inputBox i {
+    position: absolute;
+    left: 0;
+    padding: 15px 10px;
+    font-style: normal;
+    color: #aaa;
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+.signin .content .form .inputBox input:focus~i,
+.signin .content .form .inputBox input:valid~i {
+    transform: translateY(-7.5px);
+    font-size: 0.8em;
+    color: #fff;
+}
+
+.signin .content .form .links {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.signin .content .form .links a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.signin .content .form .links a:nth-child(2) {
+    color: #ff0000;
+    font-weight: 600;
+}
+
+.signin .content .form .inputBox input[type="submit"] {
+    padding: 10px;
+    background: #ff0000;
+    color: #000;
+    font-weight: 600;
+    font-size: 1.35em;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+}
+
+input[type="submit"]:active {
+    opacity: 0.6;
+}
+
+/* Estilos de Alerta (para mensajes flash) */
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    color: #fff; 
+    z-index: 1001; 
+    width: 100%; 
+}
+/* --- Inicio: Corrección para botón de cierre de alerta --- */
+.alert .close {
+    padding: 0.5rem 1rem;
+    margin: -0.75rem -1.25rem -0.75rem auto;
+    background-color: transparent;
+    border: none;
+    width: auto;
+    height: auto;
+    box-shadow: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    float: right;
+    color: #000;
+    opacity: 0.7;
+    text-shadow: none;
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.alert .close:hover {
+    opacity: 1;
+    color: #000;
+}
+
+.alert .close span {
+    display: inline;
+}
+/* --- Fin: Corrección para botón de cierre de alerta --- */
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+
+===== templates/login.html =====
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Panthera Strike</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_hud_animation.css') }}">
+</head>
+
+<body>
+    <section>
+        <div class="signin">
+            <div class="content">
+                <div id="animacion-hud-wrapper">
+                    <div id="anim2-container">
+                        <div id="anim2-a1"><div id="anim2-a11"></div></div>
+                        <div id="anim2-a2"><div id="anim2-a21"></div></div>
+                        <div id="anim2-a3-placeholder">
+                            </div>
+                        <div id="anim2-a4">
+                            </div>
+                        <div id="anim2-a6">PANTHERA STRIKE</div>
+                        <div id="anim2-a7"> <span class="anim2-a73 anim2-a731">00:</span><span class="anim2-a73 anim2-a732">00</span>
+                            <span class="anim2-a74 anim2-a741">01/</span><span class="anim2-a74 anim2-a742">01/</span><span class="anim2-a74 anim2-a743">2025</span>
+                        </div>
+                        <div id="anim2-a8">
+                            <div id="anim2-a81"></div>
+                            </div>
+                         <div id="anim2-a9">
+                            </div>
+                        <div id="anim2-a10">TARGET LOCK <span></span></div>
+
+                        <div id="anim2-b1">
+                            </div>
+                        
+                        <div id="anim2-figure">
+                            <div id="anim2-f1"></div>
+                            <div id="anim2-f2"></div>
+                            <div id="anim2-f3">
+                                <div id="anim2-f31">
+                                    <span class="anim2-f311"><b></b></span>
+                                    <span class="anim2-f312"><b></b></span>
+                                </div>
+                                <div id="anim2-f32">
+                                    <span class="anim2-f321"></span>
+                                    <span class="anim2-f322"></span>
+                                </div>
+                                <div id="anim2-f33"></div>
+                                <div id="anim2-f34"></div>
+                            </div>
+                            <div id="anim2-f4">
+                                <div id="anim2-f41"></div>
+                                <div id="anim2-f42"></div>
+                                <div id="anim2-f43" class="anim2-f431"></div>
+                                <div id="anim2-f43" class="anim2-f432"></div>
+                                <div id="anim2-f43" class="anim2-f433"></div>
+                                <div id="anim2-f43" class="anim2-f434"></div>
+                            </div>
+                            <div id="anim2-f5"></div>
+                            <div id="anim2-f6"></div>
+                            <div id="anim2-f7">
+                                <div id="anim2-f71"></div>
+                                <div id="anim2-f72"></div>
+                            </div>
+                            <div id="anim2-f8">
+                                <div id="anim2-f81"></div>
+                                <div id="anim2-f82"></div>
+                            </div>
+                            <div id="anim2-f9"><span></span></div>
+                            </div>
+                         <div id="anim2-a5"> </div>
+                    </div>
+                </div>
+
+                <h2>Iniciar Sesión</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <form class="form" method="POST" action="{{ url_for('login') }}">
+                    <div class="inputBox">
+                        <input type="text" id="username" name="username" required>
+                        <i>Usuario</i>
+                    </div>
+                    <div class="inputBox">
+                        <input type="password" id="password" name="password" required>
+                        <i>Contraseña</i>
+                    </div>
+                    <div class="links">
+                        <a href="#">¿Olvidaste tu contraseña?</a>
+                        <a href="#">Registrarse</a>
+                    </div>
+                    <div class="inputBox">
+                        <input type="submit" value="Entrar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/login_combined_animations.js') }}"></script>
+</body>
+</html>
+
+
+===== templates/index.html =====
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panthera Strike - Web Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scanner_styles.css') }}">
+</head>
+
+<body>
+    <h1>Panthera Strike - Vulnerability Scanner</h1>
+    <div class="container">
+
+        <label for="targets">Targets (FQDN, IPv4, IPv6, URL - uno por línea):</label>
+        <textarea id="targets" placeholder="ejemplo.com\n192.168.1.1\nhttps://sitio.seguro"></textarea>
+
+        <div class="scan-profiles">
+            <h3>Perfiles de Escaneo</h3>
+            <button onclick="window.deselectAllTools()">🧹 Desmarcar Todas</button>
+        </div>
+
+        <div class="tool-selection-container">
+            <h3>Seleccionar Herramientas de Escaneo</h3>
+            <div id="toolList">Cargando herramientas...</div>
+        </div>
+
+        <div class="advanced-options-container">
+            <details>
+                <summary>⚙️ Opciones Avanzadas de Escaneo</summary>
+                <div id="globalAdvancedOptions">
+                    <label for="customScanTime">Plantilla de Tiempo Nmap Global (-T):</label>
+                    <select id="customScanTime" name="customScanTime">
+                        <option value="-T0">Paranoid (-T0)</option>
+                        <option value="-T1">Sneaky (-T1)</option>
+                        <option value="-T2">Polite (-T2)</option>
+                        <option value="-T3" selected>Normal (-T3)</option>
+                        <option value="-T4">Aggressive (-T4)</option>
+                        <option value="-T5">Insane (-T5)</option>
+                    </select>
+                    
+                    <label for="followRedirects">Seguir redirecciones (para herramientas web):</label>
+                    <select id="followRedirects" name="followRedirects">
+                        <option value="" selected>Por defecto de la herramienta</option>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <h4>Parámetros CLI Específicos por Herramienta:</h4>
+                <div id="toolSpecificCliParamsContainer">
+                    <p>Seleccione herramientas para ver opciones específicas.</p>
+                </div>
+            </details>
+        </div>
+
+        <button id="startScanButton" style="font-size: 1.2em; padding: 12px 25px;">⚡ Iniciar Escaneo ⚡</button>
+
+        <div class="jobs-list-container">
+            <h3>Historial de Trabajos</h3>
+            <ul id="jobsListArea">
+                <li>Cargando trabajos anteriores...</li>
+            </ul>
+        </div>
+
+        <div id="currentJobInfo" class="job-info hidden"> <h3>Información del Trabajo Actual: <span id="jobIdDisplay" style="color:#ffcc00;"></span></h3>
+            <p><strong>Estado:</strong> <span id="jobStatusDisplay" style="font-weight:bold;"></span></p>
+            <div id="overallProgressBarContainer" class="progress-bar-container" style="height: 25px; margin-bottom:10px;">
+                <div id="overallProgressBar" class="progress-bar" style="height: 25px; line-height:25px;">0%</div>
+            </div>
+            <div id="targetProgressArea"></div>
+
+            <p>
+                <button id="refreshStatusButton">🔄 Actualizar Estado</button>
+                <button id="cancelJobButton" class="hidden" style="background-color:#cc0000; color:white;">
+                    🛑 Cancelar Escaneo
+                </button>
+                <a id="downloadJobZip" class="button-like hidden disabled" href="#" target="_blank" style="background-color:#006600;color:white;">💾 Descargar ZIP</a>
+            </p>
+        </div>
+
+        <h2>Estado/Logs del Escaneo:</h2>
+        <div class="terminal-container">
+            <div class="terminal">
+                <div class="terminal__bar">
+                    <div class="terminal__buttons">
+                        <button class="terminal__button terminal__button--exit"></button>
+                        <button class="terminal__button terminal__button--min"></button>
+                        <button class="terminal__button terminal__button--max"></button>
+                    </div>
+                    <div class="terminal__user">user@panthera</div>
+                </div>
+                <div id="scanOutput" class="terminal__body" data-current-job-log="">
+                    Bienvenido a Panthera Strike. Seleccione sus objetivos y herramientas, luego inicie el escaneo.
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        // ***** INICIO DE CAMBIO PARA DIAGNÓSTICO *****
+        // Temporalmente, vamos a usar un valor simple y seguro para SCRIPT_ROOT
+        // para ver si el SyntaxError desaparece.
+        const SCRIPT_ROOT = ""; // Puedes probar también con "/un_path_simple"
+        console.log("SCRIPT_ROOT definido en HTML como:", SCRIPT_ROOT); 
+          </script>
+    <script src="{{ url_for('static', filename='js/scanner_logic.js') }}"></script>
+</body>
+</html>
+
+
+===== scanner/engine.py =====
+import subprocess
+import os
+import datetime
+import shlex
+import time
+import shutil # Added import
+from utils import get_tool_config # Importar la función para obtener la configuración de herramientas
+
+MAX_CONCURRENT_TOOLS = 3 # Limitar concurrencia para no sobrecargar el sistema (12GB RAM)
+
+def log_message(job_id, message, active_jobs, level='INFO'):
+    timestamp = datetime.datetime.now().isoformat()
+    log_entry = f"[{timestamp}] [{level}] {message}"
+    print(log_entry) # Log a consola del servidor
+    if job_id in active_jobs:
+        active_jobs[job_id]['logs'].append(log_entry)
+
+def check_tool_installed(tool_name):
+    """Verifica si una herramienta está instalada y es ejecutable usando shutil.which."""
+    if shutil.which(tool_name):
+        return True
+    else:
+        # Opcional: Podríamos intentar verificar si es una ruta absoluta y si existe y es ejecutable
+        # if os.path.isabs(tool_name) and os.path.exists(tool_name) and os.access(tool_name, os.X_OK):
+        #    return True
+        return False
+
+def run_single_tool(job_id, target, tool_config, job_path, active_jobs):
+    tool_name = tool_config['name']
+    tool_command_template = tool_config['command']
+    tool_category = tool_config['category']
+
+    log_message(job_id, f"Preparando herramienta: {tool_name} para el objetivo: {target}", active_jobs)
+
+    # Crear directorio para la herramienta si no existe
+    tool_output_dir = os.path.join(job_path, tool_category, tool_name + '_' + datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
+    os.makedirs(tool_output_dir, exist_ok=True)
+    
+    # El nombre del archivo de salida puede variar o ser stdout
+    # Para herramientas que escriben a archivo, especificamos uno
+    # Para las que escriben a stdout, capturamos la salida
+    output_file_name = f"output_{target.replace('/', '_').replace(':', '_')}.txt"
+    output_file_path = os.path.join(tool_output_dir, output_file_name) # Default output file if tool writes to stdout
+
+    # Preparar argumentos para formatear el comando
+    format_kwargs = {'target': shlex.quote(target)}
+    if '{output_file}' in tool_command_template:
+        format_kwargs['output_file'] = shlex.quote(output_file_path)
+    if '{output_file_dir}' in tool_command_template:
+        format_kwargs['output_file_dir'] = shlex.quote(tool_output_dir)
+    
+    command_to_run = tool_command_template.format(**format_kwargs)
+
+    log_message(job_id, f"Ejecutando: {command_to_run}", active_jobs)
+
+    try:
+        # Verificar si la herramienta base del comando está instalada
+        # ej. 'nmap' de 'nmap -sn {target}'
+        base_command = command_to_run.split()[0]
+        if not check_tool_installed(base_command):
+            log_message(job_id, f"ADVERTENCIA: La herramienta {base_command} no parece estar instalada o no está en el PATH. Saltando ejecución.", active_jobs, level='WARN')
+            return {'tool': tool_name, 'target': target, 'status': 'skipped', 'error': f'{base_command} not found'}
+
+        # Usar shell=False y pasar argumentos como lista es más seguro
+        # pero algunas herramientas complejas o con pipes pueden requerir shell=True
+        use_shell = tool_config.get('needs_shell', False)
+        if use_shell:
+            log_message(job_id, f"Ejecutando comando con shell=True: {command_to_run}", active_jobs, level='DEBUG')
+            process = subprocess.Popen(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=job_path, shell=True)
+        else:
+            process = subprocess.Popen(shlex.split(command_to_run), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=job_path)
+        
+        stdout, stderr = process.communicate(timeout=300) # Timeout de 5 minutos por herramienta
+
+        if process.returncode == 0:
+            output_location_message = ''
+            if '{output_file_dir}' in tool_command_template:
+                output_location_message = f"Salida en directorio {tool_output_dir}"
+            elif '{output_file}' in tool_command_template:
+                output_location_message = f"Salida en archivo {output_file_path}"
+            else:
+                output_location_message = f"Salida (stdout/stderr) guardada en {output_file_path}"
+            
+            log_message(job_id, f"Herramienta {tool_name} completada para {target}. {output_location_message}", active_jobs)
+            
+            # Si la herramienta no especifica un archivo de salida o directorio de salida en su comando, guardamos stdout
+            if '{output_file}' not in tool_command_template and '{output_file_dir}' not in tool_command_template and stdout:
+                 with open(output_file_path, 'w') as f:
+                    f.write(stdout)
+            if stderr: # Guardar también errores si los hay
+                with open(os.path.join(tool_output_dir, f"error_{target.replace('/', '_').replace(':', '_')}.txt"), 'w') as f:
+                    f.write(stderr)
+            return {'tool': tool_name, 'target': target, 'status': 'success', 'output_path': tool_output_dir}
+        else:
+            log_message(job_id, f"Error ejecutando {tool_name} para {target}. Código de salida: {process.returncode}", active_jobs, level='ERROR')
+            log_message(job_id, f"Stderr: {stderr}", active_jobs, level='ERROR')
+            with open(os.path.join(tool_output_dir, f"error_{target.replace('/', '_').replace(':', '_')}.txt"), 'w') as f:
+                f.write(f"COMMAND: {command_to_run}\nRETURN_CODE: {process.returncode}\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}")
+            return {'tool': tool_name, 'target': target, 'status': 'failed', 'error': stderr, 'output_path': tool_output_dir}
+
+    except subprocess.TimeoutExpired:
+        log_message(job_id, f"Timeout ejecutando {tool_name} para {target}", active_jobs, level='ERROR')
+        return {'tool': tool_name, 'target': target, 'status': 'timeout', 'error': 'Timeout expired'}
+    except Exception as e:
+        log_message(job_id, f"Excepción ejecutando {tool_name} para {target}: {e}", active_jobs, level='ERROR')
+        return {'tool': tool_name, 'target': target, 'status': 'exception', 'error': str(e)}
+
+def run_scan(job_id, targets, job_path, targets_file_path, active_jobs, selected_tool_ids=None):
+    log_message(job_id, f"Iniciando escaneo para el job {job_id} con objetivos: {targets}", active_jobs)
+    if selected_tool_ids:
+        log_message(job_id, f"Herramientas seleccionadas: {', '.join(selected_tool_ids)}", active_jobs)
+    else:
+        log_message(job_id, "No se seleccionaron herramientas específicas, se usarán las predeterminadas (MVP).", active_jobs)
+    active_jobs[job_id]['status'] = 'running'
+    all_results = []
+
+    # Escribir los objetivos a un archivo dentro del directorio del job
+    with open(targets_file_path, 'w') as f:
+        for target_item in targets:
+            f.write(f"{target_item}\n")
+    log_message(job_id, f"Objetivos guardados en: {targets_file_path}", active_jobs)
+
+    # Obtener la configuración de herramientas MVP
+    tool_configurations = get_tool_config()['raw_commands'] # Obtener todos los comandos de herramientas
+    mvp_tool_keys = get_tool_config()['presets'].get('quick_scan', []) # Fallback a quick_scan si no hay seleccionadas
+
+    tools_to_run = []
+    if selected_tool_ids:
+        for tool_id in selected_tool_ids:
+            if tool_id in tool_configurations:
+                tools_to_run.append(tool_configurations[tool_id])
+            else:
+                log_message(job_id, f"ADVERTENCIA: Herramienta con ID '{tool_id}' no encontrada en la configuración.", active_jobs, level='WARN')
+    else:
+        # Si no se especifican herramientas, usar las de MVP (o un preset por defecto)
+        for tool_id in mvp_tool_keys:
+            if tool_id in tool_configurations:
+                tools_to_run.append(tool_configurations[tool_id])
+
+    if not tools_to_run:
+        log_message(job_id, "No hay herramientas válidas para ejecutar. Finalizando job.", active_jobs, level='ERROR')
+        active_jobs[job_id]['status'] = 'failed'
+        active_jobs[job_id]['end_time'] = datetime.datetime.now().isoformat()
+        active_jobs[job_id]['error_message'] = 'No tools selected or configured to run.'
+        # Guardar resumen de error
+        summary_file = os.path.join(job_path, 'summary.json')
+        with open(summary_file, 'w') as f:
+            import json
+            json.dump(active_jobs[job_id], f, indent=4, default=str)
+        return
+
+    # Agrupar por categoría para mantener la estructura de directorios si es necesario, o simplemente iterar
+    # Para simplificar, iteraremos directamente sobre las herramientas seleccionadas
+    # La categoría se usa para la ruta de salida en run_single_tool
+
+    for tool_conf in tools_to_run:
+        log_message(job_id, f"Procesando herramienta: {tool_conf['name']} (Categoría: {tool_conf['category']})", active_jobs)
+        # Aquí se podría implementar concurrencia por herramienta o por objetivo
+        # Para MVP, secuencial por ahora
+        for target_item in targets:
+                if active_jobs[job_id]['status'] == 'cancelled': # Permitir cancelación
+                    log_message(job_id, f"Job {job_id} cancelado.", active_jobs, level='WARN')
+                    return
+                
+                # Asegurarse de que la categoría de la herramienta coincide con la categoría actual
+                # (Aunque get_tool_config ya devuelve las herramientas agrupadas por su categoría MVP)
+                # if tool_conf.get('category') in category: # Esta comprobación puede ser redundante si mvp_tools_config está bien estructurado
+                result = run_single_tool(job_id, target_item, tool_conf, job_path, active_jobs)
+                all_results.append(result)
+                # Pequeña pausa para no saturar y permitir que los logs se actualicen
+                time.sleep(0.1)
+
+    active_jobs[job_id]['status'] = 'completed'
+    active_jobs[job_id]['end_time'] = datetime.datetime.now().isoformat()
+    active_jobs[job_id]['results'] = all_results # Guardar un resumen de resultados
+    log_message(job_id, f"Escaneo completado para el job {job_id}", active_jobs)
+
+    # Opcional: Crear un archivo de resumen del job
+    summary_file = os.path.join(job_path, 'summary.json')
+    with open(summary_file, 'w') as f:
+        import json
+        json.dump(active_jobs[job_id], f, indent=4, default=str)
+    log_message(job_id, f"Resumen del job guardado en: {summary_file}", active_jobs)
+
+
+===== utils/helpers.py =====
+import os
+import datetime
+import json
+import shutil # Para shutil.move, que es similar a os.replace pero más universal
+
+# Variable global para la configuración cacheada
+_tool_config_cache = None
+CONFIG_FILE_PATH = 'tools_config.json' # Ajusta la ruta si es necesario
+
+def load_config_from_file():
+    """Carga la configuración completa desde el archivo JSON."""
+    global _tool_config_cache
+    if _tool_config_cache is None:
+        try:
+            with open(CONFIG_FILE_PATH, 'r', encoding='utf-8') as f:
+                _tool_config_cache = json.load(f)
+        except FileNotFoundError:
+            print(f"ERROR: Archivo de configuración '{CONFIG_FILE_PATH}' no encontrado.")
+            # Podrías retornar una configuración por defecto o levantar una excepción
+            _tool_config_cache = {"pentest_phases": {}, "tools_definition": {}, "scan_profiles": {}}
+        except json.JSONDecodeError:
+            print(f"ERROR: Error al decodificar JSON desde '{CONFIG_FILE_PATH}'.")
+            _tool_config_cache = {"pentest_phases": {}, "tools_definition": {}, "scan_profiles": {}}
+    return _tool_config_cache
+
+def get_pentest_phases():
+    config = load_config_from_file()
+    return config.get("pentest_phases", {})
+
+def get_tools_definition():
+    config = load_config_from_file()
+    # Enriquecer cada herramienta con su 'phase_name' basado en 'phase_key'
+    phases = get_pentest_phases()
+    tools_def = config.get("tools_definition", {})
+    for tool_id, tool_data in tools_def.items():
+        tool_data['phase'] = phases.get(tool_data.get('phase_key', ''), "Unknown Phase")
+    return tools_def
+
+def get_scan_profiles():
+    config = load_config_from_file()
+    return config.get("scan_profiles", {})
+
+def create_job_directories(base_results_dir, job_id, targets):
+    """Crea los directorios necesarios para un nuevo job de escaneo."""
+    job_path = os.path.join(base_results_dir, job_id)
+    os.makedirs(job_path, exist_ok=True)
+    
+    # Directorio para logs de herramientas individuales
+    os.makedirs(os.path.join(job_path, 'tool_outputs'), exist_ok=True)
+
+    targets_file_path = os.path.join(job_path, 'targets.txt')
+    with open(targets_file_path, 'w', encoding='utf-8') as f:
+        for target in targets:
+            f.write(f"{target}\n")
+    return job_path, targets_file_path
+
+def get_scan_status_from_file(job_id, results_dir):
+    """Obtiene el estado de un job de escaneo desde su summary.json."""
+    job_path = os.path.join(results_dir, job_id)
+    summary_file = os.path.join(job_path, 'summary.json')
+    if os.path.exists(summary_file):
+        try:
+            with open(summary_file, 'r', encoding='utf-8') as f:
+                status_info = json.load(f)
+            return status_info
+        except json.JSONDecodeError:
+            return {'status': 'error', 'error_message': 'Could not parse summary file', 'job_id': job_id}
+    return None # O un estado indicando 'not_found' o 'initializing'
+
+def list_all_jobs(base_results_dir):
+    """Lista todos los job IDs existentes basándose en directorios y summary.json."""
+    if not os.path.exists(base_results_dir):
+        return []
+    
+    job_details_list = []
+    job_ids = [d for d in os.listdir(base_results_dir) if os.path.isdir(os.path.join(base_results_dir, d))]
+    
+    for job_id in job_ids:
+        summary_path = os.path.join(base_results_dir, job_id, 'summary.json')
+        if os.path.exists(summary_path):
+            try:
+                with open(summary_path, 'r', encoding='utf-8') as f:
+                    summary_data = json.load(f)
+                    job_details_list.append({
+                        "id": summary_data.get("job_id", job_id),
+                        "status": summary_data.get("status", "unknown"),
+                        "timestamp": summary_data.get("start_time", ""), # O creation_time
+                        "targets": summary_data.get("targets", []),
+                        "zip_path": get_results_zip_path(job_id, base_results_dir) if summary_data.get("status") in ["COMPLETED", "CANCELLED"] else None
+                        # Añadir más campos si es necesario para la lista
+                    })
+            except json.JSONDecodeError:
+                job_details_list.append({
+                    "id": job_id, "status": "error_summary_corrupt", "timestamp": "", "targets": []
+                })
+        else:
+            # Directorio existe pero no summary.json, podría ser un job fallido o incompleto
+             job_details_list.append({
+                "id": job_id, "status": "incomplete_no_summary", "timestamp": "", "targets": []
+            })
+
+    # Ordenar por timestamp si está disponible, o por ID
+    job_details_list.sort(key=lambda x: x.get("timestamp", x["id"]), reverse=True)
+    return job_details_list
+
+
+def get_current_timestamp_str():
+    """Obtiene un timestamp formateado para nombres de archivo/directorio."""
+    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f") # Added microseconds for uniqueness
+
+def save_job_summary(job_path, job_data):
+    """Guarda o actualiza el archivo summary.json del job de forma atómica."""
+    summary_file_path = os.path.join(job_path, 'summary.json')
+    temp_summary_file_path = summary_file_path + ".tmp"
+    
+    current_summary = {}
+    if os.path.exists(summary_file_path):
+        try:
+            with open(summary_file_path, 'r', encoding='utf-8') as f:
+                current_summary = json.load(f)
+        except json.JSONDecodeError:
+            print(f"Warning: Corrupted summary file at {summary_file_path}. Will overwrite.")
+            current_summary = {} # Reset if corrupt
+
+    # Deep merge logic for nested dictionaries like 'tool_progress'
+    for key, value in job_data.items():
+        if isinstance(value, dict) and isinstance(current_summary.get(key), dict):
+            current_summary[key].update(value)
+        elif isinstance(value, list) and key == 'logs': # Append to logs
+            if key not in current_summary or not isinstance(current_summary[key], list):
+                current_summary[key] = []
+            current_summary[key].extend(value)
+        else:
+            current_summary[key] = value
+    
+    try:
+        with open(temp_summary_file_path, 'w', encoding='utf-8') as f:
+            json.dump(current_summary, f, indent=4)
+        shutil.move(temp_summary_file_path, summary_file_path) # Atomic replace
+    except Exception as e:
+        print(f"Error saving job summary for {job_data.get('job_id', 'Unknown Job')}: {e}")
+        if os.path.exists(temp_summary_file_path):
+            try:
+                os.remove(temp_summary_file_path)
+            except OSError:
+                pass # Couldn't remove temp file, log or handle as needed
+    return current_summary
+
+
+def get_results_zip_path(job_id, results_dir):
+    """Devuelve la ruta esperada para el archivo ZIP de resultados de un job."""
+    # Asume que el ZIP se guarda en el directorio padre de los directorios de jobs
+    # o en un directorio específico de "archives". Aquí lo pongo junto al dir del job.
+    return os.path.join(results_dir, f"{job_id}_results.zip")
+
+# Funciones para acceder a detalles de herramientas desde la config cacheada
+def get_tool_details(tool_id):
+    tools_def = get_tools_definition()
+    return tools_def.get(tool_id, {})
+
+def get_target_type_for_tool(tool_id):
+    return get_tool_details(tool_id).get('target_type', 'domain_or_ip')
+
+def tool_needs_shell(tool_id):
+    return get_tool_details(tool_id).get('needs_shell', False)
+
+def is_tool_dangerous(tool_id):
+    return get_tool_details(tool_id).get('dangerous', False)
+
+def get_tool_cli_params_config(tool_id):
+    return get_tool_details(tool_id).get('cli_params_config', [])
+
+

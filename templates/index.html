@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panthera Strike - Web Scanner</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/scanner_styles.css') }}">
-    </head>
+</head>
 
 <body>
     <h1>Panthera Strike - Vulnerability Scanner</h1>
@@ -17,7 +17,7 @@
 
         <div class="scan-profiles">
             <h3>Perfiles de Escaneo</h3>
-            <button onclick="deselectAllTools()">🧹 Desmarcar Todas</button>
+            <button onclick="window.deselectAllTools()">🧹 Desmarcar Todas</button>
         </div>
 
         <div class="tool-selection-container">
@@ -45,7 +45,7 @@
                         <option value="true">Sí</option>
                         <option value="false">No</option>
                     </select>
-                    </div>
+                </div>
                 <h4>Parámetros CLI Específicos por Herramienta:</h4>
                 <div id="toolSpecificCliParamsContainer">
                     <p>Seleccione herramientas para ver opciones específicas.</p>
@@ -95,12 +95,14 @@
             </div>
         </div>
 
-    </div> <script>
-        // Define SCRIPT_ROOT para que scanner_logic.js pueda usarlo si es necesario
-        // Esto es útil si tu aplicación no está en la raíz del dominio.
-        // Si está en la raíz, SCRIPT_ROOT puede ser "".
-        const SCRIPT_ROOT = "{{ request.script_root|tojson|safe }}"; 
-    </script>
+    </div>
+    <script>
+        // ***** INICIO DE CAMBIO PARA DIAGNÓSTICO *****
+        // Temporalmente, vamos a usar un valor simple y seguro para SCRIPT_ROOT
+        // para ver si el SyntaxError desaparece.
+        const SCRIPT_ROOT = ""; // Puedes probar también con "/un_path_simple"
+        console.log("SCRIPT_ROOT definido en HTML como:", SCRIPT_ROOT); 
+          </script>
     <script src="{{ url_for('static', filename='js/scanner_logic.js') }}"></script>
 </body>
 </html>

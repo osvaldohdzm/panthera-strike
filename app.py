@@ -409,7 +409,7 @@ def init_db_command():
     cursor = db.cursor()
     cursor.execute("SELECT * FROM user WHERE username = ?", ("panthera",))
     if cursor.fetchone() is None:
-        hashed_password = generate_password_hash("strike!", method="pbkdf2:sha256")
+        hashed_password = generate_password_hash("panthera", method="pbkdf2:sha256")
         cursor.execute(
             "INSERT INTO user (username, password) VALUES (?, ?)",
             ("panthera", hashed_password),
