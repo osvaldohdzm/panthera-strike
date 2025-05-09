@@ -1,0 +1,2250 @@
+==== static/js/login_hud_animation.js ====
+// Script para Animación HUD (Animación 02)
+$(document).ready(function () {
+    const anim2_a3_placeholder = $('#anim2-a3-placeholder');
+    const anim2_a4 = $('#anim2-a4');
+    const anim2_a5 = $('#anim2-a5');
+    const anim2_a8 = $('#anim2-a8'); // Contenedor para las líneas horizontales
+    const anim2_a9 = $('#anim2-a9'); // Contenedor para números aleatorios par/impar
+    const anim2_f1 = $('#anim2-f1');
+    const anim2_f2 = $('#anim2-f2');
+    const anim2_f5 = $('#anim2-f5');
+    const anim2_b1 = $('#anim2-b1'); // Contenedor para las barras b1
+
+    // Generación de números aleatorios para #anim2-a3-placeholder
+    if (anim2_a3_placeholder.length) {
+        for (let i = 1; i < 11; i++) { // 10 spans de números
+            anim2_a3_placeholder.append('<span class="anim2-num-span' + i + '"></span>');
+            $('.anim2-num-span' + i).css({
+                '-webkit-animation': 'anim2-kf-opacity 1s ' + (Math.random() * 2) + 's infinite',
+                '-moz-animation': 'anim2-kf-opacity 1s ' + (Math.random() * 2) + 's infinite',
+                // El color ya está definido en el CSS #anim2-a3-placeholder
+            });
+        }
+        setInterval(function () {
+            $('#anim2-a3-placeholder span').each(function () {
+                $(this).text(Math.ceil(Math.random() * 999));
+            });
+        }, 100);
+    }
+
+    // Animación para #anim2-a4 (barras verticales)
+    if (anim2_a4.length) {
+        for (let i = 1; i < 15; i++) { // Número de barras
+            anim2_a4.append('<span class="anim2-a4-bar' + i + '"></span>');
+        }
+        setInterval(function () {
+            $('#anim2-a4 span').each(function () {
+                $(this).width((Math.random() * 100) + '%'); // Ancho aleatorio en %
+            });
+        }, 500);
+    }
+
+    // Animación para #anim2-a5 (bloques en la parte inferior)
+    if (anim2_a5.length) {
+        for (let i = 1; i < 16; i++) { // Número de spans contenedores de <b>
+            anim2_a5.append('<span><b class="anim2-a5-block' + i + '"></b></span>');
+            // La animación 'anim2-kf-a5-b' se aplica a '.anim2-a5-blockX b' desde CSS
+            // Aquí se aplica al <b> directamente
+             $('.anim2-a5-block' + i).css({
+                '-webkit-animation': 'anim2-kf-a5-b 1s ' + (Math.random() * 1) + 's infinite',
+                '-moz-animation': 'anim2-kf-a5-b 1s ' + (Math.random() * 1) + 's infinite'
+            });
+        }
+    }
+
+    // Actualización de hora en #anim2-a7 (el global, no el de figure)
+    const clockTarget = $('#anim2-container > #anim2-a7'); // Seleccionar el #anim2-a7 global
+    if (clockTarget.length) {
+        setInterval(function () {
+            var h = new Date().getHours();
+            var m = new Date().getMinutes();
+            if (h < 10) { clockTarget.find('.anim2-a731').text('0' + h + ':'); }
+            else { clockTarget.find('.anim2-a731').text(h + ':'); }
+            if (m < 10) { clockTarget.find('.anim2-a732').text('0' + m); }
+            else { clockTarget.find('.anim2-a732').text(m); }
+        }, 1000);
+
+        // Fecha actual (estática o actualizada)
+        var currentDate = new Date();
+        var d = currentDate.getDate();
+        var mo = currentDate.getMonth() + 1;
+        var y = currentDate.getFullYear();
+        if (d < 10) { clockTarget.find('.anim2-a741').text('0' + d + '/'); } else { clockTarget.find('.anim2-a741').text(d + '/'); }
+        if (mo < 10) { clockTarget.find('.anim2-a742').text('0' + mo + '/'); } else { clockTarget.find('.anim2-a742').text(mo + '/'); }
+        clockTarget.find('.anim2-a743').text(y);
+    }
+
+
+    // Animación para #anim2-a8 (líneas horizontales con barrido)
+    if (anim2_a8.length && !anim2_a8.find('span').length) { // Solo agregar si no existen
+        for (let i = 1; i < 15; i++) { // Número de líneas horizontales
+            anim2_a8.append('<span></span>');
+        }
+    }
+
+    // Animación para #anim2-a9 (números aleatorios par/impar)
+    if (anim2_a9.length) {
+        // Asegurarse que los spans existen si el HTML no los provee inicialmente
+        if (anim2_a9.find('span').length < 2) {
+            anim2_a9.html('<span>00000</span><span>000000000</span>'); // Valores iniciales
+        }
+        setInterval(function () {
+            var mino = 10000, maxo = 99999;
+            var rand = mino - 0.5 + Math.random() * (maxo - mino + 1);
+            rand = Math.round(rand);
+            var mine = 100000000, maxe = 999999999;
+            var ran = mine - 0.5 + Math.random() * (maxe - mine + 1);
+            ran = Math.round(ran);
+            $('#anim2-a9 span:odd').text(rand); // El segundo span
+            $('#anim2-a9 span:even').text(ran); // El primer span
+        }, 200); // Intervalo más largo para que sea legible
+    }
+
+    // Generación de elementos para #anim2-f1 (dentro de #anim2-figure)
+    if (anim2_f1.length) {
+        for (let i = 1; i < 13; i++) { // 12 items
+            anim2_f1.append('<span class="anim2-f1-item' + i + '"></span>');
+            $('.anim2-f1-item' + i).css({
+                '-webkit-transform': 'rotateZ(' + i * 30 + 'deg) translateY(75px)', // translateY ajustado para figure
+                '-moz-transform': 'rotateZ(' + i * 30 + 'deg) translateY(75px)'
+            });
+        }
+    }
+    // Generación de elementos para #anim2-f2 (dentro de #anim2-figure)
+    if (anim2_f2.length) {
+        for (let i = 1; i < 37; i++) { // 36 items
+            anim2_f2.append('<span class="anim2-f2-item' + i + '"></span>');
+            $('.anim2-f2-item' + i).css({
+                '-webkit-transform': 'rotateZ(' + i * 10 + 'deg) translateY(80px)', // translateY ajustado
+                '-moz-transform': 'rotateZ(' + i * 10 + 'deg) translateY(80px)'
+            });
+        }
+    }
+    // Generación de elementos para #anim2-f5 (dentro de #anim2-figure)
+    if (anim2_f5.length) {
+        for (let i = 1; i < 19; i++) { // 18 items
+            anim2_f5.append('<span class="anim2-f5-item' + i + '"><b>' + (Math.random() * 30).toFixed(0) + '</b></span>');
+            $('.anim2-f5-item' + i).css({
+                '-webkit-transform': 'rotateZ(' + i * 20 + 'deg) translateY(40px)', // translateY ajustado
+                '-moz-transform': 'rotateZ(' + i * 20 + 'deg) translateY(40px)'
+            });
+        }
+    }
+
+    // Generación de barras para #anim2-b1
+    if (anim2_b1.length) {
+        for (let i = 1; i <= 10; i++) { // 10 barras
+            anim2_b1.append('<span class="anim2-b1-bar' + i + '"></span>');
+            $('.anim2-b1-bar' + i).css({
+                'left': (i * 7 - 7) + 'px', // Espaciado de las barras (5px width + 2px gap)
+                '-webkit-animation': 'anim2-kf-b1 ' + (0.5 + Math.random() * 1.5) + 's ease-in-out infinite alternate',
+                '-moz-animation': 'anim2-kf-b1 ' + (0.5 + Math.random() * 1.5) + 's ease-in-out infinite alternate'
+            });
+        }
+    }
+});==== static/js/login_animation.js ====
+document.addEventListener('DOMContentLoaded', function() {
+    const sectionElement = document.querySelector('section');
+
+    if (sectionElement) {
+        const numberOfSpans = 256;
+        for (let i = 0; i < numberOfSpans; i++) {
+            let span = document.createElement('span');
+            sectionElement.appendChild(span);
+        }
+    } else {
+        console.error("Error: El elemento <section> para la animación de fondo no fue encontrado.");
+    }
+});==== static/js/login_background_animation.js ====
+document.addEventListener('DOMContentLoaded', function() {
+    const sectionElement = document.querySelector('section');
+
+    if (sectionElement) {
+        const numberOfSpans = 500; // Aumentado para mejor cobertura en diferentes aspect ratios
+        for (let i = 0; i < numberOfSpans; i++) {
+            let span = document.createElement('span');
+            sectionElement.appendChild(span);
+        }
+    } else {
+        // Este mensaje ayudará a saber si el script no encuentra el <section>
+        console.error("Error JS: No se encontró el elemento <section> para crear los mosaicos de fondo.");
+    }
+});==== static/js/scripts.js ====
+$(document).ready(function() {
+    const a3 = $('#animacion');
+    const a4 = $('#a4');
+    const a5 = $('#a5');
+    const a8 = $('#a8');
+    const a9 = $('#a9');
+    const f1 = $('#f1');
+    const f2 = $('#f2');
+    const f5 = $('#f5');
+    
+    $('.f11, .f12, .f13, .f14, .f15, .f16, .f17, .f18, .f19, .f110, .f111, .f112').css('transform', function() {
+        return 'rotateZ(' + (Math.random() * 360) + 'deg) translateY(91px)';
+    });
+    
+    $('.f21, .f22, .f23, .f24, .f25, .f26, .f27, .f28, .f29, .f210, .f211, .f212, .f213, .f214, .f215, .f216, .f217, .f218, .f219, .f220, .f221, .f222, .f223, .f224, .f225, .f226, .f227, .f228, .f229, .f230, .f231, .f232, .f233').css('transform', function() {
+        return 'rotateZ(' + (Math.random() * 360) + 'deg) translateY(95px)';
+    });
+    
+    for (let i = 1; i < 11; i++) {      
+        a3.append('<span class=a3'+i+'></span>'); 
+        $('.a3'+i+'').css({ 
+            '-webkit-animation': 'a3 1s '+(Math.random()*2)+'s infinite', 
+            '-moz-animation': 'a3 1s '+(Math.random()*2)+'s infinite',
+            'color': '#ff0000'
+        }); 
+    } 
+    
+    setInterval(function() { 
+        $('#animacion span').each(function() { 
+            $(this).text(Math.ceil(Math.random()*999));
+        }); 
+    }, 100);
+    
+    for (let i = 1; i < 31; i++) {      
+        a4.append('<span class=a3'+i+'></span>'); 
+    }
+    
+    setInterval(function() { 
+        $('#a4 span').each(function() { 
+            $(this).width((Math.random()*15)); 
+        }); 
+    }, 500);  
+    
+    for (let i = 1; i < 16; i++) {      
+        a5.append('<span><b class=a5'+i+'></b></span>'); 
+        $('.a5'+i+'').css({ 
+            '-webkit-animation': 'a3 1s 0.'+i+'s infinite', 
+            '-moz-animation': 'a3 1s 0.'+i+'s infinite' 
+        });   
+    } 
+    
+    setInterval(function() { 
+        var h = Math.ceil(Math.random()*24); 
+        var m = Math.ceil(Math.random()*60); 
+        if (h<10) {$('.a731').text('0'+h+':');} 
+        else {$('.a731').text(h+':');} 
+        if (m<10) {$('.a732').text('0'+m);} 
+        else {$('.a732').text(m);}  
+    }, 100); 
+    
+    setInterval(function() { 
+        var d = Math.ceil(Math.random()*30); 
+        var m = Math.ceil(Math.random()*12); 
+        var min = 1700, max = 1999; 
+        var rand = min - 0.5 + Math.random()*(max-min+1) 
+        rand = Math.round(rand); 
+        if (d<10) {$('.a741').text('0'+d+'/');} 
+        else {$('.a741').text(d+'/');} 
+        if (m<10) {$('.a742').text('0'+m+'/');} 
+        else {$('.a742').text(m+'/');} 
+        $('.a743').text(rand); 
+    }, 50); 
+    
+    for (let i = 1; i < 41; i++) {      
+        a8.append('<span></span>'); 
+    } 
+    
+    setInterval(function() { 
+        var mino = 10000, maxo = 99999; 
+        var rand = mino - 0.5 + Math.random()*(maxo-mino+1); 
+        rand = Math.round(rand); 
+        var mine = 100000000, maxe = 999999999;  
+        var ran = mine - 0.5 + Math.random()*(maxe-mine+1); 
+        ran = Math.round(ran);  
+        $('#a9 span:odd').text(rand); 
+        $('#a9 span:even').text(ran);  
+    }, 100); 
+    
+    for (let i = 1; i < 37; i++) {      
+        f2.append('<span class=f2'+i+'></span>'); 
+        $('.f2'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i+'0deg) translateY(95px)' 
+        });   
+    } 
+    
+    for (let i = 1; i < 19; i++) {      
+        f5.append('<span class=f5'+i+'><b>'+Math.random()*30+'</b></span>'); 
+        $('.f5'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i*2+'0deg) translateY(40px)' 
+        });   
+    } 
+    
+    for (let i = 1; i < 13; i++) {      
+        f1.append('<span class=f1'+i+'></span>'); 
+        $('.f1'+i+'').css({ 
+            '-webkit-transform': 'rotateZ('+i*30+'deg) translateY(91px)' 
+        });   
+    }
+});
+
+// Animación de creación de spans
+for(let i=0; i<200; i++) {
+    let span = document.createElement('span');
+    document.querySelector('section').appendChild(span);
+}==== static/css/styles.css ====
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+* 
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+body 
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #000;
+}
+section 
+{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+section::before 
+{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(#000,#ff0000,#000);
+    animation: animate 5s linear infinite;
+}
+@keyframes animate 
+{
+    0% 
+    {
+        transform: translateY(-100%);
+    }
+    100% 
+    {
+        transform: translateY(100%);
+    }
+}
+@-webkit-keyframes a3 {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+@-moz-keyframes a3 {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 200px;
+    height: auto;
+    z-index: 1001;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+    color: #ff0000;
+    font-size: 12px;
+    padding: 2px;
+    opacity: 0.8;
+}
+section span 
+{
+    position: relative;
+    display: block;
+    width: calc(6.25vw - 2px);
+    height: calc(6.25vw - 2px);
+    background: #181818;
+    z-index: 2;
+    transition: 1.5s;
+}
+section span:hover 
+{
+    background: #ff0000;
+    transition: 0s;
+}
+
+section .signin 
+{
+    position: absolute;
+    width: 400px;
+    background: #222;  
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(0,0,0,9);
+}
+section .signin .content 
+{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 40px;
+}
+section .signin .content h2 
+{
+    font-size: 2em;
+    color: #ff0000;
+    text-transform: uppercase;
+}
+section .signin .content .form 
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+section .signin .content .form .inputBox 
+{
+    position: relative;
+    width: 100%;
+}
+section .signin .content .form .inputBox input 
+{
+    position: relative;
+    width: 100%;
+    background: #333;
+    border: none;
+    outline: none;
+    padding: 25px 10px 7.5px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1em;
+}
+section .signin .content .form .inputBox i 
+{
+    position: absolute;
+    left: 0;
+    padding: 15px 10px;
+    font-style: normal;
+    color: #aaa;
+    transition: 0.5s;
+    pointer-events: none;
+}
+.signin .content .form .inputBox input:focus ~ i,
+.signin .content .form .inputBox input:valid ~ i 
+{
+    transform: translateY(-7.5px);
+    font-size: 0.8em;
+    color: #fff;
+}
+.signin .content .form .links 
+{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.signin .content .form .links a 
+{
+    color: #fff;
+    text-decoration: none;
+}
+.signin .content .form .links a:nth-child(2) 
+{
+    color: #ff0000;
+    font-weight: 600;
+}
+.signin .content .form .inputBox input[type="submit"] 
+{
+    padding: 10px;
+    background: #ff0000;
+    color: #000;
+    font-weight: 600;
+    font-size: 1.35em;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+}
+input[type="submit"]:active 
+{
+    opacity: 0.6;
+}
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    color: #fff;
+    z-index: 1001;
+}
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+}
+.close:hover {
+    color: #000;
+    text-decoration: none;
+    opacity: .75;
+}
+
+@media (max-width: 900px) 
+{
+    section span 
+    {
+        width: calc(10vw - 2px);
+        height: calc(10vw - 2px);
+    }
+}
+@media (max-width: 600px) 
+{
+    section span 
+    {
+        width: calc(20vw - 2px);
+        height: calc(20vw - 2px);
+    }
+}==== static/css/login_hud_animation.css ====
+/* === ESTILOS PARA LA ANIMACIÓN HUD (ANIMACIÓN 02) === */
+/* Estos estilos se basan en el archivo static/css/animation-2.css proporcionado,
+   eliminando redundancias como import de fuentes, body, section, signin, etc.,
+   que ya están en login_styles.css */
+
+
+    width: 100%;           /* Ocupa todo el ancho disponible en .content */
+    max-width: 380px;      /* Ancho máximo aumentado de 340px a 380px */
+    height: 210px;         /* Altura aumentada de 180px a 210px */
+    position: relative;    /* Se mantiene en el flujo, no absolute */
+    margin-bottom: 25px;   /* Más espacio antes del título "Iniciar Sesión" */
+    background: #1A1A1A;   /* Fondo oscuro para la HUD */
+    overflow: hidden;
+    border: 1px solid #550000; /* Borde rojo más visible */
+    border-radius: 6px;   /* Redondeo ligero para el contenedor */
+    color: #CCCCCC;        /* Color de texto por defecto (blanco/gris claro) */
+    font-family: 'Courier New', Courier, monospace; /* Fuente más "tech" */
+}
+
+
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
+    box-sizing: border-box; 
+}
+
+
+    position: absolute;
+}
+
+
+    height: 100%; width: 100%; position: relative;
+    -webkit-perspective: 600px;
+    -moz-perspective: 600px;
+    -webkit-animation: anim2-start 0.8s ease-out;
+    -moz-animation: anim2-start 0.8s ease-out;
+    overflow: hidden; /* Para contener elementos que puedan desbordarse */
+}
+
+@-webkit-keyframes anim2-start {
+    from { -webkit-transform: scale(0.5); opacity: 0; }
+    to   { -webkit-transform: scale(1); opacity: 1; }
+}
+@-moz-keyframes anim2-start {
+    from { -moz-transform: scale(0.5); opacity: 0; }
+    to   { -moz-transform: scale(1); opacity: 1; }
+}
+
+/* Elementos generales de la HUD con temática roja */
+
+
+@-webkit-keyframes anim2-kf-a11 { from {width:70%;} 10% {width:20%;} 20% {width:90%;} 30% {width:60%;} 40% {width:100%;} 50% {width:10%;} 60% {width:30%;} 70% {width:20%;} 80% {width:50%;} 90% {width:10%;} to {width:70%;} }
+@-moz-keyframes anim2-kf-a11 { from {width:70%;} 10% {width:20%;} 20% {width:90%;} 30% {width:60%;} 40% {width:100%;} 50% {width:10%;} 60% {width:30%;} 70% {width:20%;} 80% {width:50%;} 90% {width:10%;} to {width:70%;} }
+
+
+
+
+@-webkit-keyframes anim2-kf-a21 { from {-webkit-transform:rotateZ(0deg) translateY(50%);} to {-webkit-transform:rotateZ(360deg) translateY(50%);} }
+@-moz-keyframes anim2-kf-a21 { from {-moz-transform:rotateZ(0deg) translateY(50%);} to {-moz-transform:rotateZ(360deg) translateY(50%);} }
+
+
+
+
+/* Keyframes para opacidad usados por JS para los spans de #anim2-a3-placeholder */
+@-webkit-keyframes anim2-kf-opacity { from { opacity:0; } 50% { opacity:1; } to { opacity:0; } }
+@-moz-keyframes anim2-kf-opacity { from { opacity:0; } 50% { opacity:1; } to { opacity:0; } }
+
+
+
+
+
+
+
+
+
+/* Keyframes para #anim2-a5 span b usados por JS */
+@-webkit-keyframes anim2-kf-a5-b { from {opacity:0;} 50% {opacity:1;} to {opacity:0;} }
+@-moz-keyframes anim2-kf-a5-b { from {opacity:0;} 50% {opacity:1;} to {opacity:0;} }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@-webkit-keyframes anim2-kf-a81 { from {height:0;} 20% {height:25%;} 40% {height:5%;} 60% {height:60%;} 80% {height:35%;} to {height:0;} }
+@-moz-keyframes anim2-kf-a81 { from {height:0;} 20% {height:25%;} 40% {height:5%;} 60% {height:60%;} 80% {height:35%;} to {height:0;} }
+
+
+
+
+
+
+
+@-webkit-keyframes anim2-kf-a10 { from {width:70px;} 20% {width:10px;} 40% {width:100px;} 60% {width:30px;} 80% {width:90px;} to {width:70px;} }
+@-moz-keyframes anim2-kf-a10 { from {width:70px;} 20% {width:10px;} 40% {width:100px;} 60% {width:30px;} 80% {width:90px;} to {width:70px;} }
+
+
+
+
+/* Keyframes para #anim2-b1 span usados por JS */
+@-webkit-keyframes anim2-kf-b1 { from {height:100%;} 20% {height:10%;} 40% {height:60%;} 60% {height:5%;} 80% {height:40%;} to {height:100%;} }
+@-moz-keyframes anim2-kf-b1 { from {height:100%;} 20% {height:10%;} 40% {height:60%;} 60% {height:5%;} 80% {height:40%;} to {height:100%;} }
+
+
+/* --- Estilos de #anim2-figure y sus hijos --- */
+
+    top: 50%; left: 50%; 
+    width: 200px;  /* Aumentado para ocupar más espacio */
+    height: 200px; /* Aumentado proporcionalmente */
+    margin-top: -100px; /* Ajustado a la mitad de la nueva altura */
+    margin-left: -100px;/* Ajustado a la mitad del nuevo ancho */
+    -webkit-transform: rotateY(-30deg) rotateX(10deg) scale(0.85);
+    -moz-transform: rotateY(-30deg) rotateX(10deg) scale(0.85);
+    -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d;
+    -webkit-animation: anim2-kf-figure 8s ease-in-out infinite;
+    -moz-animation: anim2-kf-figure 8s ease-in-out infinite;
+}
+@-webkit-keyframes anim2-kf-figure { from {-webkit-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} 20% {-webkit-transform:rotateY(30deg) rotateX(30deg) scale(0.8);} 40% {-webkit-transform:rotateY(30deg) rotateX(-30deg) scale(0.8);} 60% {-webkit-transform:rotateY(-10deg) rotateX(30deg) scale(0.8);} 80% {-webkit-transform:rotateY(30deg) rotateX(-10deg) scale(0.8);} to {-webkit-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} }
+@-moz-keyframes anim2-kf-figure { from {-moz-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} 20% {-moz-transform:rotateY(30deg) rotateX(30deg) scale(0.8);} 40% {-moz-transform:rotateY(30deg) rotateX(-30deg) scale(0.8);} 60% {-moz-transform:rotateY(-10deg) rotateX(30deg) scale(0.8);} 80% {-moz-transform:rotateY(30deg) rotateX(-10deg) scale(0.8);} to {-moz-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} }
+
+
+    position: absolute; left:-90px; top:10px; color:#FF0000; font-size: 10px;
+    -webkit-transform:scale(0.5); -moz-transform:scale(0.5);
+    -webkit-animation:anim2-kf-fa7-red 2s ease-in-out infinite; -moz-animation:anim2-kf-fa7-red 2s ease-in-out infinite;
+}
+
+
+
+@-webkit-keyframes anim2-kf-fa7-red { from {color:#FF0000;} 25% {color:#DD0000;} 50% {color:#FFFFFF;} 75% {color:#DD0000;} to {color:#FF0000;} }
+@-moz-keyframes anim2-kf-fa7-red { from {color:#FF0000;} 25% {color:#DD0000;} 50% {color:#FFFFFF;} 75% {color:#DD0000;} to {color:#FF0000;} }
+
+
+
+/* Elementos F1 */
+
+@-webkit-keyframes anim2-kf-f1-red { from {-webkit-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} 10% {-webkit-transform:rotateZ(30deg); opacity:1.0; border-color:#FF0000;} 50% {-webkit-transform:rotateZ(-40deg); opacity:1.0; border-color:#FFFFFF;} to {-webkit-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} }
+@-moz-keyframes anim2-kf-f1-red { from {-moz-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} 10% {-moz-transform:rotateZ(30deg); opacity:1.0; border-color:#FF0000;} 50% {-moz-transform:rotateZ(-40deg); opacity:1.0; border-color:#FFFFFF;} to {-moz-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} }
+
+@-webkit-keyframes anim2-kf-f1div-red { from {background:#AA0000;} 10% {background:#FF0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+@-moz-keyframes anim2-kf-f1div-red { from {background:#AA0000;} 10% {background:#FF0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+
+/* Elementos F2 */
+
+@-webkit-keyframes anim2-kf-f2 { from {-webkit-transform:translateZ(-5px) rotateZ(0deg);} to {-webkit-transform:translateZ(-5px) rotateZ(360deg);} }
+@-moz-keyframes anim2-kf-f2 { from {-moz-transform:translateZ(-5px) rotateZ(0deg);} to {-moz-transform:translateZ(-5px) rotateZ(360deg);} }
+
+
+/* Elementos F3 */
+
+@-webkit-keyframes anim2-kf-f3-red { from {-webkit-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} 50% {-webkit-transform:translateZ(10px) rotateZ(-120deg); border-color:#FFFFFF; opacity:1.0;} to {-webkit-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} }
+@-moz-keyframes anim2-kf-f3-red { from {-moz-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} 50% {-moz-transform:translateZ(10px) rotateZ(-120deg); border-color:#FFFFFF; opacity:1.0;} to {-moz-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} }
+
+
+
+
+@-webkit-keyframes anim2-kf-f31span-red { from {background:#FF0000; opacity:1;} 25% {background:#DD0000; opacity:0;} 50% {background:#FFFFFF; opacity:1;} 75% {background:#DD0000; opacity:0;} to {background:#FF0000; opacity:1;} }
+@-moz-keyframes anim2-kf-f31span-red { from {background:#FF0000; opacity:1;} 25% {background:#DD0000; opacity:0;} 50% {background:#FFFFFF; opacity:1;} 75% {background:#DD0000; opacity:0;} to {background:#FF0000; opacity:1;} }
+
+
+
+
+
+
+
+/* Elementos F4 */
+
+ @-webkit-keyframes anim2-kf-f4-red { from {-webkit-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} 25% {-webkit-transform:translateZ(15px) rotateZ(120deg); opacity:1; border-color: #FFFFFF;} 50% {-webkit-transform:translateZ(15px) rotateZ(0); opacity:0; border-color: #FF0000;} 75% {-webkit-transform:translateZ(15px) rotateZ(-120deg); opacity:1; border-color: #FFFFFF;} to {-webkit-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} }
+ @-moz-keyframes anim2-kf-f4-red { from {-moz-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} 25% {-moz-transform:translateZ(15px) rotateZ(120deg); opacity:1; border-color: #FFFFFF;} 50% {-moz-transform:translateZ(15px) rotateZ(0); opacity:0; border-color: #FF0000;} 75% {-moz-transform:translateZ(15px) rotateZ(-120deg); opacity:1; border-color: #FFFFFF;} to {-moz-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} }
+
+
+
+
+
+
+
+
+
+/* Elementos F5 */
+
+@-webkit-keyframes anim2-kf-f5 { from {-webkit-transform:translateZ(20px) rotateZ(0deg);} to {-webkit-transform:translateZ(20px) rotateZ(-360deg);} }
+@-moz-keyframes anim2-kf-f5 { from {-moz-transform:translateZ(20px) rotateZ(0deg);} to {-moz-transform:translateZ(20px) rotateZ(-360deg);} }
+
+
+
+/* Elementos F6 */
+
+
+/* Elementos F7 */
+
+ @-webkit-keyframes anim2-kf-f7-red { from {-webkit-transform:translateZ(28px) rotateZ(0deg); opacity:1;} 10% {-webkit-transform:translateZ(28px) rotateZ(36deg); opacity:0;} 20% {opacity:0;} 30% {-webkit-transform:translateZ(28px) rotateZ(108deg); opacity:1;} to {-webkit-transform:translateZ(28px) rotateZ(360deg); opacity:1;} }
+ @-moz-keyframes anim2-kf-f7-red { from {-moz-transform:translateZ(28px) rotateZ(0deg); opacity:1;} 10% {-moz-transform:translateZ(28px) rotateZ(36deg); opacity:0;} 20% {opacity:0;} 30% {-moz-transform:translateZ(28px) rotateZ(108deg); opacity:1;} to {-moz-transform:translateZ(28px) rotateZ(360deg); opacity:1;} }
+
+
+
+/* Elementos F8 */
+
+@-webkit-keyframes anim2-kf-f8-red { from {-webkit-transform:translateZ(32px) rotateZ(360deg); border-color:#AA0000; opacity:1;} 50%  {-webkit-transform:translateZ(32px) rotateZ(180deg); border-color:#FFFFFF; opacity:1;} to   {-webkit-transform:translateZ(32px) rotateZ(0deg); border-color:#AA0000; opacity:1;} }
+@-moz-keyframes anim2-kf-f8-red { from {-moz-transform:translateZ(32px) rotateZ(360deg); border-color:#AA0000; opacity:1;} 50%  {-moz-transform:translateZ(32px) rotateZ(180deg); border-color:#FFFFFF; opacity:1;} to   {-moz-transform:translateZ(32px) rotateZ(0deg); border-color:#AA0000; opacity:1;} }
+
+
+@-webkit-keyframes anim2-kf-f8div-red { from {background:#AA0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+@-moz-keyframes anim2-kf-f8div-red { from {background:#AA0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
+
+/* Elementos F9 */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #000; /* Fondo negro base de la página */
+}
+
+/* Contenedor Animación 01 (Fondo cuadrados) */
+section {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+
+
+/* Estilos de la Animación 01 (cuadrados de fondo) */
+section span {
+    position: relative; /* Sigue siendo buena práctica */
+    display: block;
+    width: calc(3vw - 2px); /* Tamaño de cada mosaico */
+    height: calc(3vw - 2px); /* Tamaño de cada mosaico */
+    background: #181818;       /* Color base GRIS OSCURO de los mosaicos */
+    z-index: 2;
+    transition: background-color 1.5s;
+}
+
+section span:hover {
+    background: #ff0000;       /* Color ROJO al pasar el cursor */
+    transition: background-color 0s; /* Cambio inmediato al pasar el cursor */
+}
+
+/* --- Inicio: Corrección para botón de cierre de alerta --- */
+
+/* Asegura que el botón 'close' no tenga fondo ni tamaño extraños */
+.alert .close {
+    padding: 0.5rem 1rem;
+    margin: -0.75rem -1.25rem -0.75rem auto;
+    background-color: transparent;
+    border: none;
+    width: auto;
+    height: auto;
+    box-shadow: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    float: right;
+    color: #000;
+    opacity: 0.7;
+    text-shadow: none;
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.alert .close:hover {
+    opacity: 1;
+    color: #000;
+}
+
+.alert .close span {
+    display: inline;
+}
+
+/* --- Fin: Corrección para botón de cierre de alerta --- */
+
+/* Formulario de Inicio de Sesión */
+section .signin {
+    position: absolute; /* Ya lo tienes, es correcto */
+    top: 50%;           /* Nuevo: para centrado vertical */
+    left: 50%;          /* Nuevo: para centrado horizontal */
+    transform: translate(-50%, -50%); /* Nuevo: ajusta la posición basada en su propio tamaño */
+    width: 420px; /* Ligeramente más ancho para acomodar un HUD más grande */
+    background: #222;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px; /* Ajustar padding si es necesario */
+    border-radius: 8px; /* Un poco más redondeado para estética */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
+}
+
+section .signin .content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0px; /* El espacio lo dará el margin de animacion-hud-wrapper y h2 */
+}
+
+section .signin .content h2 {
+    font-size: 2em;
+    color: #ff0000;
+    text-transform: uppercase;
+    margin-top: 15px; /* Espacio después de la HUD */
+    margin-bottom: 25px; /* Espacio antes del formulario */
+    text-align: center;
+}
+
+section .signin .content .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+section .signin .content .form .inputBox {
+    position: relative;
+    width: 100%;
+}
+
+section .signin .content .form .inputBox input {
+    position: relative;
+    width: 100%;
+    background: #333;
+    border: none;
+    outline: none;
+    padding: 25px 10px 7.5px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1em;
+}
+
+section .signin .content .form .inputBox i {
+    position: absolute;
+    left: 0;
+    padding: 15px 10px;
+    font-style: normal;
+    color: #aaa;
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+.signin .content .form .inputBox input:focus~i,
+.signin .content .form .inputBox input:valid~i {
+    transform: translateY(-7.5px);
+    font-size: 0.8em;
+    color: #fff;
+}
+
+.signin .content .form .links {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.signin .content .form .links a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.signin .content .form .links a:nth-child(2) {
+    color: #ff0000;
+    font-weight: 600;
+}
+
+.signin .content .form .inputBox input[type="submit"] {
+    padding: 10px;
+    background: #ff0000;
+    color: #000;
+    font-weight: 600;
+    font-size: 1.35em;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+}
+
+input[type="submit"]:active {
+    opacity: 0.6;
+}
+
+/* Estilos de Alerta (para mensajes flash) */
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    color: #fff; /* Color de texto general para alertas */
+    z-index: 1001; /* Por encima de la animación HUD si se superponen */
+    width: 100%; /* Para que la alerta ocupe el ancho del form */
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.close { /* Para el botón de cerrar la alerta */
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+}
+
+.close:hover {
+    color: #000;
+    text-decoration: none;
+    opacity: .75;
+}
+
+/* Media Queries */
+@media (max-width: 900px) {
+    section span {
+        width: calc(10vw - 2px);
+        height: calc(10vw - 2px);
+    }
+}
+
+@media (max-width: 600px) {
+    section span {
+        width: calc(20vw - 2px);
+        height: calc(20vw - 2px);
+    }
+    section .signin {
+        width: 90%;
+        padding: 20px;
+    }
+    section .signin .content h2 {
+        font-size: 1.5em;
+    }
+}==== templates/login.html ====
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Panthera Strike</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_hud_animation.css') }}">
+</head>
+
+<body>
+    <section>
+        <!-- Los spans para la animación de fondo serán generados por login_background_animation.js -->
+        <div class="signin">
+            <div class="content">
+                <!-- Contenedor de la Animación HUD (Animación 02) -->
+                <div id="animacion-hud-wrapper">
+                    <div id="anim2-container">
+                        <!-- Figura Central de la HUD -->
+                        <div id="anim2-figure">
+                            <div id="anim2-f1">
+                                <!-- Spans internos generados por JS -->
+                            </div>
+                            <div id="anim2-f2">
+                                <!-- Spans internos generados por JS -->
+                            </div>
+                            <div id="anim2-f3">
+                                <div id="anim2-f31">
+                                    <span class="anim2-f311"><b></b></span>
+                                    <span class="anim2-f312"><b></b></span>
+                                </div>
+                                <div id="anim2-f32">
+                                    <span class="anim2-f321"></span>
+                                    <span class="anim2-f322"></span>
+                                </div>
+                                <div id="anim2-f33"></div>
+                                <div id="anim2-f34"></div>
+                            </div>
+                            <div id="anim2-f4">
+                                <div id="anim2-f41"></div>
+                                <div id="anim2-f42"></div>
+                                <div id="anim2-f43" class="anim2-f431"></div>
+                                <div id="anim2-f43" class="anim2-f432"></div>
+                                <div id="anim2-f43" class="anim2-f433"></div>
+                                <div id="anim2-f43" class="anim2-f434"></div>
+                            </div>
+                            <div id="anim2-f5">
+                                <!-- Spans internos generados por JS -->
+                            </div>
+                            <div id="anim2-f6"></div>
+                            <div id="anim2-f7">
+                                <div id="anim2-f71"></div>
+                                <div id="anim2-f72"></div>
+                            </div>
+                            <div id="anim2-f8">
+                                <div id="anim2-f81"></div>
+                                <div id="anim2-f82"></div>
+                            </div>
+                            <div id="anim2-f9"><span></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Iniciar Sesión</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <form class="form" method="POST" action="{{ url_for('login') }}">
+                    <div class="inputBox">
+                        <input type="text" id="username" name="username" required>
+                        <i>Usuario</i>
+                    </div>
+                    <div class="inputBox">
+                        <input type="password" id="password" name="password" required>
+                        <i>Contraseña</i>
+                    </div>
+                    <div class="links">
+                        <a href="#">¿Olvidaste tu contraseña?</a>
+                        <a href="#">Registrarse</a>
+                    </div>
+                    <div class="inputBox">
+                        <input type="submit" value="Entrar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/login_background_animation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/login_hud_animation.js') }}"></script>
+</body>
+
+</html>==== templates/index.html ====
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panthera Strike - Web Scanner</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700');
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            /* Cambiado a blanco */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #1a1a1a;
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px #ff0000;
+            /* Cambiado de verde a rojo */
+            width: 80%;
+            max-width: 900px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            /* Cambiado a blanco */
+            text-shadow: 0 0 5px #ff0000;
+            /* Cambiado de verde a rojo */
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: calc(100% - 22px);
+            /* Ajustar por padding y borde */
+            height: 150px;
+            background-color: #000;
+            color: #ffffff;
+            /* Cambiado a blanco */
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
+            padding: 10px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        button {
+            background-color: #330000;
+            /* Cambiado de verde a rojo */
+            color: #ffffff;
+            /* Cambiado a blanco */
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1em;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            background-color: #660000;
+            /* Cambiado de verde a rojo */
+            box-shadow: 0 0 10px #ff0000;
+            /* Cambiado de verde a rojo */
+        }
+
+
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #000;
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
+            min-height: 100px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            /* Para mantener saltos de línea y espacios */
+            word-wrap: break-word;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #330000;
+            /* Cambiado de verde a rojo */
+            padding-bottom: 5px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .error {
+            color: #ff0000;
+        }
+
+        .warn {
+            color: #ffff00;
+        }
+
+        .info {
+            color: #ffffff;
+            /* Cambiado a blanco */
+        }
+
+        .job-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px dashed #660000;
+            /* Cambiado de verde a rojo */
+            background-color: #050505;
+        }
+
+        .jobs-list {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #000;
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .jobs-list h3 {
+            margin-top: 0;
+        }
+
+        .jobs-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .jobs-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #330000;
+            /* Cambiado de verde a rojo */
+            cursor: pointer;
+        }
+
+        .jobs-list li:hover {
+            background-color: #330000;
+            /* Cambiado de verde a rojo */
+        }
+
+        .jobs-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tool-selection-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #101010;
+            /* Slightly lighter than container for distinction */
+            border: 1px solid #cc0000;
+            /* Cambiado de verde a rojo */
+            border-radius: 5px;
+        }
+
+        .tool-selection-container h3 {
+            margin-top: 0;
+            color: #ffffff;
+            /* Cambiado a blanco */
+        }
+
+        .tool-category {
+            margin-bottom: 15px;
+        }
+
+        .tool-category h4 {
+            color: #dd0000;
+            /* Cambiado de verde a rojo */
+            border-bottom: 1px solid #660000;
+            /* Cambiado de verde a rojo */
+            padding-bottom: 5px;
+        }
+
+        .tool-item {
+            margin-bottom: 8px;
+        }
+
+        .tool-item label {
+            display: flex;
+            align-items: center;
+        }
+
+        .tool-item input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: #ff0000;
+            /* Style the checkbox color */
+            /* Cambiado de verde a rojo */
+        }
+
+        .tool-description {
+            font-size: 0.8em;
+            color: #ffffff;
+            /* Cambiado a blanco */
+            margin-left: 25px;
+            /* Align with checkbox text */
+        }
+
+        .preset-buttons button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <style>
+        .terminal {
+            width: 100%;
+            background: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            font-family: 'Ubuntu Mono', 'Courier New', Courier, monospace;
+            border: 1px solid #444;
+            min-height: 200px;
+        }
+
+        .terminal__bar {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            height: 32px;
+            background: linear-gradient(to bottom, #3c3b37, #2e2d2a);
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+
+        .terminal__buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal__button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(to bottom, #7d7871, #595953);
+            box-shadow: 0 0 1px #41403A, 0 1px 1px #474642;
+            padding: 0;
+            flex-shrink: 0;
+            cursor: default;
+            outline: none;
+        }
+
+        .terminal__button--exit {
+            background: linear-gradient(to bottom, #ff5f56, #e0443e);
+        }
+
+        .terminal__button--min {
+            background: linear-gradient(to bottom, #ffbd2e, #dea123);
+        }
+
+        .terminal__button--max {
+            background: linear-gradient(to bottom, #27c93f, #12ac28);
+        }
+
+        .terminal__user {
+            margin-left: auto;
+            padding-right: 10px;
+            font-size: 13px;
+            color: #d5d0ce;
+            font-weight: 500;
+        }
+
+        .terminal__body {
+            flex-grow: 1;
+            background: rgba(0, 0, 0, 0.93);
+            padding: 16px;
+            color: #e0e0e0;
+            font-size: 1em;
+            overflow-y: auto;
+            max-height: 400px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .terminal__body .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .terminal__body .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .terminal__body .error {
+            color: #ff5f56;
+        }
+
+        .terminal__body .warn {
+            color: #ffe066;
+        }
+
+        .terminal__body .info {
+            color: #7eda28;
+        }
+
+        .terminal__body strong {
+            color: #ffffff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Panthera Strike - Web Scanner</h1>
+
+        <label for="targets">Targets (FQDN, IPv4, IPv6, URL - uno por línea):</label>
+        <textarea id="targets" placeholder="ejemplo.com\n192.168.1.1\nhttps://sitio.seguro"></textarea>
+
+        <div class="tool-selection-container">
+            <h3>Seleccionar Herramientas de Escaneo</h3>
+            <div class="preset-buttons">
+                <button onclick="applyToolPreset('none')">Desmarcar Todas</button>
+                <button onclick="applyToolPreset('full_scan')">Escaneo Robusto (Marcar Todas Seguras)</button>
+                <button onclick="applyToolPreset('quick_scan')">Escaneo Rápido</button>
+                <button id="downloadZip" style="background-color:#006600;color:white;margin-left:10px;">Descargar
+                    Resultados (ZIP)</button>
+                <button onclick="applyToolPreset('discovery_only')">Solo Descubrimiento</button>
+            </div>
+            <div id="toolList">Cargando herramientas...</div>
+        </div>
+
+        <button onclick="startScan()">Enviar Ataque</button>
+
+        <div class="jobs-list">
+            <h3>Historial de Trabajos</h3>
+            <ul id="jobsListArea">
+                <li>Cargando trabajos anteriores...</li>
+            </ul>
+        </div>
+
+        <div id="currentJobInfo" class="job-info" style="display:none;">
+            <h3>Información del Trabajo Actual:</h3>
+            <p><strong>Job ID:</strong> <span id="jobIdDisplay"></span></p>
+            <p><strong>Estado:</strong> <span id="jobStatusDisplay"></span></p>
+            <p><button onclick="refreshStatus()">Actualizar Estado</button>
+            <button id="cancelJobButton" onclick="cancelScan()" style="background-color:#cc0000; color:white; display:none; margin-left: 10px;">
+                Cancelar Escaneo
+            </button></p>
+        </div>
+
+        <h2>Estado/Logs del Escaneo:</h2>
+        <!-- Contenedor principal para la terminal -->
+        <div class="terminal-container" style="margin-top: 20px;">
+            <div class="terminal">
+                <div class="terminal__bar">
+                    <div class="terminal__buttons">
+                        <button class="terminal__button terminal__button--exit"></button>
+                        <button class="terminal__button terminal__button--min"></button>
+                        <button class="terminal__button terminal__button--max"></button>
+                    </div>
+                    <div class="terminal__user">PantheraStrike@scanner:~</div>
+                </div>
+                <!-- El contenido de los logs irá aquí -->
+                <div class="terminal__body" id="terminalBody">
+                    Esperando inicio de escaneo...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentJobId = null;
+        let statusInterval = null;
+        let availableTools = [];
+        let toolPresets = {};
+
+        async function cancelScan() {
+            if (!currentJobId) {
+                alert("No hay un trabajo seleccionado o en ejecución para cancelar.");
+                return;
+            }
+
+            const cancelButton = document.getElementById('cancelJobButton');
+            const jobStatusDisplay = document.getElementById('jobStatusDisplay');
+
+            if (confirm(`¿Estás seguro de que deseas cancelar el escaneo con Job ID: ${currentJobId}?`)) {
+                cancelButton.disabled = true;
+                jobStatusDisplay.textContent = 'cancelling';
+                addLogToTerminal(`[WARN] Solicitando cancelación para el Job ID: ${currentJobId}...`, 'warn');
+
+                try {
+                    const response = await fetch(`/cancel/${currentJobId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        addLogToTerminal(`[INFO] Solicitud de cancelación enviada para ${currentJobId}. Refrescando estado...`, 'info');
+                    } else {
+                        addLogToTerminal(`[ERROR] Error al solicitar cancelación para ${currentJobId}: ${data.error || response.statusText}`, 'error');
+                        cancelButton.disabled = false;
+                        jobStatusDisplay.textContent = 'error_cancelling';
+                    }
+                } catch (error) {
+                    addLogToTerminal(`[ERROR] Error de red al solicitar cancelación: ${error.message}`, 'error');
+                    cancelButton.disabled = false;
+                    jobStatusDisplay.textContent = 'error_cancelling';
+                }
+                setTimeout(() => fetchStatus(currentJobId), 1500);
+            }
+        }
+
+        function addLogToTerminal(message, level = 'info') {
+            const terminalBody = document.getElementById('terminalBody');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${level}`;
+            logEntry.textContent = `[CLIENT] ${message}`;
+            terminalBody.appendChild(logEntry);
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTools();
+            fetchJobs();
+        });
+
+        async function fetchTools() {
+            try {
+                const response = await fetch('/tools');
+                const data = await response.json();
+                if (response.ok) {
+                    availableTools = data.tools;
+                    toolPresets = data.presets;
+                    renderToolList(availableTools);
+                } else {
+                    document.getElementById('toolList').innerHTML = `<span class="error">Error cargando herramientas: ${data.error || response.statusText}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('toolList').innerHTML = `<span class="error">Error de red o servidor al cargar herramientas: ${error.message}</span>`;
+            }
+        }
+
+        function renderToolList(tools) {
+            const toolListDiv = document.getElementById('toolList');
+            toolListDiv.innerHTML = ''; // Limpiar contenido anterior
+
+            const toolsByCategory = tools.reduce((acc, tool) => {
+                acc[tool.category] = acc[tool.category] || [];
+                acc[tool.category].push(tool);
+                return acc;
+            }, {});
+
+            for (const category in toolsByCategory) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'tool-category';
+
+                const categoryTitle = document.createElement('h4');
+                categoryTitle.textContent = category;
+                categoryDiv.appendChild(categoryTitle);
+
+                toolsByCategory[category].forEach(tool => {
+                    const toolItemDiv = document.createElement('div');
+                    toolItemDiv.className = 'tool-item';
+
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `tool-${tool.id}`;
+                    checkbox.value = tool.id;
+                    checkbox.checked = tool.default_enabled; // Marcar por defecto según configuración
+                    if (tool.dangerous) {
+                        label.title = "PELIGROSO: Esta herramienta puede tener efectos no deseados.";
+                        label.style.color = "#ff6600";
+                    }
+                    if (tool.requires_api_token) {
+                        label.title = "Requiere configuración de API token en el backend.";
+                        // checkbox.disabled = true; // Opcional: deshabilitar si no está configurada
+                    }
+
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(` ${tool.name}`));
+
+                    const description = document.createElement('div');
+                    description.className = 'tool-description';
+                    description.textContent = tool.description;
+                    if (tool.dangerous) description.innerHTML += ' <strong style="color:red;">[PELIGROSO]</strong>';
+                    if (tool.requires_api_token) description.innerHTML += ' <strong style="color:orange;">[REQUIERE API TOKEN]</strong>';
+
+
+                    toolItemDiv.appendChild(label);
+                    toolItemDiv.appendChild(description);
+                    categoryDiv.appendChild(toolItemDiv);
+                });
+                toolListDiv.appendChild(categoryDiv);
+            }
+        }
+
+        function applyToolPreset(presetName) {
+            const checkboxes = document.querySelectorAll('#toolList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false); // Desmarcar todos primero
+
+            if (presetName === 'none') {
+                return; // Ya están todos desmarcados
+            }
+
+            const presetToolIds = toolPresets[presetName];
+            if (presetToolIds) {
+                presetToolIds.forEach(toolId => {
+                    const checkbox = document.getElementById(`tool-${toolId}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+        }
+
+        function getSelectedToolIds() {
+            const selectedTools = [];
+            const checkboxes = document.querySelectorAll('#toolList input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                selectedTools.push(checkbox.value);
+            });
+            return selectedTools;
+        }
+
+        async function fetchJobs() {
+            try {
+                const response = await fetch('/jobs');
+                const jobs = await response.json();
+                const jobsListArea = document.getElementById('jobsListArea');
+                jobsListArea.innerHTML = ''; // Limpiar
+                if (jobs.length === 0) {
+                    jobsListArea.innerHTML = '<li>No hay trabajos anteriores.</li>';
+                    return;
+                }
+                jobs.forEach(job => {
+                    const li = document.createElement('li');
+                    li.textContent = `Job ID: ${job.id} - Estado: ${job.status} - Targets: ${job.targets.join(', ') || 'N/A'} - Inicio: ${job.start_time}`;
+                    li.onclick = () => {
+                        currentJobId = job.id;
+                        document.getElementById('jobIdDisplay').textContent = job.id;
+                        document.getElementById('jobStatusDisplay').textContent = job.status;
+                        document.getElementById('currentJobInfo').style.display = 'block';
+                        fetchStatus(job.id); // Cargar logs e info detallada
+                        if (statusInterval) clearInterval(statusInterval);
+                        // Solo reiniciar intervalo si el job no está finalizado
+                        if (job.status !== 'completed' && job.status !== 'failed' && job.status !== 'cancelled' && job.status !== 'error') {
+                            statusInterval = setInterval(() => fetchStatus(job.id), 5000);
+                        }
+                    };
+                    jobsListArea.appendChild(li);
+                });
+            } catch (error) {
+                document.getElementById('jobsListArea').innerHTML = `<li><span class="error">Error cargando trabajos: ${error.message}</span></li>`;
+            }
+        }
+
+
+        async function startScan() {
+            const targetsText = document.getElementById('targets').value;
+            if (!targetsText.trim()) {
+                alert('Por favor, ingrese al menos un objetivo.');
+                return;
+            }
+            const targetsArray = targetsText.split('\n').map(t => t.trim()).filter(t => t);
+            const selectedTools = getSelectedToolIds();
+
+            if (selectedTools.length === 0) {
+                if (!confirm('No ha seleccionado ninguna herramienta. ¿Desea continuar con un escaneo predeterminado (rápido)?')) {
+                    return;
+                }
+                // Si el usuario confirma, selectedTools se queda vacío y el backend usará el default.
+            }
+
+            document.getElementById('terminalBody').innerHTML = 'Iniciando escaneo...';
+            document.getElementById('currentJobInfo').style.display = 'none';
+            if (statusInterval) clearInterval(statusInterval);
+
+            try {
+                const response = await fetch('/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ targets: targetsArray, tools: selectedTools }), // Enviar herramientas seleccionadas
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    currentJobId = data.job_id;
+                    document.getElementById('terminalBody').innerHTML = `Escaneo iniciado. Job ID: ${data.job_id}.<br>Consultando estado...`;
+                    document.getElementById('jobIdDisplay').textContent = data.job_id;
+                    document.getElementById('jobStatusDisplay').textContent = 'pending';
+                    document.getElementById('currentJobInfo').style.display = 'block';
+                    fetchStatus(currentJobId);
+                    statusInterval = setInterval(() => fetchStatus(currentJobId), 5000); // Actualizar cada 5 segundos
+                    fetchJobs(); // Actualizar lista de jobs
+                } else {
+                    document.getElementById('terminalBody').innerHTML = `<span class="error">Error iniciando escaneo: ${data.error || response.statusText}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('terminalBody').innerHTML = `<span class="error">Error de red o servidor: ${error.message}</span>`;
+            }
+        }
+
+        async function fetchStatus(jobId) {
+            if (!jobId) return;
+            try {
+                const response = await fetch(`/status/${jobId}`);
+                const data = await response.json();
+                const terminalBody = document.getElementById('terminalBody');
+                const jobStatusDisplay = document.getElementById('jobStatusDisplay');
+
+                if (response.ok) {
+                    jobStatusDisplay.textContent = data.status;
+                    let logsHtml = `<strong>Estado del Job ${jobId}: ${data.status}</strong><br>`;
+                    
+                    // Lógica para el botón de cancelar
+                    const cancelButton = document.getElementById('cancelJobButton');
+                    if (data.status === 'running' || data.status === 'pending') {
+                        cancelButton.style.display = 'inline-block';
+                        cancelButton.disabled = false;
+                    } else if (data.status === 'cancelling') {
+                        cancelButton.style.display = 'inline-block';
+                        cancelButton.disabled = true;
+                    } else {
+                        cancelButton.style.display = 'none';
+                    }
+                    logsHtml += `Hora de inicio: ${data.start_time || 'N/A'}<br>`;
+                    if (data.end_time) logsHtml += `Hora de finalización: ${data.end_time}<br>`;
+                    logsHtml += `Objetivos: ${data.targets ? data.targets.join(', ') : 'N/A'}<br>`;
+                    logsHtml += `Resultados en: ${data.results_path || 'N/A'}<br><hr>`;
+
+                    if (data.logs && data.logs.length > 0) {
+                        logsHtml += data.logs.map(log => {
+                            let logClass = 'info';
+                            if (log.includes('[ERROR]')) logClass = 'error';
+                            else if (log.includes('[WARN]')) logClass = 'warn';
+                            return `<div class="log-entry ${logClass}">${escapeHtml(log)}</div>`;
+                        }).join('');
+                    } else {
+                        logsHtml += 'No hay logs detallados disponibles aún.';
+                    }
+                    terminalBody.innerHTML = logsHtml;
+
+                    if (data.status === 'completed' || data.status === 'failed' || data.status === 'cancelled' || data.status === 'error') {
+                        if (statusInterval) clearInterval(statusInterval);
+                        statusInterval = null;
+                        jobStatusDisplay.textContent += ` (Finalizado)`;
+                    }
+                } else {
+                    terminalBody.innerHTML += `<br><span class="error">Error obteniendo estado para ${jobId}: ${data.error || response.statusText}</span>`;
+                    if (statusInterval) clearInterval(statusInterval);
+                }
+            } catch (error) {
+                document.getElementById('terminalBody').innerHTML += `<br><span class="error">Error de red o servidor al obtener estado: ${error.message}</span>`;
+                if (statusInterval) clearInterval(statusInterval);
+            }
+        }
+
+        function refreshStatus() {
+            if (currentJobId) {
+                fetchStatus(currentJobId);
+            }
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+    </script>
+</body>
+
+</html>==== scanner/__init__.py ====
+# scanner package==== scanner/engine.py ====
+import subprocess
+import os
+import datetime
+import shlex
+import time
+import shutil # Added import
+from utils import get_tool_config # Importar la función para obtener la configuración de herramientas
+
+MAX_CONCURRENT_TOOLS = 3 # Limitar concurrencia para no sobrecargar el sistema (12GB RAM)
+
+def log_message(job_id, message, active_jobs, level='INFO'):
+    timestamp = datetime.datetime.now().isoformat()
+    log_entry = f"[{timestamp}] [{level}] {message}"
+    print(log_entry) # Log a consola del servidor
+    if job_id in active_jobs:
+        active_jobs[job_id]['logs'].append(log_entry)
+
+def check_tool_installed(tool_name):
+    """Verifica si una herramienta está instalada y es ejecutable usando shutil.which."""
+    if shutil.which(tool_name):
+        return True
+    else:
+        # Opcional: Podríamos intentar verificar si es una ruta absoluta y si existe y es ejecutable
+        # if os.path.isabs(tool_name) and os.path.exists(tool_name) and os.access(tool_name, os.X_OK):
+        #    return True
+        return False
+
+def run_single_tool(job_id, target, tool_config, job_path, active_jobs):
+    tool_name = tool_config['name']
+    tool_command_template = tool_config['command']
+    tool_category = tool_config['category']
+
+    log_message(job_id, f"Preparando herramienta: {tool_name} para el objetivo: {target}", active_jobs)
+
+    # Crear directorio para la herramienta si no existe
+    tool_output_dir = os.path.join(job_path, tool_category, tool_name + '_' + datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
+    os.makedirs(tool_output_dir, exist_ok=True)
+    
+    # El nombre del archivo de salida puede variar o ser stdout
+    # Para herramientas que escriben a archivo, especificamos uno
+    # Para las que escriben a stdout, capturamos la salida
+    output_file_name = f"output_{target.replace('/', '_').replace(':', '_')}.txt"
+    output_file_path = os.path.join(tool_output_dir, output_file_name) # Default output file if tool writes to stdout
+
+    # Preparar argumentos para formatear el comando
+    format_kwargs = {'target': shlex.quote(target)}
+    if '{output_file}' in tool_command_template:
+        format_kwargs['output_file'] = shlex.quote(output_file_path)
+    if '{output_file_dir}' in tool_command_template:
+        format_kwargs['output_file_dir'] = shlex.quote(tool_output_dir)
+    
+    command_to_run = tool_command_template.format(**format_kwargs)
+
+    log_message(job_id, f"Ejecutando: {command_to_run}", active_jobs)
+
+    try:
+        # Verificar si la herramienta base del comando está instalada
+        # ej. 'nmap' de 'nmap -sn {target}'
+        base_command = command_to_run.split()[0]
+        if not check_tool_installed(base_command):
+            log_message(job_id, f"ADVERTENCIA: La herramienta {base_command} no parece estar instalada o no está en el PATH. Saltando ejecución.", active_jobs, level='WARN')
+            return {'tool': tool_name, 'target': target, 'status': 'skipped', 'error': f'{base_command} not found'}
+
+        # Usar shell=False y pasar argumentos como lista es más seguro
+        # pero algunas herramientas complejas o con pipes pueden requerir shell=True
+        use_shell = tool_config.get('needs_shell', False)
+        if use_shell:
+            log_message(job_id, f"Ejecutando comando con shell=True: {command_to_run}", active_jobs, level='DEBUG')
+            process = subprocess.Popen(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=job_path, shell=True)
+        else:
+            process = subprocess.Popen(shlex.split(command_to_run), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=job_path)
+        
+        stdout, stderr = process.communicate(timeout=300) # Timeout de 5 minutos por herramienta
+
+        if process.returncode == 0:
+            output_location_message = ''
+            if '{output_file_dir}' in tool_command_template:
+                output_location_message = f"Salida en directorio {tool_output_dir}"
+            elif '{output_file}' in tool_command_template:
+                output_location_message = f"Salida en archivo {output_file_path}"
+            else:
+                output_location_message = f"Salida (stdout/stderr) guardada en {output_file_path}"
+            
+            log_message(job_id, f"Herramienta {tool_name} completada para {target}. {output_location_message}", active_jobs)
+            
+            # Si la herramienta no especifica un archivo de salida o directorio de salida en su comando, guardamos stdout
+            if '{output_file}' not in tool_command_template and '{output_file_dir}' not in tool_command_template and stdout:
+                 with open(output_file_path, 'w') as f:
+                    f.write(stdout)
+            if stderr: # Guardar también errores si los hay
+                with open(os.path.join(tool_output_dir, f"error_{target.replace('/', '_').replace(':', '_')}.txt"), 'w') as f:
+                    f.write(stderr)
+            return {'tool': tool_name, 'target': target, 'status': 'success', 'output_path': tool_output_dir}
+        else:
+            log_message(job_id, f"Error ejecutando {tool_name} para {target}. Código de salida: {process.returncode}", active_jobs, level='ERROR')
+            log_message(job_id, f"Stderr: {stderr}", active_jobs, level='ERROR')
+            with open(os.path.join(tool_output_dir, f"error_{target.replace('/', '_').replace(':', '_')}.txt"), 'w') as f:
+                f.write(f"COMMAND: {command_to_run}\nRETURN_CODE: {process.returncode}\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}")
+            return {'tool': tool_name, 'target': target, 'status': 'failed', 'error': stderr, 'output_path': tool_output_dir}
+
+    except subprocess.TimeoutExpired:
+        log_message(job_id, f"Timeout ejecutando {tool_name} para {target}", active_jobs, level='ERROR')
+        return {'tool': tool_name, 'target': target, 'status': 'timeout', 'error': 'Timeout expired'}
+    except Exception as e:
+        log_message(job_id, f"Excepción ejecutando {tool_name} para {target}: {e}", active_jobs, level='ERROR')
+        return {'tool': tool_name, 'target': target, 'status': 'exception', 'error': str(e)}
+
+def run_scan(job_id, targets, job_path, targets_file_path, active_jobs, selected_tool_ids=None):
+    log_message(job_id, f"Iniciando escaneo para el job {job_id} con objetivos: {targets}", active_jobs)
+    if selected_tool_ids:
+        log_message(job_id, f"Herramientas seleccionadas: {', '.join(selected_tool_ids)}", active_jobs)
+    else:
+        log_message(job_id, "No se seleccionaron herramientas específicas, se usarán las predeterminadas (MVP).", active_jobs)
+    active_jobs[job_id]['status'] = 'running'
+    all_results = []
+
+    # Escribir los objetivos a un archivo dentro del directorio del job
+    with open(targets_file_path, 'w') as f:
+        for target_item in targets:
+            f.write(f"{target_item}\n")
+    log_message(job_id, f"Objetivos guardados en: {targets_file_path}", active_jobs)
+
+    # Obtener la configuración de herramientas MVP
+    tool_configurations = get_tool_config()['raw_commands'] # Obtener todos los comandos de herramientas
+    mvp_tool_keys = get_tool_config()['presets'].get('quick_scan', []) # Fallback a quick_scan si no hay seleccionadas
+
+    tools_to_run = []
+    if selected_tool_ids:
+        for tool_id in selected_tool_ids:
+            if tool_id in tool_configurations:
+                tools_to_run.append(tool_configurations[tool_id])
+            else:
+                log_message(job_id, f"ADVERTENCIA: Herramienta con ID '{tool_id}' no encontrada en la configuración.", active_jobs, level='WARN')
+    else:
+        # Si no se especifican herramientas, usar las de MVP (o un preset por defecto)
+        for tool_id in mvp_tool_keys:
+            if tool_id in tool_configurations:
+                tools_to_run.append(tool_configurations[tool_id])
+
+    if not tools_to_run:
+        log_message(job_id, "No hay herramientas válidas para ejecutar. Finalizando job.", active_jobs, level='ERROR')
+        active_jobs[job_id]['status'] = 'failed'
+        active_jobs[job_id]['end_time'] = datetime.datetime.now().isoformat()
+        active_jobs[job_id]['error_message'] = 'No tools selected or configured to run.'
+        # Guardar resumen de error
+        summary_file = os.path.join(job_path, 'summary.json')
+        with open(summary_file, 'w') as f:
+            import json
+            json.dump(active_jobs[job_id], f, indent=4, default=str)
+        return
+
+    # Agrupar por categoría para mantener la estructura de directorios si es necesario, o simplemente iterar
+    # Para simplificar, iteraremos directamente sobre las herramientas seleccionadas
+    # La categoría se usa para la ruta de salida en run_single_tool
+
+    for tool_conf in tools_to_run:
+        log_message(job_id, f"Procesando herramienta: {tool_conf['name']} (Categoría: {tool_conf['category']})", active_jobs)
+        # Aquí se podría implementar concurrencia por herramienta o por objetivo
+        # Para MVP, secuencial por ahora
+        for target_item in targets:
+                if active_jobs[job_id]['status'] == 'cancelled': # Permitir cancelación
+                    log_message(job_id, f"Job {job_id} cancelado.", active_jobs, level='WARN')
+                    return
+                
+                # Asegurarse de que la categoría de la herramienta coincide con la categoría actual
+                # (Aunque get_tool_config ya devuelve las herramientas agrupadas por su categoría MVP)
+                # if tool_conf.get('category') in category: # Esta comprobación puede ser redundante si mvp_tools_config está bien estructurado
+                result = run_single_tool(job_id, target_item, tool_conf, job_path, active_jobs)
+                all_results.append(result)
+                # Pequeña pausa para no saturar y permitir que los logs se actualicen
+                time.sleep(0.1)
+
+    active_jobs[job_id]['status'] = 'completed'
+    active_jobs[job_id]['end_time'] = datetime.datetime.now().isoformat()
+    active_jobs[job_id]['results'] = all_results # Guardar un resumen de resultados
+    log_message(job_id, f"Escaneo completado para el job {job_id}", active_jobs)
+
+    # Opcional: Crear un archivo de resumen del job
+    summary_file = os.path.join(job_path, 'summary.json')
+    with open(summary_file, 'w') as f:
+        import json
+        json.dump(active_jobs[job_id], f, indent=4, default=str)
+    log_message(job_id, f"Resumen del job guardado en: {summary_file}", active_jobs)==== scanner/__pycache__/engine.cpython-313.pyc ====
+�
+
+    th�(  �                   �d   � S SK r S SKrS SKrS SKrS SKrS SKrS SKJr  SrSS jr	S r
+S rS	S jrg)
+�    N)�get_tool_config�   c                 ��   � [         R                   R                  5       R                  5       nSU SU SU 3n[        U5        X;   a  X    S   R	                  U5        g g )N�[z] [z] �logs)�datetime�now�	isoformat�print�append)�job_id�message�active_jobs�level�	timestamp�	log_entrys         �,/home/arya/panthera-strike/scanner/engine.py�log_messager      s`   � ��!�!�%�%�'�1�1�3�I��I�;�c�%���7�)�4�I�	�)��
+����F�#�*�*�9�5� �    c                 �<   � [         R                  " U 5      (       a  gg)uP   Verifica si una herramienta está instalada y es ejecutable usando shutil.which.TF)�shutil�which)�	tool_names    r   �check_tool_installedr      s   � �
+�|�|�I����
+ r   c                 ��  � US   nUS   nUS   n[        U SU SU 3U5        [        R                  R                  X7US-   [        R                  R                  5       R
+                  S5      -   5      n[        R                  " USS	9  S
+UR                  SS5      R                  SS5       S
+3n	[        R                  R                  X�5      n
+S[        R                  " U5      0nSU;   a  [        R                  " U
+5      US'   SU;   a  [        R                  " U5      US'   UR                  " S@0 UD6n[        U SU 3U5         UR                  5       S   n
+[        U
+5      (       d  [        U SU
+ S3USS9  XQSU
+ S3S.$ UR                  SS5      nU(       aE  [        U SU 3USS9  [        R                   " U[        R"                  [        R"                  SUSS 9nOH[        R                   " [        R                  " U5      [        R"                  [        R"                  SUS!9nUR%                  S"S#9u  nnUR&                  S:X  a�  S$nSU;   a  S%U 3nOSU;   a  S&U
+ 3nOS'U
+ 3n[        U S(U S)U S*U 3U5        SU;  a3  SU;  a-  U(       a&  [)        U
+S+5       nUR+                  U5        S S S 5        U(       ah  [)        [        R                  R                  US,UR                  SS5      R                  SS5       S
+35      S+5       nUR+                  U5        S S S 5        XQS-US..$ [        U S/U S0U S1UR&                   3US2S9  [        U S3U 3US2S9  [)        [        R                  R                  US,UR                  SS5      R                  SS5       S
+35      S+5       nUR+                  S4U S5UR&                   S6U S7U 35        S S S 5        XQS8UUS9.$ ! , (       d  f       GN7= f! , (       d  f       N�= f! , (       d  f       N8= f! [        R,                   a    [        U S:U S0U 3US2S9  XQS;S<S.s $ [.         a.  n[        U S=U S0U S>U 3US2S9  XQS?[1        U5      S.s S nA$ S nAff = f)AN�name�command�categoryzPreparando herramienta: z para el objetivo: �_z
+%Y%m%d_%H%M%ST)�exist_ok�output_�/�:z.txt�targetz
+{output_file}�output_filez{output_file_dir}�output_file_dirzEjecutando: r   zADVERTENCIA: La herramienta uF    no parece estar instalada o no está en el PATH. Saltando ejecución.�WARN�r   �skippedz
+ not found)�toolr$   �status�error�needs_shellFz#Ejecutando comando con shell=True: �DEBUG)�stdout�stderr�text�cwd�shell)r/   r0   r1   r2   i,  )�timeout� zSalida en directorio zSalida en archivo z#Salida (stdout/stderr) guardada en zHerramienta z completada para z. �w�error_�success)r*   r$   r+   �output_pathzError ejecutando z para u   . Código de salida: �ERRORzStderr: z	COMMAND: z
+RETURN_CODE: z	
+STDOUT:
+z	
+STDERR:
+�failed)r*   r$   r+   r,   r9   zTimeout ejecutando r4   zTimeout expiredu   Excepción ejecutando z: �	exception� )r   �os�path�joinr   r	   �strftime�makedirs�replace�shlex�quote�format�splitr   �get�
+subprocess�Popen�PIPE�communicate�
+returncode�open�write�TimeoutExpired�	Exception�str)r
+   r$   �tool_config�job_pathr   r   �tool_command_template�
+tool_category�tool_output_dir�output_file_name�output_file_path�
+format_kwargs�command_to_run�base_command�	use_shell�processr/   r0   �output_location_message�f�es                        r   �run_single_toolrb      s�  � ��F�#�I�'�	�2���
+�+�M���2�9�+�=P�QW�PX�Y�[f�g� �g�g�l�l�8�I��O�h�N_�N_�Nc�Nc�Ne�Nn�Nn�o~�N�<�  A�O��K�K��$�/�
+ !�����S�!9�!A�!A�#�s�!K� L�D�Q���w�w�|�|�O�F�� �u�{�{�6�2�3�M��/�/�',�{�{�3C�'D�
+�m�$��3�3�+0�;�;��+G�
+�'�(�*�1�1�B�M�B�N���,�~�&6�7��E�2]� &�+�+�-�a�0��#�L�1�1���">�|�n�  MS�  !T�  Va�  io�  
+p�%�9�Zf�Yg�gq�Wr�s�s�  �O�O�M�5�9�	����"E�n�EU� V�Xc�kr�s� �&�&�~�j�o�o�V`�Ve�Ve�lp�v~�  GK�  L�G� �&�&�u�{�{�>�'B�:�?�?�cm�cr�cr�y}�  DL�  M�G� �,�,�S�,�9��������"�&(�#�"�&;�;�,A�/�AR�*S�'� �$9�9�,>�?O�>P�*Q�'�,O�P`�Oa�*b�'���,�y�k�9J�6�(�RT�Ul�Tm� n�p{�|� �&;�;�@S�[p�@p�u{��+�S�1�Q��G�G�F�O� 2���"�'�'�,�,��&����PS�UX�AY�Aa�Aa�be�gj�Ak�@l�lp�8q�r�tw�x�|}��G�G�F�O� y�%�9�]l�m�m���"3�I�;�f�V�H�La�bi�bt�bt�au� v�  yD�  LS�  
+T���(�6�(� 3�[��P��b�g�g�l�l�?�f�V�^�^�C�QT�=U�=]�=]�^a�cf�=g�<h�hl�4m�n�ps�t�xy����)�N�#3�?�7�CU�CU�BV�Va�bh�ai�it�u{�t|�}�~� u�%�8�V\�m|�}�}� 2�1�� y�x�� u�t�� �$�$� f��F�1�)��F�6�(�K�[�`g�h�!�y�Sd�e�e�� ]��F�4�Y�K�v�f�X�R�PQ�s�S�U`�ho�p�!�{�UX�YZ�U[�\�\��]�s{   �;P �DP �O!�1AP �O3� 
+P �.A<P �*(P�P �!
+O0�+P �3
+P�=P �
+P�P �,Q:�	Q:�#Q5�/Q:�5Q:c           	      �H  � [        U SU  SU 3U5        U(       a   [        U SSR                  U5       3U5        O
+[        U SU5        SX@   S'   / n[        US5       nU H  nUR                  U S	35        M     S S S 5        [        U S
+U 3U5        [	        5       S   n	[	        5       S   R                  S
+/ 5      n
+/ nU(       a4  U H-  nX�;   a  UR
+                  X�   5        M  [        U SU S3USS9  M/     O#U
+ H  nX�;   d  M
+  UR
+                  X�   5        M     U(       d�  [        U SUSS9  SX@   S'   [        R                  R                  5       R                  5       X@   S'   SX@   S'   [        R                  R                  US5      n
+[        U
+S5       nSS KnUR                  X@   US[        S9  S S S 5        g U Hx  n[        U SUS    SUS    S 3U5        U HU  nX@   S   S!:X  a  [        U S"U  S#3USS9      g [        XX�U5      nUR
+                  U5        [         R"                  " S$5        MW     Mz     S%X@   S'   [        R                  R                  5       R                  5       X@   S'   XdU    S&'   [        U S'U  3U5        [        R                  R                  US5      n
+[        U
+S5       nSS KnUR                  X@   US[        S9  S S S 5        [        U S(U
+ 3U5        g ! , (       d  f       GN|= f! , (       d  f       g = f! , (       d  f       NB= f))NzIniciando escaneo para el job z con objetivos: zHerramientas seleccionadas: z, uT   No se seleccionaron herramientas específicas, se usarán las predeterminadas (MVP).�runningr+   r6   �
+zObjetivos guardados en: �raw_commands�presets�
+quick_scanz!ADVERTENCIA: Herramienta con ID 'u%   ' no encontrada en la configuración.r'   r(   u<   No hay herramientas válidas para ejecutar. Finalizando job.r:   r;   �end_timez'No tools selected or configured to run.�
+error_messagezsummary.jsonr   �   )�indent�defaultzProcesando herramienta: r   u    (Categoría: r   �)�	cancelledzJob z cancelado.g�������?�	completed�resultszEscaneo completado para el job zResumen del job guardado en: )r   r@   rN   rO   r   rH   r   r   r	   r
+   r>   r?   �json�dumprR   rb   �time�sleep)r
+   �targetsrT   �targets_file_pathr   �selected_tool_ids�all_resultsr`   �target_item�tool_configurations�
+mvp_tool_keys�tools_to_run�tool_id�summary_filerr   �	tool_conf�results                    r   �run_scanr�   l   sL  � ���8���@P�QX�PY�Z�\g�h���F�:�4�9�9�EV�;W�:X�Y�[f�g��F�r�t�  	A�$-�K���!��K� 
+���	%��"�K�
+�G�G�{�m�2�&�'� #� 
+&� ��2�3D�2E�F��T� *�+�N�;��#�%�i�0�4�4�\�2�F�M��L��(�G��-��#�#�$7�$@�A��F�&G��y�Pu�$v�  yD�  LR�  S�	 )� %�G��-��#�#�$7�$@�A� %� ��F�Z�\g�ov�w�(0���H�%�*2�*;�*;�*?�*?�*A�*K�*K�*M���J�'�/X���O�,��w�w�|�|�H�n�=��
+�,��
+$����I�I�k�)�1�Q��I�D� %� 	� "�	��F�6�y��7H�6I��Xa�bl�Xm�Wn�no�p�r}�~� #�K��&�x�0�K�?���$�v�h�k�(B�K�W]�^��
+ )��i�S^�_���"�"�6�*��
+�
+�3�� #�	 "�" %0�K���!�&.�&7�&7�&;�&;�&=�&G�&G�&I�K��
+�#�%0���	�"���9�&��B�K�P� �7�7�<�<��.�9�L�	
+�l�C�	 �A���	�	�+�%�q��C�	�@� 
+!� ��7��~�F��T�C 
+&�	%��: %�
+$� 	��< 
+!�	 �s$   �K0�L�:L�0
+K?�
+L�
+L!)�INFO)N)
+rI   r>   r   rD   rt   r   �utilsr   �MAX_CONCURRENT_TOOLSr   r   rb   r�   r=   r   r   �<module>r�      s9   �� � 	� � � � 
+� !�� �6��N]�`KUr   ==== scanner/__pycache__/__init__.cpython-313.pyc ====
+�
+
+    $ih   �                   �   � g )N� r   �    �./home/arya/panthera-strike/scanner/__init__.py�<module>r      s   �r   ==== utils/__init__.py ====
+# utils package
+from .helpers import create_job_directories, get_scan_status, get_job_logs, get_tool_config, list_all_jobs==== utils/__pycache__/helpers.cpython-313.pyc ====
+�
+
+    ��h�"  �                   �:   � S SK r S SKrS SKrS rS rS rS rS rg)�    Nc                 �:  � [         R                  R                  X5      n[         R                  " USS9  [         R                  R                  US5      n[	        US5       nU H  nUR                  U S35        M     SSS5        X44$ ! , (       d  f       X44$ = f)z=Crea los directorios necesarios para un nuevo job de escaneo.T)�exist_okztargets.txt�w�
+N)�os�path�join�makedirs�open�write)�base_results_dir�job_id�targets�job_path�targets_file_path�f�targets          �+/home/arya/panthera-strike/utils/helpers.py�create_job_directoriesr      s�   � ��w�w�|�|�,�5�H��K�K��4�(� �����X�}�=��	
+���	%���F�
+�G�G�v�h�b�M�"� � 
+&� �&�&� 
+&�	%� �&�&�s   �!B
+�
+
+Bc                 �  � X;   a  X   $ [         R                  R                  X 5      n[         R                  R                  US5      n[         R                  R                  U5      (       a.   [	        US5       n[
+        R                  " U5      nSSS5        U$ g! , (       d  f       W$ = f! [
+        R                   a    SSS.s $ f = f)z'Obtiene el estado de un job de escaneo.zsummary.json�rN�unknownzCould not parse summary file)�status�error)r   r   r	   �existsr   �json�load�JSONDecodeError)r   �active_jobs�results_dirr   �summary_filer   �status_infos          r   �get_scan_statusr#      s�   � �
+���"�"� �w�w�|�|�K�0�H��7�7�<�<��.�9�L�	�w�w�~�~�l�#�#�	R��l�C�(�A�"�i�i��l�� )��� � )�(�����#�#� 	R�'�2P�Q�Q�	R�s0   �.B. �:B�	B. �
+B+�&B. �+B. �.C
+�	C
+c                 �   � [        U 0 U5      nU(       a  SU;   a  US   $ U(       a  SU  SUR                  SS5       S3/$ g)zkIntenta obtener los logs de un job, ya sea de active_jobs o del archivo de log principal del job si existe.�logsz
+Logs for job z7 might be found in individual tool output files within �results_pathzits result directory�.N)r#   �get)r   r    r   s      r   �get_job_logsr)   "   sp   � � �V�R��
+5�F�
+�&�F�"��f�~��	���x�'^�_e�_i�_i�jx�  {Q�  `R�  _S�  ST�  U�  V�  	V��    c           	      �L  � [         R                  R                  U 5      (       d  / $ [         R                  " U 5       Vs/ s HH  n[         R                  R	                  [         R                  R                  X5      5      (       d  MF  UPMJ     nnUR
+                  SS9  U$ s  snf )zJLista todos los job IDs existentes escaneando el directorio de resultados.T)�reverse)r   r   r   �listdir�isdirr	   �sort)r
+   �d�job_idss      r   �
+list_all_jobsr2   9   ss   � �
+�7�7�>�>�*�+�+��	��*�*�%5�6�k�6�Q�"�'�'�-�-������Ue�Hi�:j�q�6�G�k� �L�L��L���N��	 ls   �AB!�B!c                  �p  � SSSSS.SSSSS.S	S
+SSSS
+.SSSSS.SSSSS.SSSSS.SSSSS.SSSS S.S!S"SS#S.S$S%S&S'SS(.S)S*SS+S.S,S-SS.S.S/S0SS1S.S2S3SS4S.S5S6S7S8SS9.S:.n / S;Qn/ nU R                  5        HV  u  p4UR                  UUS<   US=   UR                  S>S?5      X1;   UR                  S@SA5      UR                  SBSA5      SC.5        MX     U R                  5        Vs/ s H9  o0U   R                  SB5      (       a  M  X   R                  S@5      (       a  M7  UPM;     sn/ SDQ/ SEQSF.nX%U SG.$ s  snf )Hu]   Carga la configuración de herramientas. Podría ser desde un archivo YAML/JSON en el futuro.z
+Amass Enumz'amass enum -d {target} -o {output_file}�	Discoveryu8   Descubrimiento de subdominios y enumeración de activos.)�name�command�category�description�	Subfinderz&subfinder -d {target} -o {output_file}u.   Descubrimiento rápido de subdominios pasivos.�DNSXzCsubfinder -d {target} -silent | dnsx -silent -resp -o {output_file}u?   Herramienta rápida de DNS para resolver y consultar registros.T)r5   r6   r7   r8   �needs_shell�Naabuz-naabu -host {target} -silent -o {output_file}z	Port Scanu%   Escáner de puertos rápido y simple.�HTTPXzKhttpx -silent -status-code -title -tech-detect -o {output_file} -u {target}zWeb Infou$   Sonda HTTP rápida y multifuncional.zNmap Top Portsz8nmap -sV -T4 --top-ports 1000 {target} -oA {output_file}ug   Escaneo de los 1000 puertos TCP más comunes con detección de versión y todos los formatos de salida.�Nucleiz+nuclei -u {target} -o {output_file} -silentz	Vuln Scanu2   Escáner de vulnerabilidades basado en plantillas.zFFUF Common Directoriesztffuf -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u {target}/FUZZ -o {output_file} -of csv -fs 0�Fuzzingz*Fuzzing de directorios y archivos comunes.zDirsearch Commonzwdirsearch -u {target} -e php,html,js,txt -w /usr/share/wordlists/dirb/common.txt --output={output_file} --format=simpleu(   Búsqueda de directorios y archivos web.�WPScanz�wpscan --ignore-main-redirect --url {target} --enumerate vp,vt,u --random-user-agent --api-token YOUR_WPSCAN_API_TOKEN -o {output_file} -f cli-no-colorzCMS Scanu?   Escáner de vulnerabilidades de WordPress (requiere API token).)r5   r6   r7   r8   �requires_api_token�Niktoz.nikto -h {target} -o {output_file} -Format txtu!   Escáner de vulnerabilidades web.�WhatWebz/whatweb -a 3 {target} --log-brief {output_file}u$   Identificación de tecnologías web.�Wapitiz=wapiti -u {target} -o {output_file_dir} -f txt --scope domainuR   Escáner de vulnerabilidades de aplicaciones web (black-box). Salida a directorio.�DirbzCdirb {target} /usr/share/wordlists/dirb/common.txt -o {output_file}u   Escáner de directorios web.zSQLMap (Batch)zVsqlmap -u "{target}" --batch --output-dir={output_file_dir} --results-file=results.txt�ExploitationuE   Detección y explotación de inyecciones SQL (modo batch). Peligroso.)r5   r6   r7   r8   �	dangerous)�
+amass_enum�	subfinder�dnsx�naabu�httpx�nmap_top_ports�nuclei�ffuf_common�dirsearch_common�wpscan�nikto�whatweb�wapiti�dirb�sqlmap_batch)rH   rI   rJ   rK   rL   rM   rN   rR   rS   rT   rU   r5   r7   r8   zN/ArA   FrG   )�idr5   r7   r8   �default_enabledrA   rG   )rI   rK   rL   rM   rR   )rH   rI   rJ   rK   rL   )�	full_scan�
+quick_scan�discovery_only)�tools�presets�raw_commands)�items�appendr(   �keys)�tools_definition�
+mvp_tool_keys�frontend_tools�key�	tool_datar]   s         r   �get_tool_configrg   D   s�  � �  ,�8a�oz�  LF�  G�)�6^�lw�  Iy�  z��,q�  @K�  \]�  nr�  s�!�.]�kv�  Ho�  p�!�.{�  JT�  eK�  L�#3�@z�  IT�  eN�  O�#�0]�kv�  H|�  }� 9�  G}�  KT�  eQ�  R�%7�  E~�  LU�  fP�  Q�#�  1J�  Xb�  st�  LP�  Q�!�.^�lw�  Il�  m�%�2c�q{�  Ms�  t�#�0o�  ~I�  Zn�  o��,q�  @I�  Zx�  y�!1�  ?W�  es�  DK�  Z^�  _���(�M� �N�*�0�0�2��������f�%�!�*�-�$�=�=���>�"�3�"+�-�-�0D�e�"L�"���{�E�:�
+� 	� 3� &6�%:�%:�%<�  d�%<�c�UX�DY�D]�D]�^i�Dj�c�  tD�  tI�  tM�  tM�  Nb�  tc�c�%<�  d�P�O��G� $�IY�Z�Z�� ds   �#D3�D3�D3)r   �datetimer   r   r#   r)   r2   rg   � r*   r   �<module>rj      s(   �� 	� � �
+'��"�.�>[r*   ==== utils/__pycache__/__init__.cpython-313.pyc ====
+�
+
+    &ohz   �                   �    � S SK JrJrJrJrJr  g)�   )�create_job_directories�get_scan_status�get_job_logs�get_tool_config�
+list_all_jobsN)�helpersr   r   r   r   r   � �    �,/home/arya/panthera-strike/utils/__init__.py�<module>r      s   �� j� jr
+   ==== utils/helpers.py ====
+import os
+import datetime
+import json
+
+def create_job_directories(base_results_dir, job_id, targets):
+    """Crea los directorios necesarios para un nuevo job de escaneo."""
+    job_path = os.path.join(base_results_dir, job_id)
+    os.makedirs(job_path, exist_ok=True)
+
+    # Guardar los targets en un archivo dentro del directorio del job
+    targets_file_path = os.path.join(job_path, 'targets.txt')
+    with open(targets_file_path, 'w') as f:
+        for target in targets:
+            f.write(f"{target}\n")
+    return job_path, targets_file_path
+
+def get_scan_status(job_id, active_jobs, results_dir):
+    """Obtiene el estado de un job de escaneo."""
+    if job_id in active_jobs:
+        return active_jobs[job_id]
+    
+    # Si no está en active_jobs (por ejemplo, si la app reinició), intentar leer del summary.json
+    job_path = os.path.join(results_dir, job_id)
+    summary_file = os.path.join(job_path, 'summary.json')
+    if os.path.exists(summary_file):
+        try:
+            with open(summary_file, 'r') as f:
+                status_info = json.load(f)
+            return status_info
+        except json.JSONDecodeError:
+            return {'status': 'unknown', 'error': 'Could not parse summary file'}
+    return None
+
+def get_job_logs(job_id, results_dir):
+    """Intenta obtener los logs de un job, ya sea de active_jobs o del archivo de log principal del job si existe."""
+    # Esta función es un placeholder. En una implementación real, los logs se manejarían de forma más robusta.
+    # Por ahora, los logs están en active_jobs[job_id]['logs'] o podrían estar en un archivo job_id.log
+    # Para este MVP, nos basaremos en lo que está en active_jobs si el job está activo.
+    # Si el job ha terminado, el summary.json podría tener una copia de los logs o un puntero.
+
+    # Simulación: si el job terminó, los logs podrían estar en un archivo. 
+    # Aquí solo devolvemos un mensaje genérico si no está en active_jobs.
+    # En app.py, los logs se añaden a active_jobs[job_id]['logs']
+    # Esta función podría expandirse para leer de un archivo de log consolidado por job_id
+    # Por ejemplo, leer de os.path.join(results_dir, job_id, 'job.log')
+    
+    # Para el MVP, los logs se gestionan en memoria en app.py y se guardan en summary.json
+    # Esta función podría leer el summary.json para obtener los logs si el job no está activo.
+    status = get_scan_status(job_id, {}, results_dir) # Usar {} para forzar lectura de archivo si no está activo
+    if status and 'logs' in status:
+        return status['logs']
+    elif status:
+        return [f"Logs for job {job_id} might be found in individual tool output files within {status.get('results_path', 'its result directory')}."]
+    return None
+
+
+def list_all_jobs(base_results_dir):
+    """Lista todos los job IDs existentes escaneando el directorio de resultados."""
+    if not os.path.exists(base_results_dir):
+        return []
+    job_ids = [d for d in os.listdir(base_results_dir) if os.path.isdir(os.path.join(base_results_dir, d))]
+    # Opcional: filtrar por formato de job_id si es necesario, o simplemente devolver todos los directorios
+    # Podríamos ordenarlos por fecha de creación si los nombres de directorio lo permiten (ej. si empiezan con fecha)
+    job_ids.sort(reverse=True) # Mostrar los más recientes primero
+    return job_ids
+
+
+def get_tool_config():
+    """Carga la configuración de herramientas. Podría ser desde un archivo YAML/JSON en el futuro."""
+    # Esta es la lista completa de herramientas solicitada por el usuario.
+    # Se necesita refinar los comandos exactos y cómo manejar la salida de cada una.
+    # '{target}' y '{output_file}' son placeholders.
+    # Algunas herramientas pueden necesitar argumentos específicos o no tener opción de output directo a archivo.
+
+    tools_definition = {
+        'amass_enum': {'name': 'Amass Enum', 'command': 'amass enum -d {target} -o {output_file}', 'category': 'Discovery', 'description': 'Descubrimiento de subdominios y enumeración de activos.'},
+        'subfinder': {'name': 'Subfinder', 'command': 'subfinder -d {target} -o {output_file}', 'category': 'Discovery', 'description': 'Descubrimiento rápido de subdominios pasivos.'},
+        'dnsx': {'name': 'DNSX', 'command': 'subfinder -d {target} -silent | dnsx -silent -resp -o {output_file}', 'category': 'Discovery', 'description': 'Herramienta rápida de DNS para resolver y consultar registros.', 'needs_shell': True},
+        'naabu': {'name': 'Naabu', 'command': 'naabu -host {target} -silent -o {output_file}', 'category': 'Port Scan', 'description': 'Escáner de puertos rápido y simple.'},
+        'httpx': {'name': 'HTTPX', 'command': 'httpx -silent -status-code -title -tech-detect -o {output_file} -u {target}', 'category': 'Web Info', 'description': 'Sonda HTTP rápida y multifuncional.'},
+        'nmap_top_ports': {'name': 'Nmap Top Ports', 'command': 'nmap -sV -T4 --top-ports 1000 {target} -oA {output_file}', 'category': 'Port Scan', 'description': 'Escaneo de los 1000 puertos TCP más comunes con detección de versión y todos los formatos de salida.'},
+        'nuclei': {'name': 'Nuclei', 'command': 'nuclei -u {target} -o {output_file} -silent', 'category': 'Vuln Scan', 'description': 'Escáner de vulnerabilidades basado en plantillas.'},
+        'ffuf_common': {'name': 'FFUF Common Directories', 'command': 'ffuf -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u {target}/FUZZ -o {output_file} -of csv -fs 0', 'category': 'Fuzzing', 'description': 'Fuzzing de directorios y archivos comunes.'},
+        'dirsearch_common': {'name': 'Dirsearch Common', 'command': 'dirsearch -u {target} -e php,html,js,txt -w /usr/share/wordlists/dirb/common.txt --output={output_file} --format=simple', 'category': 'Fuzzing', 'description': 'Búsqueda de directorios y archivos web.'},
+        'wpscan': {'name': 'WPScan', 'command': 'wpscan --ignore-main-redirect --url {target} --enumerate vp,vt,u --random-user-agent --api-token YOUR_WPSCAN_API_TOKEN -o {output_file} -f cli-no-color', 'category': 'CMS Scan', 'description': 'Escáner de vulnerabilidades de WordPress (requiere API token).', 'requires_api_token': True},
+        'nikto': {'name': 'Nikto', 'command': 'nikto -h {target} -o {output_file} -Format txt', 'category': 'Vuln Scan', 'description': 'Escáner de vulnerabilidades web.'},
+        'whatweb': {'name': 'WhatWeb', 'command': 'whatweb -a 3 {target} --log-brief {output_file}', 'category': 'Web Info', 'description': 'Identificación de tecnologías web.'},
+        'wapiti': {'name': 'Wapiti', 'command': 'wapiti -u {target} -o {output_file_dir} -f txt --scope domain', 'category': 'Vuln Scan', 'description': 'Escáner de vulnerabilidades de aplicaciones web (black-box). Salida a directorio.'},
+        'dirb': {'name': 'Dirb', 'command': 'dirb {target} /usr/share/wordlists/dirb/common.txt -o {output_file}', 'category': 'Fuzzing', 'description': 'Escáner de directorios web.'},
+        'sqlmap_batch': {'name': 'SQLMap (Batch)', 'command': 'sqlmap -u "{target}" --batch --output-dir={output_file_dir} --results-file=results.txt', 'category': 'Exploitation', 'description': 'Detección y explotación de inyecciones SQL (modo batch). Peligroso.', 'dangerous': True},
+    }
+
+    # Herramientas seleccionadas para el MVP y para las opciones predefinidas
+    # Estas son las claves de 'tools_definition'
+    mvp_tool_keys = [
+        'amass_enum',
+        'subfinder',
+        'dnsx',
+        'naabu',
+        'httpx',
+        'nmap_top_ports',
+        'nuclei',
+        'nikto',
+        'whatweb',
+        'wapiti',
+        'dirb'
+    ]
+
+    # Configuración para el frontend: una lista de diccionarios
+    frontend_tools = []
+    for key, tool_data in tools_definition.items():
+        frontend_tools.append({
+            'id': key, # Usar la clave como ID único
+            'name': tool_data['name'],
+            'category': tool_data['category'],
+            'description': tool_data.get('description', 'N/A'),
+            'default_enabled': key in mvp_tool_keys, # Marcar las herramientas MVP por defecto
+            'requires_api_token': tool_data.get('requires_api_token', False),
+            'dangerous': tool_data.get('dangerous', False)
+        })
+
+    # Definir conjuntos de herramientas para presets
+    # Los IDs deben coincidir con las claves de 'tools_definition'
+    presets = {
+        'full_scan': [key for key in tools_definition.keys() if not tools_definition[key].get('dangerous') and not tools_definition[key].get('requires_api_token')], # Todas las seguras y sin API
+        'quick_scan': ['subfinder', 'naabu', 'httpx', 'nmap_top_ports', 'nikto'], # Un subconjunto para escaneo rápido
+        'discovery_only': ['amass_enum', 'subfinder', 'dnsx', 'naabu', 'httpx']
+    }
+
+    return {'tools': frontend_tools, 'presets': presets, 'raw_commands': tools_definition}
+
+
+# ... existing code ...

@@ -1,0 +1,4 @@
+# Nmap 7.95 scan initiated Thu May  8 19:53:13 2025 as: /usr/lib/nmap/nmap --privileged -sV -T4 --top-ports 1000 -oA "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195313/output_https___mail.bim.mx_owa.txt" https://mail.bim.mx/owa
+Unable to split netmask from target expression: "https://mail.bim.mx/owa"
+WARNING: No targets were specified, so 0 hosts scanned.
+# Nmap done at Thu May  8 19:53:13 2025 -- 0 IP addresses (0 hosts up) scanned in 0.15 seconds

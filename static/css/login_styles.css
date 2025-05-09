@@ -34,8 +34,8 @@ section {
 section span {
     position: relative; /* Sigue siendo buena práctica */
     display: block;
-    width: calc(6.25vw - 2px); /* Tamaño de cada mosaico */
-    height: calc(6.25vw - 2px); /* Tamaño de cada mosaico */
+    width: calc(3vw - 2px); /* Tamaño de cada mosaico */
+    height: calc(3vw - 2px); /* Tamaño de cada mosaico */
     background: #181818;       /* Color base GRIS OSCURO de los mosaicos */
     z-index: 2;
     transition: background-color 1.5s;
@@ -45,6 +45,39 @@ section span:hover {
     background: #ff0000;       /* Color ROJO al pasar el cursor */
     transition: background-color 0s; /* Cambio inmediato al pasar el cursor */
 }
+
+/* --- Inicio: Corrección para botón de cierre de alerta --- */
+
+/* Asegura que el botón 'close' no tenga fondo ni tamaño extraños */
+.alert .close {
+    padding: 0.5rem 1rem;
+    margin: -0.75rem -1.25rem -0.75rem auto;
+    background-color: transparent;
+    border: none;
+    width: auto;
+    height: auto;
+    box-shadow: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    float: right;
+    color: #000;
+    opacity: 0.7;
+    text-shadow: none;
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.alert .close:hover {
+    opacity: 1;
+    color: #000;
+}
+
+.alert .close span {
+    display: inline;
+}
+
+/* --- Fin: Corrección para botón de cierre de alerta --- */
 
 /* Formulario de Inicio de Sesión */
 section .signin {

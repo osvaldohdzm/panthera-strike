@@ -1,0 +1,14 @@
+COMMAND: dirb https:/cuentadigital.bim.mx/ /usr/share/wordlists/dirb/common.txt -o /home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirb_20250508_201332/output_https__cuentadigital.bim.mx_.txt
+RETURN_CODE: 255
+STDOUT:
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+
+(!) FATAL: Invalid URL format: https:/cuentadigital.bim.mx/
+    (Use: "http://host/" or "https://host/" for SSL)
+
+STDERR:

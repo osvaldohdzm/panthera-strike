@@ -1,0 +1,70 @@
+COMMAND: wapiti -u https://mail.bim.mx/owa -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907' -f txt --scope domain
+RETURN_CODE: 1
+STDOUT:
+
+     __      __               .__  __  .__________
+    /  \    /  \_____  ______ |__|/  |_|__\_____  \
+    \   \/\/   /\__  \ \____ \|  \   __\  | _(__  <
+     \        /  / __ \|  |_> >  ||  | |  |/       \
+      \__/\  /  (____  /   __/|__||__| |__/______  /
+           \/        \/|__|                      \/
+Wapiti-3.0.4 (wapiti.sourceforge.io)
+[*] Wapiti found 5 URLs and forms during the scan
+[*] Loading modules:
+	 backup, blindsql, brute_login_form, buster, cookieflags, crlf, csp, csrf, exec, file, htaccess, http_headers, methods, nikto, permanentxss, redirect, shellshock, sql, ssrf, wapp, xss, xxe
+
+[*] Launching module csp
+CSP is not set
+
+[*] Launching module http_headers
+Checking X-Frame-Options :
+OK
+Checking X-XSS-Protection :
+X-XSS-Protection is not set
+Checking X-Content-Type-Options :
+X-Content-Type-Options is not set
+Checking Strict-Transport-Security :
+Strict-Transport-Security is not set
+
+[*] Launching module cookieflags
+
+[*] Launching module exec
+[*] 2 pages were previously attacked and will be skipped
+
+[*] Launching module file
+[*] 2 pages were previously attacked and will be skipped
+
+[*] Launching module sql
+[*] 2 pages were previously attacked and will be skipped
+
+[*] Launching module xss
+[*] 2 pages were previously attacked and will be skipped
+
+[*] Launching module ssrf
+[*] 2 pages were previously attacked and will be skipped
+[*] Asking endpoint URL https://wapiti3.ovh/get_ssrf.php?id=cewn97 for results, please wait...
+
+[*] Launching module redirect
+[*] 2 pages were previously attacked and will be skipped
+
+[*] Launching module blindsql
+[*] 2 pages were previously attacked and will be skipped
+
+[*] Launching module permanentxss
+[*] 2 pages were previously attacked and will be skipped
+
+STDERR:
+Traceback (most recent call last):
+  File "/usr/bin/wapiti", line 33, in <module>
+    sys.exit(load_entry_point('wapiti3==3.0.4', 'console_scripts', 'wapiti')())
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/wapitiCore/main/wapiti.py", line 1217, in wapiti_main
+    wap.attack()
+    ~~~~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/wapitiCore/main/wapiti.py", line 515, in attack
+    self.report_gen.generate_report(self.output_file)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/wapitiCore/report/txtreportgenerator.py", line 61, in generate_report
+    txt_report_file = codecs.open(output_path, mode="w", encoding="UTF-8")
+  File "<frozen codecs>", line 921, in open
+IsADirectoryError: [Errno 21] Is a directory: '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907'

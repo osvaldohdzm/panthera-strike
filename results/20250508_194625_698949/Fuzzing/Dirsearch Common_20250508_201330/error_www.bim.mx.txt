@@ -1,0 +1,9 @@
+COMMAND: dirsearch -u www.bim.mx -e php,html,js,txt -w /usr/share/wordlists/dirb/common.txt --output='/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirsearch Common_20250508_201330/output_www.bim.mx.txt' --format=simple
+RETURN_CODE: 1
+STDOUT:
+
+STDERR:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/dirsearch/dirsearch.py", line 23, in <module>
+    from pkg_resources import DistributionNotFound, VersionConflict
+ModuleNotFoundError: No module named 'pkg_resources'

@@ -1,0 +1,2 @@
+Unable to split netmask from target expression: "https://mail.bim.mx/owa"
+WARNING: No targets were specified, so 0 hosts scanned.

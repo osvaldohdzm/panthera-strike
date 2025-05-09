@@ -1,164 +1,330 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panthera Strike - Web Scanner</title>
     <style>
+        @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700');
+
         body {
             font-family: 'Courier New', Courier, monospace;
             background-color: #0a0a0a;
-            color: #ffffff; /* Cambiado a blanco */
+            color: #ffffff;
+            /* Cambiado a blanco */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         .container {
             background-color: #1a1a1a;
-            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
             padding: 20px;
             border-radius: 5px;
-            box-shadow: 0 0 15px #ff0000; /* Cambiado de verde a rojo */
+            box-shadow: 0 0 15px #ff0000;
+            /* Cambiado de verde a rojo */
             width: 80%;
             max-width: 900px;
         }
+
         h1 {
             text-align: center;
-            color: #ffffff; /* Cambiado a blanco */
-            text-shadow: 0 0 5px #ff0000; /* Cambiado de verde a rojo */
+            color: #ffffff;
+            /* Cambiado a blanco */
+            text-shadow: 0 0 5px #ff0000;
+            /* Cambiado de verde a rojo */
             margin-bottom: 20px;
         }
+
         textarea {
-            width: calc(100% - 22px); /* Ajustar por padding y borde */
+            width: calc(100% - 22px);
+            /* Ajustar por padding y borde */
             height: 150px;
             background-color: #000;
-            color: #ffffff; /* Cambiado a blanco */
-            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            color: #ffffff;
+            /* Cambiado a blanco */
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
             padding: 10px;
             margin-bottom: 10px;
             font-family: inherit;
         }
+
         button {
-            background-color: #330000; /* Cambiado de verde a rojo */
-            color: #ffffff; /* Cambiado a blanco */
-            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            background-color: #330000;
+            /* Cambiado de verde a rojo */
+            color: #ffffff;
+            /* Cambiado a blanco */
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
             padding: 10px 20px;
             cursor: pointer;
             font-family: inherit;
             font-size: 1em;
             transition: background-color 0.3s, box-shadow 0.3s;
         }
+
         button:hover {
-            background-color: #660000; /* Cambiado de verde a rojo */
-            box-shadow: 0 0 10px #ff0000; /* Cambiado de verde a rojo */
+            background-color: #660000;
+            /* Cambiado de verde a rojo */
+            box-shadow: 0 0 10px #ff0000;
+            /* Cambiado de verde a rojo */
         }
-        #statusArea, #logsArea {
+
+        #logsArea {
             margin-top: 20px;
             padding: 15px;
             background-color: #000;
-            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
             min-height: 100px;
             max-height: 400px;
             overflow-y: auto;
-            white-space: pre-wrap; /* Para mantener saltos de línea y espacios */
+            white-space: pre-wrap;
+            /* Para mantener saltos de línea y espacios */
             word-wrap: break-word;
         }
+
         .log-entry {
             margin-bottom: 5px;
-            border-bottom: 1px dashed #330000; /* Cambiado de verde a rojo */
+            border-bottom: 1px dashed #330000;
+            /* Cambiado de verde a rojo */
             padding-bottom: 5px;
         }
+
         .log-entry:last-child {
             border-bottom: none;
         }
+
         .error {
             color: #ff0000;
         }
+
         .warn {
             color: #ffff00;
         }
+
         .info {
-            color: #ffffff; /* Cambiado a blanco */
+            color: #ffffff;
+            /* Cambiado a blanco */
         }
+
         .job-info {
             margin-bottom: 15px;
             padding: 10px;
-            border: 1px dashed #660000; /* Cambiado de verde a rojo */
+            border: 1px dashed #660000;
+            /* Cambiado de verde a rojo */
             background-color: #050505;
         }
+
         .jobs-list {
             margin-top: 20px;
             padding: 15px;
             background-color: #000;
-            border: 1px solid #ff0000; /* Cambiado de verde a rojo */
+            border: 1px solid #ff0000;
+            /* Cambiado de verde a rojo */
             max-height: 300px;
             overflow-y: auto;
         }
+
         .jobs-list h3 {
             margin-top: 0;
         }
+
         .jobs-list ul {
             list-style-type: none;
             padding: 0;
         }
+
         .jobs-list li {
             padding: 5px 0;
-            border-bottom: 1px solid #330000; /* Cambiado de verde a rojo */
+            border-bottom: 1px solid #330000;
+            /* Cambiado de verde a rojo */
             cursor: pointer;
         }
+
         .jobs-list li:hover {
-            background-color: #330000; /* Cambiado de verde a rojo */
+            background-color: #330000;
+            /* Cambiado de verde a rojo */
         }
+
         .jobs-list li:last-child {
             border-bottom: none;
         }
+
         .tool-selection-container {
             margin-top: 20px;
             padding: 15px;
-            background-color: #101010; /* Slightly lighter than container for distinction */
-            border: 1px solid #cc0000; /* Cambiado de verde a rojo */
+            background-color: #101010;
+            /* Slightly lighter than container for distinction */
+            border: 1px solid #cc0000;
+            /* Cambiado de verde a rojo */
             border-radius: 5px;
         }
+
         .tool-selection-container h3 {
             margin-top: 0;
-            color: #ffffff; /* Cambiado a blanco */
+            color: #ffffff;
+            /* Cambiado a blanco */
         }
+
         .tool-category {
             margin-bottom: 15px;
         }
+
         .tool-category h4 {
-            color: #dd0000; /* Cambiado de verde a rojo */
-            border-bottom: 1px solid #660000; /* Cambiado de verde a rojo */
+            color: #dd0000;
+            /* Cambiado de verde a rojo */
+            border-bottom: 1px solid #660000;
+            /* Cambiado de verde a rojo */
             padding-bottom: 5px;
         }
+
         .tool-item {
             margin-bottom: 8px;
         }
+
         .tool-item label {
             display: flex;
             align-items: center;
         }
+
         .tool-item input[type="checkbox"] {
             margin-right: 10px;
-            accent-color: #ff0000; /* Style the checkbox color */ /* Cambiado de verde a rojo */
+            accent-color: #ff0000;
+            /* Style the checkbox color */
+            /* Cambiado de verde a rojo */
         }
+
         .tool-description {
             font-size: 0.8em;
-            color: #ffffff; /* Cambiado a blanco */
-            margin-left: 25px; /* Align with checkbox text */
+            color: #ffffff;
+            /* Cambiado a blanco */
+            margin-left: 25px;
+            /* Align with checkbox text */
         }
+
         .preset-buttons button {
             margin-right: 10px;
             margin-bottom: 10px;
         }
     </style>
+    <style>
+        .terminal {
+            width: 100%;
+            background: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            font-family: 'Ubuntu Mono', 'Courier New', Courier, monospace;
+            border: 1px solid #444;
+            min-height: 200px;
+        }
+
+        .terminal__bar {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            height: 32px;
+            background: linear-gradient(to bottom, #3c3b37, #2e2d2a);
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+
+        .terminal__buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal__button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(to bottom, #7d7871, #595953);
+            box-shadow: 0 0 1px #41403A, 0 1px 1px #474642;
+            padding: 0;
+            flex-shrink: 0;
+            cursor: default;
+            outline: none;
+        }
+
+        .terminal__button--exit {
+            background: linear-gradient(to bottom, #ff5f56, #e0443e);
+        }
+
+        .terminal__button--min {
+            background: linear-gradient(to bottom, #ffbd2e, #dea123);
+        }
+
+        .terminal__button--max {
+            background: linear-gradient(to bottom, #27c93f, #12ac28);
+        }
+
+        .terminal__user {
+            margin-left: auto;
+            padding-right: 10px;
+            font-size: 13px;
+            color: #d5d0ce;
+            font-weight: 500;
+        }
+
+        .terminal__body {
+            flex-grow: 1;
+            background: rgba(0, 0, 0, 0.93);
+            padding: 16px;
+            color: #e0e0e0;
+            font-size: 1em;
+            overflow-y: auto;
+            max-height: 400px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .terminal__body .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .terminal__body .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .terminal__body .error {
+            color: #ff5f56;
+        }
+
+        .terminal__body .warn {
+            color: #ffe066;
+        }
+
+        .terminal__body .info {
+            color: #7eda28;
+        }
+
+        .terminal__body strong {
+            color: #ffffff;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Panthera Strike - Web Scanner</h1>
-        
+
         <label for="targets">Targets (FQDN, IPv4, IPv6, URL - uno por línea):</label>
         <textarea id="targets" placeholder="ejemplo.com\n192.168.1.1\nhttps://sitio.seguro"></textarea>
 
@@ -168,7 +334,8 @@
                 <button onclick="applyToolPreset('none')">Desmarcar Todas</button>
                 <button onclick="applyToolPreset('full_scan')">Escaneo Robusto (Marcar Todas Seguras)</button>
                 <button onclick="applyToolPreset('quick_scan')">Escaneo Rápido</button>
-                <button id="downloadZip" style="background-color:#006600;color:white;margin-left:10px;">Descargar Resultados (ZIP)</button>
+                <button id="downloadZip" style="background-color:#006600;color:white;margin-left:10px;">Descargar
+                    Resultados (ZIP)</button>
                 <button onclick="applyToolPreset('discovery_only')">Solo Descubrimiento</button>
             </div>
             <div id="toolList">Cargando herramientas...</div>
@@ -187,82 +354,31 @@
             <h3>Información del Trabajo Actual:</h3>
             <p><strong>Job ID:</strong> <span id="jobIdDisplay"></span></p>
             <p><strong>Estado:</strong> <span id="jobStatusDisplay"></span></p>
-            <p><button onclick="refreshStatus()">Actualizar Estado</button></p>
+            <p><button onclick="refreshStatus()">Actualizar Estado</button>
+            <button id="cancelJobButton" onclick="cancelScan()" style="background-color:#cc0000; color:white; display:none; margin-left: 10px;">
+                Cancelar Escaneo
+            </button></p>
         </div>
 
         <h2>Estado/Logs del Escaneo:</h2>
-        <div id="statusArea">
-            #statusArea {
-                margin-top: 20px;
-                padding: 0;
-                background: none;
-                border: none;
-                min-height: 100px;
-                max-height: 400px;
-                overflow: visible;
-                white-space: normal;
-                word-wrap: break-word;
-            }
-            .terminal {
-                width: 100%;
-                background: #1e1e1e;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-                display: flex;
-                flex-direction: column;
-                font-family: 'Ubuntu Mono', 'Courier New', Courier, monospace;
-                border: 1px solid #444;
-            }
-            .terminal__bar {
-                display: flex;
-                align-items: center;
-                padding: 0 12px;
-                height: 32px;
-                background: linear-gradient(to bottom, #3c3b37, #2e2d2a);
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
-                box-shadow: inset 0 -1px 0 rgba(255,255,255,0.05);
-            }
-            .terminal__buttons {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            .terminal__button {
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                border: none;
-                background: linear-gradient(to bottom, #7d7871, #595953);
-                box-shadow: 0 0 1px #41403A, 0 1px 1px #474642;
-                margin-right: 2px;
-            }
-            .terminal__button--exit { background: linear-gradient(to bottom, #ff5f56, #e0443e); }
-            .terminal__button--min { background: linear-gradient(to bottom, #ffbd2e, #dea123); }
-            .terminal__button--max { background: linear-gradient(to bottom, #27c93f, #12ac28); }
-            .terminal__user {
-                margin-left: 12px;
-                font-size: 13px;
-                color: #d5d0ce;
-                font-weight: 500;
-            }
-            .terminal__body {
-                flex: 1;
-                background: rgba(0,0,0,0.93);
-                padding: 16px;
-                font-family: 'Ubuntu Mono', 'Courier New', Courier, monospace;
-                color: #e0e0e0;
-                font-size: 1em;
-                overflow-y: auto;
-                min-height: 100px;
-                max-height: 400px;
-            }
-            .terminal__body .error { color: #ff5f56; }
-            .terminal__body .warn { color: #ffe066; }
-            .terminal__body .info { color: #7eda28; }
-            @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700');
+        <!-- Contenedor principal para la terminal -->
+        <div class="terminal-container" style="margin-top: 20px;">
+            <div class="terminal">
+                <div class="terminal__bar">
+                    <div class="terminal__buttons">
+                        <button class="terminal__button terminal__button--exit"></button>
+                        <button class="terminal__button terminal__button--min"></button>
+                        <button class="terminal__button terminal__button--max"></button>
+                    </div>
+                    <div class="terminal__user">PantheraStrike@scanner:~</div>
+                </div>
+                <!-- El contenido de los logs irá aquí -->
+                <div class="terminal__body" id="terminalBody">
+                    Esperando inicio de escaneo...
+                </div>
+            </div>
         </div>
+
     </div>
 
     <script>
@@ -270,6 +386,54 @@
         let statusInterval = null;
         let availableTools = [];
         let toolPresets = {};
+
+        async function cancelScan() {
+            if (!currentJobId) {
+                alert("No hay un trabajo seleccionado o en ejecución para cancelar.");
+                return;
+            }
+
+            const cancelButton = document.getElementById('cancelJobButton');
+            const jobStatusDisplay = document.getElementById('jobStatusDisplay');
+
+            if (confirm(`¿Estás seguro de que deseas cancelar el escaneo con Job ID: ${currentJobId}?`)) {
+                cancelButton.disabled = true;
+                jobStatusDisplay.textContent = 'cancelling';
+                addLogToTerminal(`[WARN] Solicitando cancelación para el Job ID: ${currentJobId}...`, 'warn');
+
+                try {
+                    const response = await fetch(`/cancel/${currentJobId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        addLogToTerminal(`[INFO] Solicitud de cancelación enviada para ${currentJobId}. Refrescando estado...`, 'info');
+                    } else {
+                        addLogToTerminal(`[ERROR] Error al solicitar cancelación para ${currentJobId}: ${data.error || response.statusText}`, 'error');
+                        cancelButton.disabled = false;
+                        jobStatusDisplay.textContent = 'error_cancelling';
+                    }
+                } catch (error) {
+                    addLogToTerminal(`[ERROR] Error de red al solicitar cancelación: ${error.message}`, 'error');
+                    cancelButton.disabled = false;
+                    jobStatusDisplay.textContent = 'error_cancelling';
+                }
+                setTimeout(() => fetchStatus(currentJobId), 1500);
+            }
+        }
+
+        function addLogToTerminal(message, level = 'info') {
+            const terminalBody = document.getElementById('terminalBody');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${level}`;
+            logEntry.textContent = `[CLIENT] ${message}`;
+            terminalBody.appendChild(logEntry);
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchTools();
@@ -305,7 +469,7 @@
             for (const category in toolsByCategory) {
                 const categoryDiv = document.createElement('div');
                 categoryDiv.className = 'tool-category';
-                
+
                 const categoryTitle = document.createElement('h4');
                 categoryTitle.textContent = category;
                 categoryDiv.appendChild(categoryTitle);
@@ -313,7 +477,7 @@
                 toolsByCategory[category].forEach(tool => {
                     const toolItemDiv = document.createElement('div');
                     toolItemDiv.className = 'tool-item';
-                    
+
                     const label = document.createElement('label');
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
@@ -331,7 +495,7 @@
 
                     label.appendChild(checkbox);
                     label.appendChild(document.createTextNode(` ${tool.name}`));
-                    
+
                     const description = document.createElement('div');
                     description.className = 'tool-description';
                     description.textContent = tool.description;
@@ -394,10 +558,10 @@
                         document.getElementById('jobStatusDisplay').textContent = job.status;
                         document.getElementById('currentJobInfo').style.display = 'block';
                         fetchStatus(job.id); // Cargar logs e info detallada
-                        if(statusInterval) clearInterval(statusInterval);
+                        if (statusInterval) clearInterval(statusInterval);
                         // Solo reiniciar intervalo si el job no está finalizado
                         if (job.status !== 'completed' && job.status !== 'failed' && job.status !== 'cancelled' && job.status !== 'error') {
-                           statusInterval = setInterval(() => fetchStatus(job.id), 5000);
+                            statusInterval = setInterval(() => fetchStatus(job.id), 5000);
                         }
                     };
                     jobsListArea.appendChild(li);
@@ -424,9 +588,9 @@
                 // Si el usuario confirma, selectedTools se queda vacío y el backend usará el default.
             }
 
-            document.getElementById('statusArea').innerHTML = 'Iniciando escaneo...';
+            document.getElementById('terminalBody').innerHTML = 'Iniciando escaneo...';
             document.getElementById('currentJobInfo').style.display = 'none';
-            if(statusInterval) clearInterval(statusInterval);
+            if (statusInterval) clearInterval(statusInterval);
 
             try {
                 const response = await fetch('/scan', {
@@ -439,7 +603,7 @@
                 const data = await response.json();
                 if (response.ok) {
                     currentJobId = data.job_id;
-                    document.getElementById('statusArea').innerHTML = `Escaneo iniciado. Job ID: ${data.job_id}.<br>Consultando estado...`;
+                    document.getElementById('terminalBody').innerHTML = `Escaneo iniciado. Job ID: ${data.job_id}.<br>Consultando estado...`;
                     document.getElementById('jobIdDisplay').textContent = data.job_id;
                     document.getElementById('jobStatusDisplay').textContent = 'pending';
                     document.getElementById('currentJobInfo').style.display = 'block';
@@ -447,10 +611,10 @@
                     statusInterval = setInterval(() => fetchStatus(currentJobId), 5000); // Actualizar cada 5 segundos
                     fetchJobs(); // Actualizar lista de jobs
                 } else {
-                    document.getElementById('statusArea').innerHTML = `<span class="error">Error iniciando escaneo: ${data.error || response.statusText}</span>`;
+                    document.getElementById('terminalBody').innerHTML = `<span class="error">Error iniciando escaneo: ${data.error || response.statusText}</span>`;
                 }
             } catch (error) {
-                document.getElementById('statusArea').innerHTML = `<span class="error">Error de red o servidor: ${error.message}</span>`;
+                document.getElementById('terminalBody').innerHTML = `<span class="error">Error de red o servidor: ${error.message}</span>`;
             }
         }
 
@@ -459,17 +623,29 @@
             try {
                 const response = await fetch(`/status/${jobId}`);
                 const data = await response.json();
-                const statusArea = document.getElementById('statusArea');
+                const terminalBody = document.getElementById('terminalBody');
                 const jobStatusDisplay = document.getElementById('jobStatusDisplay');
 
                 if (response.ok) {
                     jobStatusDisplay.textContent = data.status;
                     let logsHtml = `<strong>Estado del Job ${jobId}: ${data.status}</strong><br>`;
+                    
+                    // Lógica para el botón de cancelar
+                    const cancelButton = document.getElementById('cancelJobButton');
+                    if (data.status === 'running' || data.status === 'pending') {
+                        cancelButton.style.display = 'inline-block';
+                        cancelButton.disabled = false;
+                    } else if (data.status === 'cancelling') {
+                        cancelButton.style.display = 'inline-block';
+                        cancelButton.disabled = true;
+                    } else {
+                        cancelButton.style.display = 'none';
+                    }
                     logsHtml += `Hora de inicio: ${data.start_time || 'N/A'}<br>`;
-                    if(data.end_time) logsHtml += `Hora de finalización: ${data.end_time}<br>`;
+                    if (data.end_time) logsHtml += `Hora de finalización: ${data.end_time}<br>`;
                     logsHtml += `Objetivos: ${data.targets ? data.targets.join(', ') : 'N/A'}<br>`;
                     logsHtml += `Resultados en: ${data.results_path || 'N/A'}<br><hr>`;
-                    
+
                     if (data.logs && data.logs.length > 0) {
                         logsHtml += data.logs.map(log => {
                             let logClass = 'info';
@@ -480,38 +656,39 @@
                     } else {
                         logsHtml += 'No hay logs detallados disponibles aún.';
                     }
-                    statusArea.innerHTML = logsHtml;
+                    terminalBody.innerHTML = logsHtml;
 
                     if (data.status === 'completed' || data.status === 'failed' || data.status === 'cancelled' || data.status === 'error') {
-                        if(statusInterval) clearInterval(statusInterval);
+                        if (statusInterval) clearInterval(statusInterval);
                         statusInterval = null;
                         jobStatusDisplay.textContent += ` (Finalizado)`;
                     }
                 } else {
-                    statusArea.innerHTML += `<br><span class="error">Error obteniendo estado para ${jobId}: ${data.error || response.statusText}</span>`;
-                    if(statusInterval) clearInterval(statusInterval);
+                    terminalBody.innerHTML += `<br><span class="error">Error obteniendo estado para ${jobId}: ${data.error || response.statusText}</span>`;
+                    if (statusInterval) clearInterval(statusInterval);
                 }
             } catch (error) {
-                document.getElementById('statusArea').innerHTML += `<br><span class="error">Error de red o servidor al obtener estado: ${error.message}</span>`;
-                if(statusInterval) clearInterval(statusInterval);
+                document.getElementById('terminalBody').innerHTML += `<br><span class="error">Error de red o servidor al obtener estado: ${error.message}</span>`;
+                if (statusInterval) clearInterval(statusInterval);
             }
         }
 
-        function refreshStatus(){
-            if(currentJobId){
+        function refreshStatus() {
+            if (currentJobId) {
                 fetchStatus(currentJobId);
             }
         }
 
         function escapeHtml(unsafe) {
             return unsafe
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
     </script>
 </body>
+
 </html>

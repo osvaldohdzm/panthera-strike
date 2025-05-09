@@ -1,0 +1,487 @@
+{
+    "status": "completed",
+    "targets": [
+        "www.bim.mx",
+        "https://mail.bim.mx/owa",
+        "https:/cuentadigital.bim.mx/"
+    ],
+    "start_time": "2025-05-08T19:46:25.699477",
+    "logs": [
+        "[2025-05-08T19:46:25.699430] [INFO] Iniciando escaneo para el job 20250508_194625_698949 con objetivos: ['www.bim.mx', 'https://mail.bim.mx/owa', 'https:/cuentadigital.bim.mx/']",
+        "[2025-05-08T19:46:25.699994] [INFO] Herramientas seleccionadas: amass_enum, subfinder, dnsx, naabu, nmap_top_ports, httpx, whatweb, nuclei, nikto, wapiti, ffuf_common, dirsearch_common, dirb, wpscan, sqlmap_batch",
+        "[2025-05-08T19:46:25.700292] [INFO] Objetivos guardados en: /home/arya/panthera-strike/results/20250508_194625_698949/targets.txt",
+        "[2025-05-08T19:46:25.700403] [INFO] Procesando herramienta: Amass Enum (Categor\u00eda: Discovery)",
+        "[2025-05-08T19:46:25.700425] [INFO] Preparando herramienta: Amass Enum para el objetivo: www.bim.mx",
+        "[2025-05-08T19:46:25.700673] [INFO] Ejecutando: amass enum -d www.bim.mx -o '/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194625/output_www.bim.mx.txt'",
+        "[2025-05-08T19:47:28.693574] [INFO] Herramienta Amass Enum completada para www.bim.mx. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194625/output_www.bim.mx.txt",
+        "[2025-05-08T19:47:28.794046] [INFO] Preparando herramienta: Amass Enum para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T19:47:28.794587] [INFO] Ejecutando: amass enum -d https://mail.bim.mx/owa -o '/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194728/output_https___mail.bim.mx_owa.txt'",
+        "[2025-05-08T19:48:47.466761] [INFO] Herramienta Amass Enum completada para https://mail.bim.mx/owa. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194728/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:48:47.567202] [INFO] Preparando herramienta: Amass Enum para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:48:47.567967] [INFO] Ejecutando: amass enum -d https:/cuentadigital.bim.mx/ -o '/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194847/output_https__cuentadigital.bim.mx_.txt'",
+        "[2025-05-08T19:51:37.820224] [INFO] Herramienta Amass Enum completada para https:/cuentadigital.bim.mx/. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194847/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:51:37.920736] [INFO] Procesando herramienta: Subfinder (Categor\u00eda: Discovery)",
+        "[2025-05-08T19:51:37.920842] [INFO] Preparando herramienta: Subfinder para el objetivo: www.bim.mx",
+        "[2025-05-08T19:51:37.921233] [INFO] Ejecutando: subfinder -d www.bim.mx -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195137/output_www.bim.mx.txt",
+        "[2025-05-08T19:51:42.878421] [INFO] Herramienta Subfinder completada para www.bim.mx. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195137/output_www.bim.mx.txt",
+        "[2025-05-08T19:51:42.978999] [INFO] Preparando herramienta: Subfinder para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T19:51:42.979760] [INFO] Ejecutando: subfinder -d https://mail.bim.mx/owa -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195142/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:51:58.242709] [INFO] Herramienta Subfinder completada para https://mail.bim.mx/owa. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195142/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:51:58.343287] [INFO] Preparando herramienta: Subfinder para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:51:58.344033] [INFO] Ejecutando: subfinder -d https:/cuentadigital.bim.mx/ -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195158/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:52:02.348852] [INFO] Herramienta Subfinder completada para https:/cuentadigital.bim.mx/. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195158/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:52:02.449420] [INFO] Procesando herramienta: DNSX (Categor\u00eda: Discovery)",
+        "[2025-05-08T19:52:02.449536] [INFO] Preparando herramienta: DNSX para el objetivo: www.bim.mx",
+        "[2025-05-08T19:52:02.449952] [INFO] Ejecutando: subfinder -d www.bim.mx -silent | dnsx -silent -resp -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195202/output_www.bim.mx.txt",
+        "[2025-05-08T19:52:02.450249] [DEBUG] Ejecutando comando con shell=True: subfinder -d www.bim.mx -silent | dnsx -silent -resp -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195202/output_www.bim.mx.txt",
+        "[2025-05-08T19:52:07.504429] [INFO] Herramienta DNSX completada para www.bim.mx. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195202/output_www.bim.mx.txt",
+        "[2025-05-08T19:52:07.604655] [INFO] Preparando herramienta: DNSX para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T19:52:07.605499] [INFO] Ejecutando: subfinder -d https://mail.bim.mx/owa -silent | dnsx -silent -resp -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195207/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:52:07.605864] [DEBUG] Ejecutando comando con shell=True: subfinder -d https://mail.bim.mx/owa -silent | dnsx -silent -resp -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195207/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:52:15.570922] [INFO] Herramienta DNSX completada para https://mail.bim.mx/owa. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195207/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:52:15.671237] [INFO] Preparando herramienta: DNSX para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:52:15.671868] [INFO] Ejecutando: subfinder -d https:/cuentadigital.bim.mx/ -silent | dnsx -silent -resp -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195215/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:52:15.672238] [DEBUG] Ejecutando comando con shell=True: subfinder -d https:/cuentadigital.bim.mx/ -silent | dnsx -silent -resp -o /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195215/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:52:25.422523] [INFO] Herramienta DNSX completada para https:/cuentadigital.bim.mx/. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195215/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:52:25.522812] [INFO] Procesando herramienta: Naabu (Categor\u00eda: Port Scan)",
+        "[2025-05-08T19:52:25.522946] [INFO] Preparando herramienta: Naabu para el objetivo: www.bim.mx",
+        "[2025-05-08T19:52:25.523824] [INFO] Ejecutando: naabu -host www.bim.mx -silent -o '/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Naabu_20250508_195225/output_www.bim.mx.txt'",
+        "[2025-05-08T19:52:42.845191] [INFO] Herramienta Naabu completada para www.bim.mx. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Naabu_20250508_195225/output_www.bim.mx.txt",
+        "[2025-05-08T19:52:42.945397] [INFO] Preparando herramienta: Naabu para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T19:52:42.945879] [INFO] Ejecutando: naabu -host https://mail.bim.mx/owa -silent -o '/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Naabu_20250508_195242/output_https___mail.bim.mx_owa.txt'",
+        "[2025-05-08T19:52:43.231818] [ERROR] Error ejecutando Naabu para https://mail.bim.mx/owa. C\u00f3digo de salida: 1",
+        "[2025-05-08T19:52:43.231898] [ERROR] Stderr: [\u001b[1;31mFTL\u001b[0m] Could not run enumeration: no valid ipv4 or ipv6 targets were found\n",
+        "[2025-05-08T19:52:43.332421] [INFO] Preparando herramienta: Naabu para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:52:43.333139] [INFO] Ejecutando: naabu -host https:/cuentadigital.bim.mx/ -silent -o '/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Naabu_20250508_195243/output_https__cuentadigital.bim.mx_.txt'",
+        "[2025-05-08T19:52:43.667449] [ERROR] Error ejecutando Naabu para https:/cuentadigital.bim.mx/. C\u00f3digo de salida: 1",
+        "[2025-05-08T19:52:43.667524] [ERROR] Stderr: [\u001b[1;31mFTL\u001b[0m] Could not run enumeration: no valid ipv4 or ipv6 targets were found\n",
+        "[2025-05-08T19:52:43.768030] [INFO] Procesando herramienta: Nmap Top Ports (Categor\u00eda: Port Scan)",
+        "[2025-05-08T19:52:43.768155] [INFO] Preparando herramienta: Nmap Top Ports para el objetivo: www.bim.mx",
+        "[2025-05-08T19:52:43.768729] [INFO] Ejecutando: nmap -sV -T4 --top-ports 1000 www.bim.mx -oA '/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195243/output_www.bim.mx.txt'",
+        "[2025-05-08T19:53:13.023931] [INFO] Herramienta Nmap Top Ports completada para www.bim.mx. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195243/output_www.bim.mx.txt",
+        "[2025-05-08T19:53:13.124208] [INFO] Preparando herramienta: Nmap Top Ports para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T19:53:13.124997] [INFO] Ejecutando: nmap -sV -T4 --top-ports 1000 https://mail.bim.mx/owa -oA '/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195313/output_https___mail.bim.mx_owa.txt'",
+        "[2025-05-08T19:53:13.297856] [INFO] Herramienta Nmap Top Ports completada para https://mail.bim.mx/owa. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195313/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:53:13.398458] [INFO] Preparando herramienta: Nmap Top Ports para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:53:13.399017] [INFO] Ejecutando: nmap -sV -T4 --top-ports 1000 https:/cuentadigital.bim.mx/ -oA '/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195313/output_https__cuentadigital.bim.mx_.txt'",
+        "[2025-05-08T19:53:13.569202] [INFO] Herramienta Nmap Top Ports completada para https:/cuentadigital.bim.mx/. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195313/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:53:13.669698] [INFO] Procesando herramienta: HTTPX (Categor\u00eda: Web Info)",
+        "[2025-05-08T19:53:13.669809] [INFO] Preparando herramienta: HTTPX para el objetivo: www.bim.mx",
+        "[2025-05-08T19:53:13.670448] [INFO] Ejecutando: httpx -silent -status-code -title -tech-detect -o '/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/HTTPX_20250508_195313/output_www.bim.mx.txt' -u www.bim.mx",
+        "[2025-05-08T19:53:13.993205] [ERROR] Error ejecutando HTTPX para www.bim.mx. C\u00f3digo de salida: 2",
+        "[2025-05-08T19:53:13.993284] [ERROR] Stderr: Usage: httpx [OPTIONS] URL\n\nError: No such option: -s\n",
+        "[2025-05-08T19:53:14.093786] [INFO] Preparando herramienta: HTTPX para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T19:53:14.094075] [INFO] Ejecutando: httpx -silent -status-code -title -tech-detect -o '/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/HTTPX_20250508_195314/output_https___mail.bim.mx_owa.txt' -u https://mail.bim.mx/owa",
+        "[2025-05-08T19:53:14.353517] [ERROR] Error ejecutando HTTPX para https://mail.bim.mx/owa. C\u00f3digo de salida: 2",
+        "[2025-05-08T19:53:14.353599] [ERROR] Stderr: Usage: httpx [OPTIONS] URL\n\nError: No such option: -s\n",
+        "[2025-05-08T19:53:14.454143] [INFO] Preparando herramienta: HTTPX para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:53:14.454734] [INFO] Ejecutando: httpx -silent -status-code -title -tech-detect -o '/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/HTTPX_20250508_195314/output_https__cuentadigital.bim.mx_.txt' -u https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:53:14.715913] [ERROR] Error ejecutando HTTPX para https:/cuentadigital.bim.mx/. C\u00f3digo de salida: 2",
+        "[2025-05-08T19:53:14.715995] [ERROR] Stderr: Usage: httpx [OPTIONS] URL\n\nError: No such option: -s\n",
+        "[2025-05-08T19:53:14.816404] [INFO] Procesando herramienta: WhatWeb (Categor\u00eda: Web Info)",
+        "[2025-05-08T19:53:14.816539] [INFO] Preparando herramienta: WhatWeb para el objetivo: www.bim.mx",
+        "[2025-05-08T19:53:14.817155] [INFO] Ejecutando: whatweb -a 3 www.bim.mx --log-brief '/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195314/output_www.bim.mx.txt'",
+        "[2025-05-08T19:54:08.777250] [INFO] Herramienta WhatWeb completada para www.bim.mx. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195314/output_www.bim.mx.txt",
+        "[2025-05-08T19:54:08.877477] [INFO] Preparando herramienta: WhatWeb para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T19:54:08.878154] [INFO] Ejecutando: whatweb -a 3 https://mail.bim.mx/owa --log-brief '/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195408/output_https___mail.bim.mx_owa.txt'",
+        "[2025-05-08T19:54:27.516343] [INFO] Herramienta WhatWeb completada para https://mail.bim.mx/owa. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195408/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:54:27.616598] [INFO] Preparando herramienta: WhatWeb para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:54:27.617410] [INFO] Ejecutando: whatweb -a 3 https:/cuentadigital.bim.mx/ --log-brief '/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195427/output_https__cuentadigital.bim.mx_.txt'",
+        "[2025-05-08T19:54:40.583260] [INFO] Herramienta WhatWeb completada para https:/cuentadigital.bim.mx/. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195427/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:54:40.683429] [INFO] Procesando herramienta: Nuclei (Categor\u00eda: Vuln Scan)",
+        "[2025-05-08T19:54:40.683551] [INFO] Preparando herramienta: Nuclei para el objetivo: www.bim.mx",
+        "[2025-05-08T19:54:40.684551] [INFO] Ejecutando: nuclei -u www.bim.mx -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195440/output_www.bim.mx.txt' -silent",
+        "[2025-05-08T19:57:50.094388] [INFO] Herramienta Nuclei completada para www.bim.mx. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195440/output_www.bim.mx.txt",
+        "[2025-05-08T19:57:50.194620] [INFO] Preparando herramienta: Nuclei para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T19:57:50.195303] [INFO] Ejecutando: nuclei -u https://mail.bim.mx/owa -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195750/output_https___mail.bim.mx_owa.txt' -silent",
+        "[2025-05-08T19:58:43.380312] [INFO] Herramienta Nuclei completada para https://mail.bim.mx/owa. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195750/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T19:58:43.480625] [INFO] Preparando herramienta: Nuclei para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T19:58:43.481340] [INFO] Ejecutando: nuclei -u https:/cuentadigital.bim.mx/ -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195843/output_https__cuentadigital.bim.mx_.txt' -silent",
+        "[2025-05-08T19:59:06.029139] [INFO] Herramienta Nuclei completada para https:/cuentadigital.bim.mx/. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195843/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T19:59:06.129354] [INFO] Procesando herramienta: Nikto (Categor\u00eda: Vuln Scan)",
+        "[2025-05-08T19:59:06.129489] [INFO] Preparando herramienta: Nikto para el objetivo: www.bim.mx",
+        "[2025-05-08T19:59:06.130234] [INFO] Ejecutando: nikto -h www.bim.mx -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nikto_20250508_195906/output_www.bim.mx.txt' -Format txt",
+        "[2025-05-08T20:04:06.230259] [ERROR] Timeout ejecutando Nikto para www.bim.mx",
+        "[2025-05-08T20:04:06.330541] [INFO] Preparando herramienta: Nikto para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T20:04:06.331077] [INFO] Ejecutando: nikto -h https://mail.bim.mx/owa -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nikto_20250508_200406/output_https___mail.bim.mx_owa.txt' -Format txt",
+        "[2025-05-08T20:09:06.391248] [ERROR] Timeout ejecutando Nikto para https://mail.bim.mx/owa",
+        "[2025-05-08T20:09:06.491656] [INFO] Preparando herramienta: Nikto para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T20:09:06.492470] [INFO] Ejecutando: nikto -h https:/cuentadigital.bim.mx/ -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nikto_20250508_200906/output_https__cuentadigital.bim.mx_.txt' -Format txt",
+        "[2025-05-08T20:09:07.172198] [INFO] Herramienta Nikto completada para https:/cuentadigital.bim.mx/. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nikto_20250508_200906/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T20:09:07.272458] [INFO] Procesando herramienta: Wapiti (Categor\u00eda: Vuln Scan)",
+        "[2025-05-08T20:09:07.272592] [INFO] Preparando herramienta: Wapiti para el objetivo: www.bim.mx",
+        "[2025-05-08T20:09:07.273157] [INFO] Ejecutando: wapiti -u www.bim.mx -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907' -f txt --scope domain",
+        "[2025-05-08T20:09:07.761467] [INFO] Herramienta Wapiti completada para www.bim.mx. Salida en directorio /home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907",
+        "[2025-05-08T20:09:07.861710] [INFO] Preparando herramienta: Wapiti para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T20:09:07.862138] [INFO] Ejecutando: wapiti -u https://mail.bim.mx/owa -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907' -f txt --scope domain",
+        "[2025-05-08T20:09:11.856268] [ERROR] Error ejecutando Wapiti para https://mail.bim.mx/owa. C\u00f3digo de salida: 1",
+        "[2025-05-08T20:09:11.856348] [ERROR] Stderr: Traceback (most recent call last):\n  File \"/usr/bin/wapiti\", line 33, in <module>\n    sys.exit(load_entry_point('wapiti3==3.0.4', 'console_scripts', 'wapiti')())\n             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/lib/python3/dist-packages/wapitiCore/main/wapiti.py\", line 1217, in wapiti_main\n    wap.attack()\n    ~~~~~~~~~~^^\n  File \"/usr/lib/python3/dist-packages/wapitiCore/main/wapiti.py\", line 515, in attack\n    self.report_gen.generate_report(self.output_file)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3/dist-packages/wapitiCore/report/txtreportgenerator.py\", line 61, in generate_report\n    txt_report_file = codecs.open(output_path, mode=\"w\", encoding=\"UTF-8\")\n  File \"<frozen codecs>\", line 921, in open\nIsADirectoryError: [Errno 21] Is a directory: '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907'\n",
+        "[2025-05-08T20:09:11.956791] [INFO] Preparando herramienta: Wapiti para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T20:09:11.957555] [INFO] Ejecutando: wapiti -u https:/cuentadigital.bim.mx/ -o '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200911' -f txt --scope domain",
+        "[2025-05-08T20:09:12.409340] [INFO] Herramienta Wapiti completada para https:/cuentadigital.bim.mx/. Salida en directorio /home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200911",
+        "[2025-05-08T20:09:12.509526] [INFO] Procesando herramienta: FFUF Common Directories (Categor\u00eda: Fuzzing)",
+        "[2025-05-08T20:09:12.509685] [INFO] Preparando herramienta: FFUF Common Directories para el objetivo: www.bim.mx",
+        "[2025-05-08T20:09:12.510707] [INFO] Ejecutando: ffuf -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u www.bim.mx/FUZZ -o '/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_200912/output_www.bim.mx.txt' -of csv -fs 0",
+        "[2025-05-08T20:09:16.839485] [INFO] Herramienta FFUF Common Directories completada para www.bim.mx. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_200912/output_www.bim.mx.txt",
+        "[2025-05-08T20:09:16.939853] [INFO] Preparando herramienta: FFUF Common Directories para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T20:09:16.940398] [INFO] Ejecutando: ffuf -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u https://mail.bim.mx/owa/FUZZ -o '/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_200916/output_https___mail.bim.mx_owa.txt' -of csv -fs 0",
+        "[2025-05-08T20:13:26.037343] [INFO] Herramienta FFUF Common Directories completada para https://mail.bim.mx/owa. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_200916/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T20:13:26.176841] [INFO] Preparando herramienta: FFUF Common Directories para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T20:13:26.177217] [INFO] Ejecutando: ffuf -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u https:/cuentadigital.bim.mx//FUZZ -o '/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_201326/output_https__cuentadigital.bim.mx_.txt' -of csv -fs 0",
+        "[2025-05-08T20:13:30.876883] [INFO] Herramienta FFUF Common Directories completada para https:/cuentadigital.bim.mx/. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_201326/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T20:13:30.977254] [INFO] Procesando herramienta: Dirsearch Common (Categor\u00eda: Fuzzing)",
+        "[2025-05-08T20:13:30.977338] [INFO] Preparando herramienta: Dirsearch Common para el objetivo: www.bim.mx",
+        "[2025-05-08T20:13:30.977709] [INFO] Ejecutando: dirsearch -u www.bim.mx -e php,html,js,txt -w /usr/share/wordlists/dirb/common.txt --output='/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirsearch Common_20250508_201330/output_www.bim.mx.txt' --format=simple",
+        "[2025-05-08T20:13:31.024173] [ERROR] Error ejecutando Dirsearch Common para www.bim.mx. C\u00f3digo de salida: 1",
+        "[2025-05-08T20:13:31.024257] [ERROR] Stderr: Traceback (most recent call last):\n  File \"/usr/lib/python3/dist-packages/dirsearch/dirsearch.py\", line 23, in <module>\n    from pkg_resources import DistributionNotFound, VersionConflict\nModuleNotFoundError: No module named 'pkg_resources'\n",
+        "[2025-05-08T20:13:31.124616] [INFO] Preparando herramienta: Dirsearch Common para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T20:13:31.124890] [INFO] Ejecutando: dirsearch -u https://mail.bim.mx/owa -e php,html,js,txt -w /usr/share/wordlists/dirb/common.txt --output='/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirsearch Common_20250508_201331/output_https___mail.bim.mx_owa.txt' --format=simple",
+        "[2025-05-08T20:13:31.182568] [ERROR] Error ejecutando Dirsearch Common para https://mail.bim.mx/owa. C\u00f3digo de salida: 1",
+        "[2025-05-08T20:13:31.182912] [ERROR] Stderr: Traceback (most recent call last):\n  File \"/usr/lib/python3/dist-packages/dirsearch/dirsearch.py\", line 23, in <module>\n    from pkg_resources import DistributionNotFound, VersionConflict\nModuleNotFoundError: No module named 'pkg_resources'\n",
+        "[2025-05-08T20:13:31.283668] [INFO] Preparando herramienta: Dirsearch Common para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T20:13:31.283873] [INFO] Ejecutando: dirsearch -u https:/cuentadigital.bim.mx/ -e php,html,js,txt -w /usr/share/wordlists/dirb/common.txt --output='/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirsearch Common_20250508_201331/output_https__cuentadigital.bim.mx_.txt' --format=simple",
+        "[2025-05-08T20:13:31.327670] [ERROR] Error ejecutando Dirsearch Common para https:/cuentadigital.bim.mx/. C\u00f3digo de salida: 1",
+        "[2025-05-08T20:13:31.327709] [ERROR] Stderr: Traceback (most recent call last):\n  File \"/usr/lib/python3/dist-packages/dirsearch/dirsearch.py\", line 23, in <module>\n    from pkg_resources import DistributionNotFound, VersionConflict\nModuleNotFoundError: No module named 'pkg_resources'\n",
+        "[2025-05-08T20:13:31.428111] [INFO] Procesando herramienta: Dirb (Categor\u00eda: Fuzzing)",
+        "[2025-05-08T20:13:31.428190] [INFO] Preparando herramienta: Dirb para el objetivo: www.bim.mx",
+        "[2025-05-08T20:13:31.428479] [INFO] Ejecutando: dirb www.bim.mx /usr/share/wordlists/dirb/common.txt -o /home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirb_20250508_201331/output_www.bim.mx.txt",
+        "[2025-05-08T20:13:31.537398] [ERROR] Error ejecutando Dirb para www.bim.mx. C\u00f3digo de salida: 255",
+        "[2025-05-08T20:13:31.537474] [ERROR] Stderr: ",
+        "[2025-05-08T20:13:31.638021] [INFO] Preparando herramienta: Dirb para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T20:13:31.638549] [INFO] Ejecutando: dirb https://mail.bim.mx/owa /usr/share/wordlists/dirb/common.txt -o /home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirb_20250508_201331/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T20:13:32.012622] [INFO] Herramienta Dirb completada para https://mail.bim.mx/owa. Salida en archivo /home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirb_20250508_201331/output_https___mail.bim.mx_owa.txt",
+        "[2025-05-08T20:13:32.112875] [INFO] Preparando herramienta: Dirb para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T20:13:32.113505] [INFO] Ejecutando: dirb https:/cuentadigital.bim.mx/ /usr/share/wordlists/dirb/common.txt -o /home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirb_20250508_201332/output_https__cuentadigital.bim.mx_.txt",
+        "[2025-05-08T20:13:32.128450] [ERROR] Error ejecutando Dirb para https:/cuentadigital.bim.mx/. C\u00f3digo de salida: 255",
+        "[2025-05-08T20:13:32.128554] [ERROR] Stderr: ",
+        "[2025-05-08T20:13:32.229090] [INFO] Procesando herramienta: WPScan (Categor\u00eda: CMS Scan)",
+        "[2025-05-08T20:13:32.229213] [INFO] Preparando herramienta: WPScan para el objetivo: www.bim.mx",
+        "[2025-05-08T20:13:32.230294] [INFO] Ejecutando: wpscan --ignore-main-redirect --url www.bim.mx --enumerate vp,vt,u --random-user-agent --api-token YOUR_WPSCAN_API_TOKEN -o '/home/arya/panthera-strike/results/20250508_194625_698949/CMS Scan/WPScan_20250508_201332/output_www.bim.mx.txt' -f cli-no-color",
+        "[2025-05-08T20:13:41.245675] [ERROR] Error ejecutando WPScan para www.bim.mx. C\u00f3digo de salida: 4",
+        "[2025-05-08T20:13:41.245729] [ERROR] Stderr: ",
+        "[2025-05-08T20:13:41.346173] [INFO] Preparando herramienta: WPScan para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T20:13:41.346957] [INFO] Ejecutando: wpscan --ignore-main-redirect --url https://mail.bim.mx/owa --enumerate vp,vt,u --random-user-agent --api-token YOUR_WPSCAN_API_TOKEN -o '/home/arya/panthera-strike/results/20250508_194625_698949/CMS Scan/WPScan_20250508_201341/output_https___mail.bim.mx_owa.txt' -f cli-no-color",
+        "[2025-05-08T20:13:43.313701] [ERROR] Error ejecutando WPScan para https://mail.bim.mx/owa. C\u00f3digo de salida: 4",
+        "[2025-05-08T20:13:43.313761] [ERROR] Stderr: ",
+        "[2025-05-08T20:13:43.414489] [INFO] Preparando herramienta: WPScan para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T20:13:43.414823] [INFO] Ejecutando: wpscan --ignore-main-redirect --url https:/cuentadigital.bim.mx/ --enumerate vp,vt,u --random-user-agent --api-token YOUR_WPSCAN_API_TOKEN -o '/home/arya/panthera-strike/results/20250508_194625_698949/CMS Scan/WPScan_20250508_201343/output_https__cuentadigital.bim.mx_.txt' -f cli-no-color",
+        "[2025-05-08T20:13:44.992341] [ERROR] Error ejecutando WPScan para https:/cuentadigital.bim.mx/. C\u00f3digo de salida: 3",
+        "[2025-05-08T20:13:44.992384] [ERROR] Stderr: ",
+        "[2025-05-08T20:13:45.092772] [INFO] Procesando herramienta: SQLMap (Batch) (Categor\u00eda: Exploitation)",
+        "[2025-05-08T20:13:45.092844] [INFO] Preparando herramienta: SQLMap (Batch) para el objetivo: www.bim.mx",
+        "[2025-05-08T20:13:45.093182] [INFO] Ejecutando: sqlmap -u \"www.bim.mx\" --batch --output-dir='/home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201345' --results-file=results.txt",
+        "[2025-05-08T20:13:49.818356] [INFO] Herramienta SQLMap (Batch) completada para www.bim.mx. Salida en directorio /home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201345",
+        "[2025-05-08T20:13:49.918622] [INFO] Preparando herramienta: SQLMap (Batch) para el objetivo: https://mail.bim.mx/owa",
+        "[2025-05-08T20:13:49.919164] [INFO] Ejecutando: sqlmap -u \"https://mail.bim.mx/owa\" --batch --output-dir='/home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201349' --results-file=results.txt",
+        "[2025-05-08T20:14:13.335783] [INFO] Herramienta SQLMap (Batch) completada para https://mail.bim.mx/owa. Salida en directorio /home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201349",
+        "[2025-05-08T20:14:13.436012] [INFO] Preparando herramienta: SQLMap (Batch) para el objetivo: https:/cuentadigital.bim.mx/",
+        "[2025-05-08T20:14:13.436688] [INFO] Ejecutando: sqlmap -u \"https:/cuentadigital.bim.mx/\" --batch --output-dir='/home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201413' --results-file=results.txt",
+        "[2025-05-08T20:14:14.001819] [INFO] Herramienta SQLMap (Batch) completada para https:/cuentadigital.bim.mx/. Salida en directorio /home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201413",
+        "[2025-05-08T20:14:14.102172] [INFO] Escaneo completado para el job 20250508_194625_698949"
+    ],
+    "results_path": "/home/arya/panthera-strike/results/20250508_194625_698949",
+    "selected_tools": [
+        "amass_enum",
+        "subfinder",
+        "dnsx",
+        "naabu",
+        "nmap_top_ports",
+        "httpx",
+        "whatweb",
+        "nuclei",
+        "nikto",
+        "wapiti",
+        "ffuf_common",
+        "dirsearch_common",
+        "dirb",
+        "wpscan",
+        "sqlmap_batch"
+    ],
+    "end_time": "2025-05-08T20:14:14.102105",
+    "results": [
+        {
+            "tool": "Amass Enum",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194625"
+        },
+        {
+            "tool": "Amass Enum",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194728"
+        },
+        {
+            "tool": "Amass Enum",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Amass Enum_20250508_194847"
+        },
+        {
+            "tool": "Subfinder",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195137"
+        },
+        {
+            "tool": "Subfinder",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195142"
+        },
+        {
+            "tool": "Subfinder",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/Subfinder_20250508_195158"
+        },
+        {
+            "tool": "DNSX",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195202"
+        },
+        {
+            "tool": "DNSX",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195207"
+        },
+        {
+            "tool": "DNSX",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Discovery/DNSX_20250508_195215"
+        },
+        {
+            "tool": "Naabu",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Naabu_20250508_195225"
+        },
+        {
+            "tool": "Naabu",
+            "target": "https://mail.bim.mx/owa",
+            "status": "failed",
+            "error": "[\u001b[1;31mFTL\u001b[0m] Could not run enumeration: no valid ipv4 or ipv6 targets were found\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Naabu_20250508_195242"
+        },
+        {
+            "tool": "Naabu",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "failed",
+            "error": "[\u001b[1;31mFTL\u001b[0m] Could not run enumeration: no valid ipv4 or ipv6 targets were found\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Naabu_20250508_195243"
+        },
+        {
+            "tool": "Nmap Top Ports",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195243"
+        },
+        {
+            "tool": "Nmap Top Ports",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195313"
+        },
+        {
+            "tool": "Nmap Top Ports",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Port Scan/Nmap Top Ports_20250508_195313"
+        },
+        {
+            "tool": "HTTPX",
+            "target": "www.bim.mx",
+            "status": "failed",
+            "error": "Usage: httpx [OPTIONS] URL\n\nError: No such option: -s\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/HTTPX_20250508_195313"
+        },
+        {
+            "tool": "HTTPX",
+            "target": "https://mail.bim.mx/owa",
+            "status": "failed",
+            "error": "Usage: httpx [OPTIONS] URL\n\nError: No such option: -s\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/HTTPX_20250508_195314"
+        },
+        {
+            "tool": "HTTPX",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "failed",
+            "error": "Usage: httpx [OPTIONS] URL\n\nError: No such option: -s\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/HTTPX_20250508_195314"
+        },
+        {
+            "tool": "WhatWeb",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195314"
+        },
+        {
+            "tool": "WhatWeb",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195408"
+        },
+        {
+            "tool": "WhatWeb",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/WhatWeb_20250508_195427"
+        },
+        {
+            "tool": "Nuclei",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195440"
+        },
+        {
+            "tool": "Nuclei",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195750"
+        },
+        {
+            "tool": "Nuclei",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nuclei_20250508_195843"
+        },
+        {
+            "tool": "Nikto",
+            "target": "www.bim.mx",
+            "status": "timeout",
+            "error": "Timeout expired"
+        },
+        {
+            "tool": "Nikto",
+            "target": "https://mail.bim.mx/owa",
+            "status": "timeout",
+            "error": "Timeout expired"
+        },
+        {
+            "tool": "Nikto",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Nikto_20250508_200906"
+        },
+        {
+            "tool": "Wapiti",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907"
+        },
+        {
+            "tool": "Wapiti",
+            "target": "https://mail.bim.mx/owa",
+            "status": "failed",
+            "error": "Traceback (most recent call last):\n  File \"/usr/bin/wapiti\", line 33, in <module>\n    sys.exit(load_entry_point('wapiti3==3.0.4', 'console_scripts', 'wapiti')())\n             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/lib/python3/dist-packages/wapitiCore/main/wapiti.py\", line 1217, in wapiti_main\n    wap.attack()\n    ~~~~~~~~~~^^\n  File \"/usr/lib/python3/dist-packages/wapitiCore/main/wapiti.py\", line 515, in attack\n    self.report_gen.generate_report(self.output_file)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3/dist-packages/wapitiCore/report/txtreportgenerator.py\", line 61, in generate_report\n    txt_report_file = codecs.open(output_path, mode=\"w\", encoding=\"UTF-8\")\n  File \"<frozen codecs>\", line 921, in open\nIsADirectoryError: [Errno 21] Is a directory: '/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907'\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200907"
+        },
+        {
+            "tool": "Wapiti",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Vuln Scan/Wapiti_20250508_200911"
+        },
+        {
+            "tool": "FFUF Common Directories",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_200912"
+        },
+        {
+            "tool": "FFUF Common Directories",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_200916"
+        },
+        {
+            "tool": "FFUF Common Directories",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/FFUF Common Directories_20250508_201326"
+        },
+        {
+            "tool": "Dirsearch Common",
+            "target": "www.bim.mx",
+            "status": "failed",
+            "error": "Traceback (most recent call last):\n  File \"/usr/lib/python3/dist-packages/dirsearch/dirsearch.py\", line 23, in <module>\n    from pkg_resources import DistributionNotFound, VersionConflict\nModuleNotFoundError: No module named 'pkg_resources'\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirsearch Common_20250508_201330"
+        },
+        {
+            "tool": "Dirsearch Common",
+            "target": "https://mail.bim.mx/owa",
+            "status": "failed",
+            "error": "Traceback (most recent call last):\n  File \"/usr/lib/python3/dist-packages/dirsearch/dirsearch.py\", line 23, in <module>\n    from pkg_resources import DistributionNotFound, VersionConflict\nModuleNotFoundError: No module named 'pkg_resources'\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirsearch Common_20250508_201331"
+        },
+        {
+            "tool": "Dirsearch Common",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "failed",
+            "error": "Traceback (most recent call last):\n  File \"/usr/lib/python3/dist-packages/dirsearch/dirsearch.py\", line 23, in <module>\n    from pkg_resources import DistributionNotFound, VersionConflict\nModuleNotFoundError: No module named 'pkg_resources'\n",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirsearch Common_20250508_201331"
+        },
+        {
+            "tool": "Dirb",
+            "target": "www.bim.mx",
+            "status": "failed",
+            "error": "",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirb_20250508_201331"
+        },
+        {
+            "tool": "Dirb",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirb_20250508_201331"
+        },
+        {
+            "tool": "Dirb",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "failed",
+            "error": "",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Fuzzing/Dirb_20250508_201332"
+        },
+        {
+            "tool": "WPScan",
+            "target": "www.bim.mx",
+            "status": "failed",
+            "error": "",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/CMS Scan/WPScan_20250508_201332"
+        },
+        {
+            "tool": "WPScan",
+            "target": "https://mail.bim.mx/owa",
+            "status": "failed",
+            "error": "",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/CMS Scan/WPScan_20250508_201341"
+        },
+        {
+            "tool": "WPScan",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "failed",
+            "error": "",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/CMS Scan/WPScan_20250508_201343"
+        },
+        {
+            "tool": "SQLMap (Batch)",
+            "target": "www.bim.mx",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201345"
+        },
+        {
+            "tool": "SQLMap (Batch)",
+            "target": "https://mail.bim.mx/owa",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201349"
+        },
+        {
+            "tool": "SQLMap (Batch)",
+            "target": "https:/cuentadigital.bim.mx/",
+            "status": "success",
+            "output_path": "/home/arya/panthera-strike/results/20250508_194625_698949/Exploitation/SQLMap (Batch)_20250508_201413"
+        }
+    ]
+}

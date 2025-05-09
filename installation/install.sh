@@ -125,6 +125,49 @@ echo "Installation complete caido!"
 echo ">> Dirección IP actual:"
 ip -4 addr show | grep inet | grep -v '127.0.0.1'
 
+
+#!/bin/bash
+
+# List of tools and their corresponding Debian package or installation command
+declare -A tools=(
+  ["amass"]="amass"
+  ["subfinder"]="subfinder"
+  ["dnsx"]="dnsx"
+  ["naabu"]="naabu"
+  ["nmap"]="nmap"
+  ["httpx"]="httpx"
+  ["whatweb"]="whatweb"
+  ["nuclei"]="nuclei"
+  ["nikto"]="nikto"
+  ["wapiti"]="wapiti"
+  ["ffuf"]="ffuf"
+  ["dirsearch"]="git clone https://github.com/maurosoria/dirsearch.git"
+  ["dirb"]="dirb"
+  ["wpscan"]="wpscan"
+  ["sqlmap"]="sqlmap"
+)
+
+echo "Checking for required tools..."
+
+for tool in "${!tools[@]}"; do
+  if ! command -v "$tool" &>/dev/null; then
+    echo "[!] $tool not found."
+    echo "Installing $tool..."
+    if [[ "${tools[$tool]}" == git* ]]; then
+      cd /opt || exit
+      ${tools[$tool]}
+      echo "Add /opt/$(basename "${tools[$tool]}" .git) to PATH if needed."
+    else
+      sudo apt-get install -y "${tools[$tool]}"
+    fi
+  else
+    echo "[✔] $tool is already installed."
+  fi
+done
+
+echo "All checks complete."
+
+
 # Fin
 echo "=================================================="
 echo " FINALIZADO: El sistema está listo con herramientas de Kali y Docker."

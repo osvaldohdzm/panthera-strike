@@ -1,0 +1,8 @@
+COMMAND: httpx -silent -status-code -title -tech-detect -o '/home/arya/panthera-strike/results/20250508_194625_698949/Web Info/HTTPX_20250508_195313/output_www.bim.mx.txt' -u www.bim.mx
+RETURN_CODE: 2
+STDOUT:
+
+STDERR:
+Usage: httpx [OPTIONS] URL
+
+Error: No such option: -s

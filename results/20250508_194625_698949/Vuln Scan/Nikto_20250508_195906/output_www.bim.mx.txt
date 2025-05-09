@@ -1,0 +1,450 @@
+- Nikto v2.5.0/
++ Target Host: www.bim.mx
++ Target Port: 80
++ GET /: The anti-clickjacking X-Frame-Options header is not present. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options: 
++ GET /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/: 
++ GET /: Cookie icwp-wpsf-notbot created without the httponly flag. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies: 
++ GET /kboard/: KBoard Forum 0.3.0 and prior have a security problem in forum_edit_post.php, forum_post.php and forum_reply.php.
++ GET /lists/admin/: PHPList pre 2.6.4 contains a number of vulnerabilities including remote administrative access, harvesting user info and more. Default login to admin interface is admin/phplist.
++ GET /splashAdmin.php: Cobalt Qube 3 admin is running. This may have multiple security problems which could not be tested remotely. See: https://seclists.org/bugtraq/2002/Jul/262: 
++ GET /ssdefs/: Siteseed pre 1.4.2 has 'major' security problems.
++ GET /sshome/: Siteseed pre 1.4.2 has 'major' security problems.
++ GET /tiki/: Tiki 1.7.2 and previous allowed restricted Wiki pages to be viewed via a 'URL trick'. Default login/pass could be admin/admin.
++ GET /tiki/tiki-install.php: Tiki 1.7.2 and previous allowed restricted Wiki pages to be viewed via a 'URL trick'. Default login/pass could be admin/admin.
++ GET /scripts/samples/details.idc: NT ODBC Remote Compromise. See: http://attrition.org/security/advisory/individual/rfp/rfp.9901.nt_odbc: 
++ GET /_vti_bin/shtml.exe: Attackers may be able to crash FrontPage by requesting a DOS device, like shtml.exe/aux.htm -- a DoS was not attempted. See: CVE-2000-0709: 
++ GET /~root/: Allowed to browse root's home directory. See: CVE-2001-1013: 
++ GET /forums//admin/config.php: PHP Config file may contain database IDs and passwords.
++ GET /forums//adm/config.php: PHP Config file may contain database IDs and passwords.
++ GET /forums//administrator/config.php: PHP Config file may contain database IDs and passwords.
++ GET /forums/config.php: PHP Config file may contain database IDs and passwords.
++ GET /guestbook/guestbookdat: PHP-Gastebuch 1.60 Beta reveals sensitive information about its configuration.
++ GET /guestbook/pwd: PHP-Gastebuch 1.60 Beta reveals the md5 hash of the admin password.
++ GET /help/: Help directory should not be accessible.
++ GET /hola/admin/cms/htmltags.php?datei=./sec/data.php: hola-cms-1.2.9-10 may reveal the administrator ID and password. See: https://vulners.com/exploitdb/EDB-ID:23027: 
++ GET /global.inc: PHP-Survey's include file should not be available via the web. Configure the web server to ignore .inc files or change this to global.inc.php. See: CVE-2002-0614: 
++ GET /inc/common.load.php: Bookmark4U v1.8.3 include files are not protected and may contain remote source injection by using the 'prefix' variable. See: CVE-2003-1253: 
++ GET /inc/config.php: Bookmark4U v1.8.3 include files are not protected and may contain remote source injection by using the 'prefix' variable. See: CVE-2003-1253: 
++ GET /inc/dbase.php: Bookmark4U v1.8.3 include files are not protected and may contain remote source injection by using the 'prefix' variable. See: CVE-2003-1253: 
++ GET /geeklog/users.php: Geeklog prior to 1.3.8-1sr2 contains a SQL injection vulnerability that lets a remote attacker reset admin password. See: https://vulners.com/osvdb/OSVDB:2703: 
++ GET /gb/index.php?login=true: gBook may allow admin login by setting the value 'login' equal to 'true'. See: CVE-2002-1560: 
++ GET /guestbook/admin.php: Guestbook admin page available without authentication.
++ GET /getaccess: This may be an indication that the server is running getAccess for SSO.
++ GET /cfdocs/expeval/openfile.cfm: Can use to expose the system/server path.
++ GET /tsweb/: Microsoft TSAC found. See: https://web.archive.org/web/20040910030506/http://www.dslwebserver.com/main/fr_index.html?/main/sbs-Terminal-Services-Advanced-Client-Configuration.html: 
++ GET /vgn/performance/TMT: Vignette CMS admin/maintenance script available.
++ GET /vgn/performance/TMT/Report: Vignette CMS admin/maintenance script available.
++ GET /vgn/performance/TMT/Report/XML: Vignette CMS admin/maintenance script available.
++ GET /vgn/performance/TMT/reset: Vignette CMS admin/maintenance script available.
++ GET /vgn/ppstats: Vignette CMS admin/maintenance script available.
++ GET /vgn/previewer: Vignette CMS admin/maintenance script available.
++ GET /vgn/record/previewer: Vignette CMS admin/maintenance script available.
++ GET /vgn/stylepreviewer: Vignette CMS admin/maintenance script available.
++ GET /vgn/vr/Deleting: Vignette CMS admin/maintenance script available.
++ GET /vgn/vr/Editing: Vignette CMS admin/maintenance script available.
++ GET /vgn/vr/Saving: Vignette CMS admin/maintenance script available.
++ GET /vgn/vr/Select: Vignette CMS admin/maintenance script available.
++ GET /scripts/iisadmin/bdir.htr: This default script shows host info, may allow file browsing and buffer a overrun in the Chunked Encoding data transfer mechanism, request /scripts/iisadmin/bdir.htr??c:\<dir>. See: MS02-028: 
++ GET /scripts/iisadmin/ism.dll: Allows you to mount a brute force attack on passwords.
++ GET /scripts/tools/ctss.idc: This CGI allows remote users to view and modify SQL DB contents, server paths, docroot and more.
++ GET /bigconf.cgi: BigIP Configuration CGI.
++ GET /blah_badfile.shtml: Allaire ColdFusion allows JSP source viewed through a vulnerable SSI call.
++ GET /vgn/style: Vignette server may reveal system information through this file. See: CVE-2003-0401: 
++ GET /SiteServer/Admin/commerce/foundation/domain.asp: Displays known domains of which that server is involved. See: CVE-2002-1769: 
++ GET /SiteServer/Admin/commerce/foundation/driver.asp: Displays a list of installed ODBC drivers. See: CVE-2002-1769: 
++ GET /SiteServer/Admin/commerce/foundation/DSN.asp: Displays all DSNs configured for selected ODBC drivers. See: CVE-2002-1769: 
++ GET /SiteServer/admin/findvserver.asp: Gives a list of installed Site Server components. See: CVE-2002-1769: 
++ GET /SiteServer/Admin/knowledge/dsmgr/default.asp: Used to view current search catalog configurations.
++ GET /basilix/mbox-list.php3: BasiliX webmail application prior to 1.1.1 contains a XSS issue in 'message list' function/page.
++ GET /basilix/message-read.php3: BasiliX webmail application prior to 1.1.1 contains a XSS issue in 'read message' function/page.
++ GET /clusterframe.jsp: Macromedia JRun 4 build 61650 remote administration interface is vulnerable to several XSS attacks.
++ GET /IlohaMail/blank.html: IlohaMail 0.8.10 contains a XSS vulnerability. Previous versions contain other non-descript vulnerabilities.
++ GET /bb-dnbd/faxsurvey: This may allow arbitrary command execution.
++ GET /cartcart.cgi: If this is Dansie Shopping Cart 3.0.8 or earlier, it contains a backdoor to allow attackers to execute arbitrary commands.
++ GET /scripts/Carello/Carello.dll: Carello 1.3 may allow commands to be executed on the server by replacing hidden form elements. This could not be tested by Nikto. See: CVE-2001-0614: 
++ GET /scripts/tools/dsnform.exe: Allows creation of ODBC Data Source.
++ GET /scripts/tools/dsnform: Allows creation of ODBC Data Source.
++ GET /SiteServer/Admin/knowledge/dsmgr/users/GroupManager.asp: Microsoft Site Server script used to create, modify, and potentially delete LDAP users and groups. See: https://securitytracker.com/id/1003420: 
++ GET /SiteServer/Admin/knowledge/dsmgr/users/UserManager.asp: Microsoft Site Server used to create, modify, and potentially delete LDAP users and groups. See: https://securitytracker.com/id/1003420: 
++ GET /prd.i/pgen/: Has MS Merchant Server 1.0.
++ GET /readme.eml: Remote server may be infected with the Nimda virus.
++ GET /scripts/httpodbc.dll: Possible IIS backdoor found.
++ GET /scripts/proxy/w3proxy.dll: MSProxy v1.0 installed.
++ GET /SiteServer/admin/: Site Server components admin. Default account may be 'LDAP_Anonymous', pass is 'LdapPassword_1'. See: https://github.com/sullo/advisory-archives/blob/master/RFP2201.txt: 
++ GET /siteseed/: Siteseed pre 1.4.2 have 'major' security problems.
++ GET /pccsmysqladm/incs/dbconnect.inc: This file should not be accessible, as it contains database connectivity information. Upgrade to version 1.2.5 or higher.
++ GET /iisadmin/: Access to /iisadmin should be restricted to localhost or allowed hosts only.
++ GET /PDG_Cart/order.log: PDG Commerce log found. See: http://zodi.com/cgi-bin/shopper.cgi?display=intro&template=Intro/commerce.html: 
++ GET /ows/restricted%2eshow: OWS may allow restricted files to be viewed by replacing a character with its encoded equivalent.
++ GET /view_source.jsp: Resin 2.1.2 view_source.jsp allows any file on the system to be viewed by using \..\ directory traversal. This script may be vulnerable.
++ GET /w-agora/: w-agora pre 4.1.4 may allow a remote user to execute arbitrary PHP scripts via URL includes in include/*.php and user/*.php files. Default account is 'admin' but password set during install.
++ GET /vider.php3: MySimpleNews may allow deleting of news items without authentication. See: CVE-2002-2320: 
++ GET /officescan/cgi/cgiChkMasterPwd.exe: Trend Micro Officescan allows you to skip the login page and access some CGI programs directly. See: https://web.archive.org/web/20030607054822/http://support.microsoft.com/support/exchange/content/whitepapers/owaguide.doc: 
++ GET /pbserver/pbserver.dll: This may contain a buffer overflow. See: MS00-094: 
++ GET /administrator/gallery/uploadimage.php: Mambo PHP Portal/Server 4.0.12 BETA and below may allow upload of any file type simply putting '.jpg' before the real file extension.
++ GET /pafiledb/includes/team/file.php: paFileDB 3.1 and below may allow file upload without authentication.
++ GET /phpEventCalendar/file_upload.php: phpEventCalendar 1.1 and prior are vulnerable to file upload bug.
++ GET /servlet/com.unify.servletexec.UploadServlet: This servlet allows attackers to upload files to the server.
++ GET /scripts/cpshost.dll: Posting acceptor possibly allows you to upload files.
++ GET /upload.asp: An ASP page that allows attackers to upload files to server.
++ GET /uploadn.asp: An ASP page that allows attackers to upload files to server.
++ GET /uploadx.asp: An ASP page that allows attackers to upload files to server.
++ GET /wa.exe: An ASP page that allows attackers to upload files to server.
++ GET /basilix/compose-attach.php3: BasiliX webmail application prior to 1.1.1 contains a non-descript security vulnerability in compose-attach.php3 related to attachment uploads.
++ GET /server/: Possibly Macromedia JRun or CRX WebDAV upload.
++ GET /vgn/ac/data: Vignette CMS admin/maintenance script available.
++ GET /vgn/ac/delete: Vignette CMS admin/maintenance script available.
++ GET /vgn/ac/edit: Vignette CMS admin/maintenance script available.
++ GET /vgn/ac/esave: Vignette CMS admin/maintenance script available.
++ GET /vgn/ac/fsave: Vignette CMS admin/maintenance script available.
++ GET /vgn/ac/index: Vignette CMS admin/maintenance script available.
++ GET /vgn/asp/MetaDataUpdate: Vignette CMS admin/maintenance script available.
++ GET /vgn/asp/previewer: Vignette CMS admin/maintenance script available.
++ GET /vgn/asp/status: Vignette CMS admin/maintenance script available.
++ GET /vgn/asp/style: Vignette CMS admin/maintenance script available.
++ GET /vgn/errors: Vignette CMS admin/maintenance script available.
++ GET /vgn/jsp/controller: Vignette CMS admin/maintenance script available.
++ GET /vgn/jsp/errorpage: Vignette CMS admin/maintenance script available.
++ GET /vgn/jsp/initialize: Vignette CMS admin/maintenance script available.
++ GET /vgn/jsp/jspstatus: Vignette CMS admin/maintenance script available.
++ GET /vgn/jsp/jspstatus56: Vignette CMS admin/maintenance script available.
++ GET /vgn/jsp/metadataupdate: Vignette CMS admin/maintenance script available.
++ GET /vgn/jsp/previewer: Vignette CMS admin/maintenance script available.
++ GET /vgn/jsp/style: Vignette CMS admin/maintenance script available.
++ GET /vgn/legacy/edit: Vignette CMS admin/maintenance script available.
++ GET /vgn/login: Vignette server may allow user enumeration based on the login attempts to this file.
++ GET /forum/admin/wwforum.mdb: Web Wiz Forums password database found. See: https://seclists.org/bugtraq/2003/Apr/238: 
++ GET /fpdb/shop.mdb: MetaCart2 is an ASP shopping cart. The database of customers is available via the web. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /guestbook/admin/o12guest.mdb: Ocean12 ASP Guestbook Manager allows download of SQL database which contains admin password. See: https://www.exploit-db.com/exploits/22484: 
++ GET /midicart.mdb: MIDICART database is available for browsing. This should not be allowed via the web server. See: CVE-2002-1432: 
++ GET /MIDICART/midicart.mdb: MIDICART database is available for browsing. This should not be allowed via the web server. See: CVE-2002-1432: 
++ GET /mpcsoftweb_guestbook/database/mpcsoftweb_guestdata.mdb: MPCSoftWeb Guest Book passwords retrieved. See: https://www.exploit-db.com/exploits/22513: 
++ GET /news/news.mdb: Web Wiz Site News release v3.06 admin password database is available and unencrypted.
++ GET /shopping300.mdb: VP-ASP shopping cart application allows .mdb files (which may include customer data) to be downloaded via the web. These should not be available. See: https://securitytracker.com/id/1004382: 
++ GET /shopping400.mdb: VP-ASP shopping cart application allows .mdb files (which may include customer data) to be downloaded via the web. These should not be available. See: https://securitytracker.com/id/1004382: 
++ GET /shoppingdirectory/midicart.mdb: MIDICART database is available for browsing. This should not be allowed via the web server. See: CVE-2002-1432: 
++ GET /database/db2000.mdb: Max Web Portal database is available remotely. It should be moved from the default location to a directory outside the web root. See: https://www.medae.co/en/max/web-app: 
++ GET /admin/config.php: PHP Config file may contain database IDs and passwords.
++ GET /adm/config.php: PHP Config file may contain database IDs and passwords.
++ GET /administrator/config.php: PHP Config file may contain database IDs and passwords.
++ GET /cgi-bin/%2e%2e/abyss.conf: The Abyss configuration file was successfully retrieved. Upgrade with the latest version/patches for 1.0. See: CVE-2002-0544: 
++ GET /contents.php?new_language=elvish&mode=select: Requesting a file with an invalid language selection from DC Portal may reveal the system path.
++ GET /pw/storemgr.pw: Encrypted ID/Pass for Mercantec's SoftCart. See: CVE-1999-0609: 
++ GET /servlet/com.livesoftware.jrun.plugins.ssi.SSIFilter: Allaire ColdFusion allows JSP source viewed through a vulnerable SSI call.
++ GET /shopa_sessionlist.asp: VP-ASP shopping cart test application is available from the web. This page may give the location of .mdb files which may also be available.
++ GET /simplebbs/users/users.php: Simple BBS 1.0.6 allows user information and passwords to be viewed remotely. See: https://www.webhostingtalk.nl/bugtraq-mailing-lijst/23898-simplebbs-1-0-6-default-permissions-vuln.html: 
++ GET /typo3conf/: This may contain sensitive TYPO3 files.
++ GET /cms/typo3conf/: This may contain sensitive TYPO3 files.
++ GET /site/typo3conf/: This may contain sensitive TYPO3 files.
++ GET /typo/typo3conf/: This may contain sensitive TYPO3 files.
++ GET /typo3/typo3conf/: This may contain sensitive TYPO3 files.
++ GET /typo3conf/database.sql: TYPO3 SQL file found.
++ GET /cms/typo3conf/database.sql: TYPO3 SQL file found.
++ GET /site/typo3conf/database.sql: TYPO3 SQL file found.
++ GET /typo/typo3conf/database.sql: TYPO3 SQL file found.
++ GET /typo3/typo3conf/database.sql: TYPO3 SQL file found.
++ GET /typo3conf/localconf.php: TYPO3 config file found.
++ GET /cms/typo3conf/localconf.php: TYPO3 config file found.
++ GET /site/typo3conf/localconf.php: TYPO3 config file found.
++ GET /typo/typo3conf/localconf.php: TYPO3 config file found.
++ GET /typo3/typo3conf/localconf.php: TYPO3 config file found.
++ GET /vchat/msg.txt: VChat allows user information to be retrieved. See: https://www.securityfocus.com/bid/7186/info: 
++ GET /vgn/license: Vignette server license file found. See: CVE-2003-0403: 
++ GET /webcart-lite/config/import.txt: This may allow attackers to read credit card data. Reconfigure to make this file not accessible via the web. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /webcart-lite/orders/import.txt: This may allow attackers to read credit card data. Reconfigure to make this file not accessible via the web. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /webcart/carts/: This may allow attackers to read credit card data. Reconfigure to make this dir not accessible via the web. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /webcart/config/: This may allow attackers to read credit card data. Reconfigure to make this dir not accessible via the web. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /webcart/config/clients.txt: This may allow attackers to read credit card data. Reconfigure to make this file not accessible via the web. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /webcart/orders/: This may allow attackers to read credit card data. Reconfigure to make this dir not accessible via the web. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /webcart/orders/import.txt: This may allow attackers to read credit card data. Reconfigure to make this file not accessible via the web. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /ws_ftp.ini: Can contain saved passwords for FTP sites.
++ GET /WS_FTP.ini: Can contain saved passwords for FTP sites.
++ GET /_mem_bin/auoconfig.asp: Displays the default AUO (LDAP) schema, including host and port.
++ GET /SiteServer/Admin/knowledge/persmbr/vs.asp: Expose various LDAP service and backend configuration parameters. See: https://vulners.com/osvdb/OSVDB:17659: 
++ GET /SiteServer/Admin/knowledge/persmbr/VsLsLpRd.asp: Expose various LDAP service and backend configuration parameters. See: https://vulners.com/osvdb/OSVDB:17661: 
++ GET /SiteServer/Admin/knowledge/persmbr/VsPrAuoEd.asp: Expose various LDAP service and backend configuration parameters. See: https://vulners.com/osvdb/OSVDB:17662: 
++ GET /SiteServer/Admin/knowledge/persmbr/VsTmPr.asp: Expose various LDAP service and backend configuration parameters. See: https://vulners.com/osvdb/OSVDB:17660: 
++ GET /tvcs/getservers.exe?action=selects1: Following steps 2-4 of this page may reveal a zip file that contains passwords and system details.
++ GET /whatever.htr: May reveal physical path. htr files may also be vulnerable to an off-by-one overflow that allows remote command execution. See: MS02-018: 
++ GET /nsn/fdir.bas:ShowVolume: You can use ShowVolume and ShowDirectory directly on the Novell server (NW5.1) to view the filesystem without having to log in.
++ GET /forum/admin/database/wwForum.mdb: Web Wiz Forums pre 7.5 is vulnerable to Cross-Site Scripting attacks. Default login/pass is Administrator/letmein.
++ GET /webmail/blank.html: IlohaMail 0.8.10 contains an XSS vulnerability. Previous versions contain other non-descript vulnerabilities.
++ GET /jamdb/: JamDB pre 0.9.2 mp3.php and image.php can allow user to read arbitrary file out of docroot.
++ GET /cgi/cgiproc?: It may be possible to crash Nortel Contivity VxWorks by requesting '/cgi/cgiproc?$' (not attempted!). Upgrade to version 2.60 or later. See: CVE-2000-0063: 
++ GET /servlet/SchedulerTransfer: PeopleSoft SchedulerTransfer servlet found, which may allow remote command execution. See: CVE-2003-0104: 
++ GET /servlet/sunexamples.BBoardServlet: This default servlet lets attackers execute arbitrary commands.
++ GET /servlets/SchedulerTransfer: PeopleSoft SchedulerTransfer servlet found, which may allow remote command execution. See: CVE-2003-0104: 
++ GET /perl/-e%20print%20Hello: The Perl interpreter on the Novell system may allow any command to be executed. See: BID-5520: 
++ GET /vgn/legacy/save: Vignette Legacy Tool may be unprotected. To access this resource, set a cookie called 'vgn_creds' with any value.
++ GET /IDSWebApp/IDSjsp/Login.jsp: Tivoli Directory Server Web Administration.
++ GET /quikstore.cfg: Shopping cart config file, http://www.quikstore.com/, http://www.mindsec.com/advisories/post2.txt. See: CVE-1999-0607: 
++ GET /quikstore.cgi: A shopping cart.
++ GET /securecontrolpanel/: Web Server Control Panel.
++ GET /siteminder: This may be an indication that the server is running Siteminder for SSO.
++ GET /webmail/: Web based mail package installed.
++ GET /_cti_pvt/: FrontPage directory found.
++ GET /smg_Smxcfg30.exe?vcc=3560121183d3: This may be a Trend Micro Officescan 'backdoor'.
++ GET /nsn/..%5Cutil/attrib.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/chkvol.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/copy.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/del.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/dir.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/dsbrowse.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/glist.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/lancard.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/md.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/rd.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/ren.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/send.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/set.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/slist.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/type.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cutil/userlist.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cweb/env.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cweb/fdir.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cwebdemo/env.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /nsn/..%5Cwebdemo/fdir.bas: Netbase util access is possible which means that several utility scripts might be run (including directory listings, NDS tree enumeration and running .bas files on server.
++ GET /upd/: WASD Server can allow directory listings by requesting /upd/directory/. Upgrade to a later version and secure according to the documents on the WASD web site.
++ GET /CVS/Entries: CVS Entries file may contain directory listing information.
++ GET /3rdparty/phpMyAdmin/db_details_importdocsql.php?submit_show=true&do=import&docpath=../: phpMyAdmin allows directory listings remotely. Upgrade to version 2.5.3 or higher. See: https://seclists.org/fulldisclosure/2003/Jun/536: 
++ GET /phpMyAdmin/db_details_importdocsql.php?submit_show=true&do=import&docpath=../: phpMyAdmin allows directory listings remotely. Upgrade to version 2.5.3 or higher. See: https://seclists.org/fulldisclosure/2003/Jun/536: 
++ GET /3rdparty/phpmyadmin/db_details_importdocsql.php?submit_show=true&do=import&docpath=../: phpMyAdmin allows directory listings remotely. Upgrade to version 2.5.3 or higher. See: https://seclists.org/fulldisclosure/2003/Jun/536: 
++ GET /pma/db_details_importdocsql.php?submit_show=true&do=import&docpath=../: phpMyAdmin allows directory listings remotely. Upgrade to version 2.5.3 or higher. See: https://seclists.org/fulldisclosure/2003/Jun/536: 
++ GET /.tools/phpMyAdmin/current/db_details_importdocsql.php?submit_show=true&do=import&docpath=../: phpMyAdmin allows directory listings remotely. Upgrade to version 2.5.3 or higher. See: https://seclists.org/fulldisclosure/2003/Jun/536: 
++ GET /LOGIN.PWD: MIPCD password file with unencrypted passwords. MIPDCD should not have the web interface enabled.
++ GET /USER/CONFIG.AP: MIPCD configuration information. MIPCD should not have the web interface enabled.
++ GET /admin-serv/config/admpw: This file contains the encrypted Netscape admin password. It should not be accessible via the web.
++ GET /ht_root/wwwroot/-/local/httpd$map.conf: WASD reveals the http configuration file. Upgrade to a later version and secure according to the documents on the WASD web site.
++ GET /local/httpd$map.conf: WASD reveals the http configuration file. Upgrade to a later version and secure according to the documents on the WASD web site.
++ GET /tree: WASD Server reveals the entire web root structure and files via this URL. Upgrade to a later version and secure according to the documents on the WASD web site.
++ GET /examples/servlet/AUX: Apache Tomcat versions below 4.1 may be vulnerable to DoS by repeatedly requesting this file.
++ GET /Config1.htm: This may be a D-Link. Some devices have a DoS condition if an oversized POST request is sent. This DoS was not tested. See: https://raw.githubusercontent.com/sullo/advisory-archives/master/phenoelit.de_dp-300.txt: 
++ GET /contents/extensions/asp/1: The IIS system may be vulnerable to a DOS. See: MS02-018: 
++ GET /WebAdmin.dll?View=Logon: Some versions of WebAdmin are vulnerable to a remote DoS (not tested). See: CVE-2005-1247: 
++ GET /cgi-win/cgitest.exe: This CGI may allow the server to be crashed remotely. See: CVE-2002-0128: 
++ GET /cgi-shl/win-c-sample.exe: win-c-sample.exe has a buffer overflow.
++ GET /.nsf/../winnt/win.ini: This win.ini file can be downloaded.
++ GET /................../config.sys: PWS allows files to be read by prepending multiple '.' characters. At worst, IIS, not PWS, should be used.
++ GET /..\..\..\..\..\..\temp\temp.class: Cisco ACS 2.6.x and 3.0.1 (build 40) allows authenticated remote users to retrieve any file from the system. Upgrade to the latest version.
++ GET /admentor/adminadmin.asp: Version 2.11 of AdMentor is vulnerable to SQL injection during login, in the style of: ' or =. See: CVE-2002-0308: 
++ GET /My_eGallery/public/displayCategory.php: My_eGallery prior to 3.1.1.g are vulnerable to a remote execution bug via SQL command injection. displayCategory.php calls imageFunctions.php without checking URL/location arguments. See: CVE-2006-6795: 
++ GET /postnuke/My_eGallery/public/displayCategory.php: My_eGallery prior to 3.1.1.g are vulnerable to a remote execution bug via SQL command injection. displayCategory.php calls imageFunctions.php without checking URL/location arguments. See: CVE-2006-6795: 
++ GET /postnuke/html/My_eGallery/public/displayCategory.php: My_eGallery prior to 3.1.1.g are vulnerable to a remote execution bug via SQL command injection. displayCategory.php calls imageFunctions.php without checking URL/location arguments. See: CVE-2006-6795: 
++ GET /modules/My_eGallery/public/displayCategory.php: My_eGallery prior to 3.1.1.g are vulnerable to a remote execution bug via SQL command injection. displayCategory.php calls imageFunctions.php without checking URL/location arguments. See: CVE-2006-6795: 
++ GET /phpBB/My_eGallery/public/displayCategory.php: My_eGallery prior to 3.1.1.g are vulnerable to a remote execution bug via SQL command injection. displayCategory.php calls imageFunctions.php without checking URL/location arguments. See: CVE-2006-6795: 
++ GET /forum/My_eGallery/public/displayCategory.php: My_eGallery prior to 3.1.1.g are vulnerable to a remote execution bug via SQL command injection. displayCategory.php calls imageFunctions.php without checking URL/location arguments. See: CVE-2006-6795: 
++ GET /author.asp: May be FactoSystem CMS, which could include SQL injection problems that could not be tested remotely. See: CVE-2002-1499: 
++ GET /phpimageview.php?pic=javascript:alert(8754): PHP Image View 1.0 is vulnerable to Cross Site Scripting (XSS). See: CVE-2002-1724: 
++ GET /openautoclassifieds/friendmail.php?listing=<script>alert(document.domain);</script>: OpenAutoClassifieds 1.0 is vulnerable to a XSS attack. See: CVE-2003-1145: 
++ GET /modules.php?op=modload&name=FAQ&file=index&myfaq=yes&id_cat=1&categories=%3Cimg%20src=javascript:alert(9456);%3E&parent_id=0: Post Nuke 0.7.2.3-Phoenix is vulnerable to Cross Site Scripting (XSS).
++ GET /modules.php?letter=%22%3E%3Cimg%20src=javascript:alert(document.cookie);%3E&op=modload&name=Members_List&file=index: Post Nuke 0.7.2.3-Phoenix is vulnerable to Cross Site Scripting (XSS).
++ GET /members.asp?SF=%22;}alert(223344);function%20x()\{v%20=%22: Web Wiz Forums ver. 7.01 and below is vulnerable to Cross Site Scripting (XSS). See: OSVDB-4598: 
++ GET /jigsaw/: Jigsaw server may be installed. Versions lower than 2.2.1 are vulnerable to Cross Site Scripting (XSS) in the error page. See: CVE-2002-1053: 
++ GET /guestbook/?number=5&lng=%3Cscript%3Ealert(document.domain);%3C/script%3E: MPM Guestbook 1.2 and previous are vulnreable to XSS attacks. See: OSVDB-2754: 
++ GET /forum_members.asp?find=%22;}alert(9823);function%20x()\{v%20=%22: Web Wiz Forums ver. 7.01 and below is vulnerable to Cross Site Scripting (XSS). See: OSVDB-2946: 
++ GET /anthill/login.php: Anthill bug tracking system may be installed. Versions lower than 0.1.6.1 allow XSS and may allow users to bypass login requirements.
++ GET /cfdocs/expeval/sendmail.cfm: Can be used to send email; go to the page and fill in the form.
++ GET /ammerum/: Ammerum pre 0.6-1 had several security issues.
++ GET /ariadne/: Ariadne pre 2.1.2 has several vulnerabilities. The default login/pass to the admin page is admin/muze.
++ GET /cbms/cbmsfoot.php: CBMS Billing Management has had many vulnerabilities in versions 0.7.1 and below. None could be confirmed here, but they should be manually checked if possible. http://freshmeat.net/projects/cbms/.
++ GET /cbms/changepass.php: CBMS Billing Management has had many vulnerabilities in versions 0.7.1 and below. None could be confirmed here, but they should be manually checked if possible. http://freshmeat.net/projects/cbms/.
++ GET /cbms/editclient.php: CBMS Billing Management has had many vulnerabilities in versions 0.7.1 and below. None could be confirmed here, but they should be manually checked if possible. http://freshmeat.net/projects/cbms/.
++ GET /cbms/passgen.php: CBMS Billing Management has had many vulnerabilities in versions 0.7.1 and below. None could be confirmed here, but they should be manually checked if possible. http://freshmeat.net/projects/cbms/.
++ GET /cbms/realinv.php: CBMS Billing Management has had many vulnerabilities in versions 0.7.1 and below. None could be confirmed here, but they should be manually checked if possible. http://freshmeat.net/projects/cbms/.
++ GET /cbms/usersetup.php: CBMS Billing Management has had many vulnerabilities in versions 0.7.1 and below. None could be confirmed here, but they should be manually checked if possible. http://freshmeat.net/projects/cbms/.
++ GET /ext.dll?MfcIsapiCommand=LoadPage&page=admin.hts%20&a0=add&a1=root&a2=%5C: This check (A) sets up the next BadBlue test (B) for possible exploit. See: CVE-2005-0595: 
++ GET /db/users.dat: upb PB allows the user database to be retrieved remotely. See: OSVDB-59412: 
++ GET /dcshop/auth_data/auth_user_file.txt: The DCShop installation allows credit card numbers to be viewed remotely. See: CVE-2001-0821 https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /dcshop/orders/orders.txt: The DCShop installation allows credit card numbers to be viewed remotely. See: CVE-2001-0821 https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /Admin_files/order.log: Selena Sol's WebStore 1.0 exposes order information. See: https://packetstormsecurity.com/files/32406/xmas.txt.html: 
++ GET /admin/cplogfile.log: DevBB 1.0 final log file is readable remotely. Upgrade to the latest version. See: http://www.mybboard.com: 
++ GET /admin/system_footer.php: myphpnuke version 1.8.8_final_7 reveals detailed system information.
++ GET /cfdocs/snippets/fileexists.cfm: Can be used to verify the existence of files (on the same drive info as the web tree/file).
++ GET /chat/!nicks.txt: WF-Chat 1.0 Beta allows retrieval of user information. See: OSVDB-59646: 
++ GET /chat/!pwds.txt: WF-Chat 1.0 Beta allows retrieval of user information. See: OSVDB-59645: 
++ GET /chat/data/usr: SimpleChat! 1.3 allows retrieval of user information. See: OSVDB-53304: 
++ GET /config.php: PHP Config file may contain database IDs and passwords.
++ GET /config/: Configuration information may be available remotely.
++ GET /cplogfile.log: XMB Magic Lantern forum 1.6b final log file is readable remotely. Upgrade to the latest version. See: https://securitytracker.com/id/1004318,http://www.xmbforum.com: 
++ GET /examples/jsp/snp/anything.snp: Tomcat servlet gives lots of host information.
++ GET /cfdocs/snippets/evaluate.cfm: This allows you to enter Coldfusion code to be evaluated, or potentially create denial of service.
++ GET /cfide/Administrator/startstop.html: Can start/stop the Coldfusion server.
++ GET /cd-cgi/sscd_suncourier.pl: Sunsolve CD script may allow users to execute arbitrary commands. The script was confirmed to exist, but the test was not done. See: CVE-2002-0436: 
++ GET /ews/ews/architext_query.pl: Versions older than 1.1 of Excite for Web Servers allow attackers to execute arbitrary commands. BID-2665. See: CVE-1999-0279: 
++ GET /instantwebmail/message.php: Instant Web Mail is installed. Versions 0.59 and lower can allow remote users to embed POP3 commands in URLs contained in email. See: CVE-2002-0490: 
++ GET /admin.php?en_log_id=0&action=config: EasyNews version 4.3 allows remote admin access. This PHP file should be protected. See: CVE-2006-5412: 
++ GET /admin.php?en_log_id=0&action=users: EasyNews version 4.3 allows remote admin access. This PHP file should be protected. See: CVE-2006-5412: 
++ GET /admin.php4?reg_login=1: Mon Album version 0.6.2d allows remote admin access. This should be protected.
++ GET /admin/admin_phpinfo.php4: Mon Album version 0.6.2d allows remote admin access. This should be protected.
++ GET /admin/login.php?action=insert&username=test&password=test: phpAuction may allow user admin accounts to be inserted without proper authentication. Attempt to log in with user 'test' password 'test' to verify. See: CVE-2002-0995: 
++ GET /dostuff.php?action=modify_user: Blahz-DNS allows unauthorized users to edit user information. Upgrade to version 0.25 or higher. See: CVE-2002-0599,https://sourceforge.net/projects/blahzdns/: 
++ GET /accounts/getuserdesc.asp: Hosting Controller 2002 administration page is available. This should be protected. See: CVE-2002-0776: 
++ GET /agentadmin.php: Immobilier agentadmin.php contains multiple SQL injection vulnerabilities. See: OSVDB-35876: 
++ GET /sqldump.sql: Database SQL?.
++ GET /structure.sql: Database SQL?.
++ GET /servlet/SessionManager: IBM WebSphere reconfigure servlet (user=servlet, password=manager). All default code should be removed from servers.
++ GET /ip.txt: This may be User Online version 2.0, which has a remotely accessible log file.
++ GET /level/42/exec/show%20conf: Retrieved Cisco configuration file.
++ GET /livehelp/: LiveHelp may reveal system information.
++ GET /LiveHelp/: LiveHelp may reveal system information.
++ GET /logicworks.ini: web-erp 0.1.4 and earlier allow .ini files to be read remotely. See: OSVDB-59536: 
++ GET /logs/str_err.log: Bmedia error log, contains invalid login attempts which include the invalid usernames and passwords entered (could just be typos & be very close to the right entries).
++ GET /mall_log_files/order.log: EZMall2000 exposes order information. See: CVE-1999-0606: 
++ GET /megabook/files/20/setup.db: Megabook guestbook configuration available remotely. See: OSVDB-3204: 
++ GET /officescan/hotdownload/ofscan.ini: OfficeScan from Trend Micro allows anyone to read the ofscan.ini file, which may contain passwords. See: CVE-2001-1151: 
++ GET /order/order_log.dat: Web shopping system exposes order information. See: CVE-1999-0606: 
++ GET /orders/order_log_v12.dat: Web shopping system exposes order information. See: CVE-1999-0606: 
++ GET /pmlite.php: A Xoops CMS script was found. Version RC3 and below allows all users to view all messages (untested). See: https://seclists.org/bugtraq/2002/Dec/129: 
++ GET /session/admnlogin: SessionServlet Output, has session cookie info.
++ GET /SiteScope/htdocs/SiteScope.html: The SiteScope install may allow remote users to get sensitive information about the hosts being monitored. See: OSVDB-613: 
++ GET /servlet/allaire.jrun.ssi.SSIFilter: Allaire ColdFusion allows JSP source viewed through a vulnerable SSI call. See: CVE-2001-0926: 
++ GET /pp.php?action=login: Pieterpost 0.10.6 allows anyone to access the 'virtual' account which can be used to relay/send e-mail. See: OSVDB-2881: 
++ GET /isapi/count.pl?: AN HTTPd default script may allow writing over arbitrary files with a new content of '1', which could allow a trivial DoS. Append /../../../../../ctr.dll to replace this file's contents, for example.
++ GET /krysalis/: Krysalis pre 1.0.3 may allow remote users to read arbitrary files outside docroot.
++ GET /logjam/showhits.php: Logjam may possibly allow remote command execution via showhits.php page.
++ GET /manual.php: Does not filter input before passing to shell command. Try 'ls -l' as the man page entry.
++ GET /smssend.php: PhpSmssend may allow system calls if a ' is passed to it. See: CVE-2002-0220: 
++ GET /ncl_items.html: This may allow attackers to reconfigure your Tektronix printer. See: CVE-1999-1508: 
++ GET /ncl_items.shtml?SUBJECT=1: This may allow attackers to reconfigure your Tektronix printer. See: CVE-2001-0484: 
++ GET /photo/manage.cgi: My Photo Gallery management interface. May allow full access to photo galleries and more.
++ GET /photodata/manage.cgi: My Photo Gallery management interface. May allow full access to photo galleries and more.
++ GET /pub/english.cgi?op=rmail: BSCW self-registration may be enabled. This could allow untrusted users semi-trusted access to the software. 3.x version (and probably some 4.x) allow arbitrary commands to be executed remotely. See: CVE-2002-0095: 
++ GET /pvote/ch_info.php?newpass=password&confirm=password%20: PVote administration page is available. Versions 1.5b and lower do not require authentication to reset the administration password.
++ GET /scripts/wsisa.dll/WService=anything?WSMadmin: Allows Webspeed to be remotely administered. Edit unbroker.properties and set AllowMsngrCmds to 0. See: CVE-2000-0127: 
++ GET /SetSecurity.shm: Cisco System's My Access for Wireless. This resource should be password protected.
++ GET /submit?setoption=q&option=allowed_ips&value=255.255.255.255: MLdonkey 2.x allows administrative interface access to be access from any IP. This is typically only found on port 4080. See: OSVDB-3126: 
++ GET /thebox/admin.php?act=write&username=admin&password=admin&aduser=admin&adpass=admin: paBox 1.6 may allow remote users to set the admin password. If successful, the 'admin' password is now 'admin'. See: OSVDB-2225: 
++ GET /shopadmin.asp: VP-ASP shopping cart admin may be available via the web. Default ID/PW are vpasp/vpasp and admin/admin.
++ GET /_vti_txt/_vti_cnf/: FrontPage directory found.
++ GET /_vti_txt/: FrontPage directory found.
++ GET /_vti_pvt/deptodoc.btr: FrontPage file found. This may contain useful information.
++ GET /_vti_pvt/doctodep.btr: FrontPage file found. This may contain useful information.
++ GET /_vti_pvt/services.org: FrontPage file found. This may contain useful information.
++ POST /_vti_bin/shtml.dll/_vti_rpc?method=server+version%3a4%2e0%2e2%2e2611: Gives info about server settings. See: CVE-2000-0413,CVE-2000-0709,CVE-2000-0710: 
++ POST /_vti_bin/shtml.exe/_vti_rpc?method=server+version%3a4%2e0%2e2%2e2611: Gives info about server settings. See: CVE-2000-0413,CVE-2000-0709,CVE-2000-0710: 
++ POST /_vti_bin/_vti_aut/author.dll?method=list+documents%3a3%2e0%2e2%2e1706&service%5fname=&listHiddenDocs=true&listExplorerDocs=true&listRecurse=false&listFiles=true&listFolders=true&listLinkInfo=true&listIncludeParent=true&listDerivedT=false&listBorders=false: We seem to have authoring access to the FrontPage web.
++ POST /_vti_bin/_vti_aut/author.exe?method=list+documents%3a3%2e0%2e2%2e1706&service%5fname=&listHiddenDocs=true&listExplorerDocs=true&listRecurse=false&listFiles=true&listFolders=true&listLinkInfo=true&listIncludeParent=true&listDerivedT=false&listBorders=false: We seem to have authoring access to the FrontPage web.
++ GET /_vti_bin/_vti_aut/dvwssr.dll: This dll allows anyone with authoring privs to change other users file, and may contain a buffer overflow for unauthenticated users. See: MS00-025: 
++ GET /_vti_bin/_vti_aut/fp30reg.dll: Some versions of the FrontPage fp30reg.dll are vulnerable to a buffer overflow. See: MS03-051: 
++ GET /_vti_pvt/access.cnf: Contains HTTP server-specific access control information. Remove or ACL if FrontPage is not being used. See: CVE-2002-1717: 
++ GET /_vti_pvt/service.cnf: Contains meta-information about the web server Remove or ACL if FrontPage is not being used. See: CVE-2002-1717: 
++ GET /_vti_pvt/services.cnf: Contains the list of subwebs. Remove or ACL if FrontPage is not being used. May reveal server version if Admin has changed it. See: CVE-2002-1717: 
++ GET /_vti_pvt/svacl.cnf: File used to store whether subwebs have unique permissions settings and any IP address restrictions. Can be used to discover information about subwebs, remove or ACL if FrontPage is not being used. See: CVE-2002-1717: 
++ GET /_vti_pvt/writeto.cnf: Contains information about form handler result files. Remove or ACL if FrontPage is not being used. See: CVE-2002-1717: 
++ GET /_vti_pvt/linkinfo.cnf: IIS file shows http links on and off site. Might show host trust relationships and other machines on network. See: CVE-2002-1717: 
++ GET /doc/: The /doc/ directory is browsable. This may be /usr/doc. See: CVE-1999-0678: 
++ GET /doc: The /doc directory is browsable. This may be /usr/doc. See: CVE-1999-0678: 
++ GET /cgis/wwwboard/wwwboard.cgi: Versions 2.0 Alpha and below have multiple problems. This could allow over-write of messages. Default ID 'WebAdmin' with pass 'WebBoard'. See: BID-1795 CVE-1999-0930: 
++ GET /cgis/wwwboard/wwwboard.pl: Versions 2.0 Alpha and below have multiple problems. This could allow over-write of messages. Default ID 'WebAdmin' with pass 'WebBoard'. See: BID-1795 CVE-1999-0930: 
++ GET /manager/contextAdmin/contextAdmin.html: Tomcat may be configured to let attackers read arbitrary files. Restrict access to /admin. See: CVE-2000-0672: 
++ GET /jk-manager/contextAdmin/contextAdmin.html: Tomcat may be configured to let attackers read arbitrary files. Restrict access to /admin. See: CVE-2000-0672: 
++ GET /jk-status/contextAdmin/contextAdmin.html: Tomcat may be configured to let attackers read arbitrary files. Restrict access to /admin. See: CVE-2000-0672: 
++ GET /admin/contextAdmin/contextAdmin.html: Tomcat may be configured to let attackers read arbitrary files. Restrict access to /admin. See: CVE-2000-0672: 
++ GET /host-manager/contextAdmin/contextAdmin.html: Tomcat may be configured to let attackers read arbitrary files. Restrict access to /admin. See: CVE-2000-0672: 
++ GET /blahb.ida: Reveals physical path. To fix: Preferences -> Home directory -> Application & check 'Check if file exists' for the ISAPI mappings. MS01-033. See: CVE-2001-0500: 
++ GET /blahb.idq: Reveals physical path. To fix: Preferences -> Home directory -> Application & check 'Check if file exists' for the ISAPI mappings. MS01-033. See: CVE-2001-0500: 
++ GET /BACLIENT: IBM Tivoli default file found. See: OSVDB-2117: 
++ GET /level/16/exec/-///pwd: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/exec/-///show/configuration: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/exec/: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/exec//show/access-lists: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/level/16/exec//show/configuration: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/level/16/exec//show/interfaces: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/level/16/exec//show/interfaces/status: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/level/16/exec//show/version: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/level/16/exec//show/running-config/interface/FastEthernet: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/16/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/17/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/18/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/19/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/20/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/21/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/22/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/23/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/24/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/25/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/26/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/27/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/28/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/29/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/30/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/31/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/32/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/33/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/34/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/35/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/36/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/37/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/38/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/39/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/40/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/41/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/42/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/43/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/44/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/45/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/46/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/47/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/48/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/49/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/50/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/51/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/52/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/53/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/54/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/55/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/56/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/57/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/58/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/59/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/60/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/61/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/62/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/63/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/64/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/65/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/66/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/67/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/68/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/69/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/70/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/71/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/72/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/73/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/74/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/75/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/76/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/77/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/78/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/79/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/80/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/81/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/82/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/83/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/84/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/85/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/86/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/87/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/88/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/89/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/90/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/91/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/92/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/93/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/94/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/95/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/96/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/97/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/98/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /level/99/exec//show: CISCO HTTP service allows remote execution of commands. See: CVE-2001-0537: 
++ GET /users.lst: LocalWEB2000 users.lst passwords found. See: CVE-2002-1353: 
++ GET /WS_FTP.LOG: WS_FTP.LOG file was found. It may contain sensitive information. See: OSVDB-13405: 
++ GET /nsn/env.bas: Novell web server shows the server environment and is vulnerable to cross-site scripting. See: CVE-2004-2104: 
++ GET /lcgi/lcgitest.nlm: Novell web server shows the server environment. See: CVE-2004-2104: 
++ GET /com/: Novell web server allows directory listing. See: CVE-2004-2106: 
++ GET /com/novell/: Novell web server allows directory listing. See: CVE-2004-2106: 
++ GET /com/novell/webaccess: Novell web server allows directory listing. See: CVE-2004-2106: 
++ GET //admin/admin.shtml: Axis network camera may allow admin bypass by using double-slashes before URLs. See: CVE-2003-0240: 
++ GET /axis-cgi/buffer/command.cgi: Axis WebCam 2400 may allow overwriting or creating files on the system. See: https://www.securityfocus.com/archive/1/313485: 
++ GET /support/messages: Axis WebCam allows retrieval

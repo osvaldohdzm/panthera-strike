@@ -1,0 +1,13 @@
+
+               __    _____           __         
+   _______  __/ /_  / __(_)___  ____/ /__  _____
+  / ___/ / / / __ \/ /_/ / __ \/ __  / _ \/ ___/
+ (__  ) /_/ / /_/ / __/ / / / / /_/ /  __/ /    
+/____/\__,_/_.___/_/ /_/_/ /_/\__,_/\___/_/
+
+		projectdiscovery.io
+
+[[34mINF[0m] Current subfinder version v2.6.0 ([91moutdated[0m)
+[[34mINF[0m] Loading provider config from /home/arya/.config/subfinder/provider-config.yaml
+[[34mINF[0m] Enumerating subdomains for https:/cuentadigital.bim.mx/
+[[34mINF[0m] Found 0 subdomains for https:/cuentadigital.bim.mx/ in 3 seconds 772 milliseconds
