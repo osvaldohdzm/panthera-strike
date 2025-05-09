@@ -2,13 +2,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const sectionElement = document.querySelector('section');
 
     if (sectionElement) {
-        const numberOfSpans = 500; // Aumentado para mejor cobertura en diferentes aspect ratios
-        for (let i = 0; i < numberOfSpans; i++) {
-            let span = document.createElement('span');
-            sectionElement.appendChild(span);
+
+        const container = document.createElement('div');
+        container.classList.add('container');
+        sectionElement.appendChild(container);
+
+        const hexWidth = 100; // Ancho del hexágono en px (de .hexagon CSS)
+        const hexHeight = 110; // Alto del hexágono en px (de .hexagon CSS)
+        const rowMarginTop = -32; // Margen superior negativo para solapar filas (de .row CSS)
+        const effectiveHexHeight = hexHeight + rowMarginTop; // Altura efectiva que ocupa una fila con solapamiento
+
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // Cálculo de hexágonos por fila y número de filas
+        // Se añade un extra para asegurar cobertura en los bordes debido a los desplazamientos y márgenes
+        const hexagonsPerRow = Math.ceil(screenWidth / hexWidth) + 2; 
+        const numberOfRows = Math.ceil(screenHeight / effectiveHexHeight) + 2;
+
+        for (let i = 0; i < numberOfRows; i++) {
+            const row = document.createElement('div');
+            row.classList.add('row');
+            for (let j = 0; j < hexagonsPerRow; j++) {
+                const hexagon = document.createElement('div');
+                hexagon.classList.add('hexagon');
+                row.appendChild(hexagon);
+            }
+            container.appendChild(row);
         }
     } else {
-        // Este mensaje ayudará a saber si el script no encuentra el <section>
-        console.error("Error JS: No se encontró el elemento <section> para crear los mosaicos de fondo.");
+        console.error("Error JS: No se encontró el elemento <section> para crear el fondo de hexágonos.");
     }
 });
