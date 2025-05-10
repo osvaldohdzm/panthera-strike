@@ -11,7 +11,7 @@ REGEX_FILTER_LINES='^\s*#(?!.*\.py).*'
 
 # File extensions to exclude entirely (case-insensitive matching for find)
 EXCLUDE_EXTENSIONS=(
-  "css" "sh" "html" "gitignore" "md" "txt" "json" "xml" "yaml" "yml" "toml" # Common non-code or config
+  "gitignore"
   "jpg" "jpeg" "png" "gif" "webp" "bmp" # Images
   "mp4" "mkv" "avi" "mov" "flv" "webm" # Videos
   "mp3" "wav" "ogg" "flac" "aac" # Audio

@@ -23,10 +23,12 @@ TOOLS_CONFIG = {
         "category_display_name": "Descubrimiento de Activos y Subdominios",
         "category_icon_class": "icon-sitemap",
         "icon_class": "icon-binoculars",
-        "timeout": 1800, # 30 minutos
+        "timeout": 1800,
         "default_enabled": True,
         "description": "Descubrimiento profundo de activos y subdominios usando Amass.",
         "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -config /path/to/config.ini",
         "dangerous": False,
         "needs_shell": False,
     },
@@ -39,28 +41,32 @@ TOOLS_CONFIG = {
         "category_display_name": "Descubrimiento de Activos y Subdominios",
         "category_icon_class": "icon-sitemap",
         "icon_class": "icon-search",
-        "timeout": 600, # 10 minutos
+        "timeout": 600,
         "default_enabled": True,
         "description": "Descubrimiento pasivo rápido de subdominios.",
         "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -t 10 -timeout 30 -sources censys,virustotal",
         "dangerous": False,
         "needs_shell": False,
     },
-    "httpx_recon": { # Renombrado para evitar colisión con httpx_tech
+    "httpx_recon": {
         "name": "HTTPX (Recon)",
         "command_template": "httpx -l {target_file_subdomains} -silent -title -tech-detect -status-code -o {output_file}",
-        "target_type": "domain_list_file", # Tipo especial para indicar que necesita un archivo de entrada
+        "target_type": "domain_list_file",
         "phase": "reconnaissance_infra_web",
         "category": "Asset Discovery",
         "category_display_name": "Descubrimiento de Activos y Subdominios",
         "category_icon_class": "icon-sitemap",
         "icon_class": "icon-http",
-        "timeout": 900, # 15 minutos
+        "timeout": 900,
         "default_enabled": True,
         "description": "Determina hosts web activos y extrae información tecnológica.",
         "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -threads 100 -p 80,443,8080",
         "dangerous": False,
-        "needs_shell": False, # httpx puede necesitar shell si se usa con pipes `cat ... | httpx`
+        "needs_shell": False,
     },
     "findomain": {
         "name": "Findomain",
@@ -71,26 +77,30 @@ TOOLS_CONFIG = {
         "category_display_name": "Descubrimiento de Activos y Subdominios",
         "category_icon_class": "icon-sitemap",
         "icon_class": "icon-search-dollar",
-        "timeout": 600, # 10 minutos
+        "timeout": 600,
         "default_enabled": False,
         "description": "Descubrimiento pasivo de subdominios usando APIs y certificados.",
         "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --threads 50 --exclude-sources crtsh",
         "dangerous": False,
         "needs_shell": False,
     },
     "theharvester": {
         "name": "theHarvester",
-        "command_template": "theHarvester -d {target_domain} -b all -f {output_file_base}_harvester.html", # Salida HTML
+        "command_template": "theHarvester -d {target_domain} -b all -f {output_file_base}_harvester.html",
         "target_type": "domain",
         "phase": "reconnaissance_infra_web",
         "category": "Asset Discovery",
         "category_display_name": "Descubrimiento de Activos y Subdominios",
         "category_icon_class": "icon-sitemap",
         "icon_class": "icon-user-secret",
-        "timeout": 1200, # 20 minutos
+        "timeout": 1200,
         "default_enabled": False,
         "description": "OSINT para descubrir subdominios, emails, empleados, IPs.",
         "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -l 500 -s",
         "dangerous": False,
         "needs_shell": False,
     },
@@ -107,6 +117,8 @@ TOOLS_CONFIG = {
         "default_enabled": True,
         "description": "Resolución masiva de DNS y filtrado de registros.",
         "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -r /path/to/resolvers.txt -wd example.com",
         "dangerous": False,
         "needs_shell": False,
     },
@@ -123,7 +135,9 @@ TOOLS_CONFIG = {
         "default_enabled": False,
         "description": "Enumeración DNS profunda (AXFR, SRV, etc.).",
         "cli_params_config": [],
-        "dangerous": False, # AXFR puede ser ruidoso
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --threads 10 -n 8.8.8.8",
+        "dangerous": False,
         "needs_shell": False,
     },
     "nmap_dns_scripts": {
@@ -139,13 +153,15 @@ TOOLS_CONFIG = {
         "default_enabled": False,
         "description": "Scripts NSE de Nmap para interrogación DNS.",
         "cli_params_config": [],
-        "dangerous": True, # dns-brute puede ser ruidoso
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --script-args dns-brute.threads=10",
+        "dangerous": True,
         "needs_shell": False,
     },
     "massdns": {
         "name": "MassDNS",
         "command_template": "massdns -r {resolvers_file} -t A -o S -w {output_file} {target_wordlist_file}",
-        "target_type": "domain_wordlist_file", # Tipo especial
+        "target_type": "domain_wordlist_file",
         "phase": "reconnaissance_infra_web",
         "category": "DNS Enumeration",
         "category_display_name": "Enumeración DNS Avanzada",
@@ -158,26 +174,30 @@ TOOLS_CONFIG = {
             {"name": "resolvers_file", "label": "Archivo de Resolvers", "type": "text", "default": "lists/resolvers.txt", "placeholder": "ruta/a/resolvers.txt"},
             {"name": "wordlist_file", "label": "Archivo Wordlist (para {target})", "type": "text", "default": "lists/default_sub_wordlist.txt", "placeholder": "ruta/a/wordlist.txt"}
         ],
-        "dangerous": True, # Puede generar mucho tráfico DNS
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -s 10000 --retry 3",
+        "dangerous": True,
         "needs_shell": False,
     },
-
     "nmap_top_ports": {
         "name": "Nmap (Top Ports + Servicios)",
-        "command_template": "nmap -sV {nmap_timing_option} --top-ports 1000 {target_host_or_ip} -oA {output_file_base}_nmap_top1000",
+        "command_template": "nmap -sV {nmap_timing_option} {nmap_show_open_flag} --top-ports 1000 {target_host_or_ip} -oA {output_file_base}_nmap_top1000",
         "target_type": "host_or_ip",
         "phase": "identification_infra",
         "category": "Port Scanning",
         "category_display_name": "Escaneo de Puertos",
         "category_icon_class": "icon-network-wired",
         "icon_class": "icon-search",
-        "timeout": 1200, # 20 minutos
+        "timeout": 1200,
         "default_enabled": True,
         "description": "Escaneo Nmap de los 1000 puertos TCP más comunes con detección de servicios.",
         "cli_params_config": [
-            {"name": "nmap_timing_option", "label": "Timing (-T)", "type": "select", "default": "-T4", "options": ["-T0", "-T1", "-T2", "-T3", "-T4", "-T5"], "description": "Controla la agresividad del escaneo Nmap."}
+            {"name": "nmap_timing_option", "label": "Timing (-T)", "type": "select", "default": "-T4", "options": ["-T0", "-T1", "-T2", "-T3", "-T4", "-T5"], "description": "Controla la agresividad del escaneo Nmap."},
+            {"name": "nmap_show_open_flag", "label": "Mostrar solo puertos abiertos", "type": "checkbox", "cli_true": "--open", "cli_false": "", "default": False, "description": "Muestra solo los puertos que Nmap determina como abiertos."}
         ],
-        "dangerous": False, # Relativamente estándar
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --reason -n -Pn",
+        "dangerous": False,
         "needs_shell": False,
     },
     "nmap_full_tcp": {
@@ -189,54 +209,59 @@ TOOLS_CONFIG = {
         "category_display_name": "Escaneo de Puertos",
         "category_icon_class": "icon-network-wired",
         "icon_class": "icon-search-plus",
-        "timeout": 7200, # 2 horas (puede ser largo)
+        "timeout": 7200,
         "default_enabled": False,
         "description": "Escaneo Nmap completo de todos los puertos TCP, con detección de servicios y scripts por defecto.",
         "cli_params_config": [],
-        "dangerous": True, # Intrusivo y lento
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -T4 --min-rate 1000",
+        "dangerous": True,
         "needs_shell": False,
     },
     "naabu": {
         "name": "Naabu",
         "command_template": "naabu -host {target_host_or_ip_list} -pf {ports_to_scan_file} -silent -o {output_file}",
-        "target_type": "host_or_ip", # Simplificado a un solo host, o se necesita lógica para listas
+        "target_type": "host_or_ip",
         "phase": "identification_infra",
         "category": "Port Scanning",
         "category_display_name": "Escaneo de Puertos",
         "category_icon_class": "icon-network-wired",
         "icon_class": "icon-bolt",
-        "timeout": 900, # 15 minutos
+        "timeout": 900,
         "default_enabled": False,
         "description": "Escáner SYN rápido para identificar puertos abiertos.",
         "cli_params_config": [
              {"name": "ports_to_scan_file", "label": "Archivo de Puertos", "type": "text", "default": "config/naabu_ports.txt", "placeholder": "ruta/a/ports.txt", "description": "Archivo con puertos a escanear, ej: 80,443,1-1000."}
         ],
-        "dangerous": False, # Escaneo SYN es sigiloso
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -rate 1000 -retries 2",
+        "dangerous": False,
         "needs_shell": False,
     },
     "masscan": {
         "name": "Masscan",
-        "command_template": "masscan -p1-65535 {target_ip_range} --rate=100000 -oL {output_file}",
-        "target_type": "ip_range", # e.g., 192.168.1.0/24
+        "command_template": "masscan -p1-65535 {target_ip_range} --rate={rate} -oL {output_file}",
+        "target_type": "ip_range",
         "phase": "identification_infra",
         "category": "Port Scanning",
         "category_display_name": "Escaneo de Puertos",
         "category_icon_class": "icon-network-wired",
         "icon_class": "icon-tachometer-alt",
-        "timeout": 3600, # 1 hora
+        "timeout": 3600,
         "default_enabled": False,
         "description": "Escáner de puertos extremadamente rápido para grandes rangos IP.",
         "cli_params_config": [
             {"name": "rate", "label": "Tasa de Paquetes", "type": "number", "default": "100000", "placeholder": "100000"}
         ],
-        "dangerous": True, # Muy ruidoso y puede causar problemas de red
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --banners --source-port 61000",
+        "dangerous": True,
         "needs_shell": False,
     },
-
     "httpx_tech": {
         "name": "HTTPX (Tech Detect)",
-        "command_template": "httpx -l {target_file_live_hosts} -silent -threads 50 -tech-detect -server -cdn -waf -o {output_file}",
-        "target_type": "url_list_file", # Requiere un archivo de hosts web vivos
+        "command_template": "httpx -l {target_file_live_hosts} -silent -threads {threads} -tech-detect -server -cdn -waf -o {output_file}",
+        "target_type": "url_list_file",
         "phase": "identification_web",
         "category": "Web Tech Identification",
         "category_display_name": "Identificación de Tecnologías Web",
@@ -248,12 +273,14 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "threads", "label": "Hilos (-threads)", "type": "number", "default": "50", "placeholder": "50"}
         ],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -x GET,POST -mc 200,302",
         "dangerous": False,
-        "needs_shell": False, # Similar a httpx_recon
+        "needs_shell": False,
     },
-    "whatweb": { # Renombrado de whatweb_basic para evitar confusión
+    "whatweb": {
         "name": "WhatWeb",
-        "command_template": "whatweb -a 3 {target_url} --log-brief {output_file_json}", # Salida JSON
+        "command_template": "whatweb -a {aggression} {target_url} --log-brief {output_file_json}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Web Tech Identification",
@@ -266,7 +293,9 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "aggression", "label": "Agresividad (-a)", "type": "select", "default": "3", "options": ["1", "3", "4"], "description": "Nivel de agresividad de WhatWeb."}
         ],
-        "dangerous": False, # Puede ser algo ruidoso con -a 3/4
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --color never --no-errors",
+        "dangerous": False,
         "needs_shell": False,
     },
     "nuclei_tech_info": {
@@ -282,12 +311,14 @@ TOOLS_CONFIG = {
         "default_enabled": True,
         "description": "Usa plantillas de Nuclei para identificar tecnologías y errores de configuración.",
         "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -H \"X-Custom-Header: Value\" -retries 3",
         "dangerous": False,
         "needs_shell": False,
     },
     "nmap_http_scripts": {
         "name": "Nmap (HTTP Scripts)",
-        "command_template": "nmap -sV --script http-enum,http-headers,http-waf-fingerprint,http-sitemap-generator -p 80,443 {target_ip_or_domain} -oA {output_file_base}_nmap_http",
+        "command_template": "nmap -sV --script http-enum,http-headers,http-waf-fingerprint,http-sitemap-generator -p {ports} {target_ip_or_domain} -oA {output_file_base}_nmap_http",
         "target_type": "ip_or_domain",
         "phase": "identification_web",
         "category": "Web Tech Identification",
@@ -300,13 +331,14 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "ports", "label": "Puertos (-p)", "type": "text", "default": "80,443", "placeholder": "80,443,8080"}
         ],
-        "dangerous": False, # Puede ser un poco ruidoso
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --script-args http-enum.fingerprintfile=myprints.lst",
+        "dangerous": False,
         "needs_shell": False,
     },
-
     "ffuf_common": {
         "name": "FFUF (Common Dirs/Files)",
-        "command_template": "ffuf -w {wordlist_path} -u {target_url}/FUZZ -mc 200,204,301,302,307,401,403 -o {output_file_json} -of json",
+        "command_template": "ffuf -w {wordlist_path} -u {target_url}/FUZZ {custom_ffuf_headers} -mc 200,204,301,302,307,401,403 -o {output_file_json} -of json",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
@@ -317,14 +349,17 @@ TOOLS_CONFIG = {
         "default_enabled": True,
         "description": "Fuzzing rápido de directorios y archivos comunes.",
         "cli_params_config": [
-            {"name": "wordlist_path", "label": "Wordlist", "type": "text", "default": "/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt", "placeholder": "ruta/a/wordlist.txt"}
+            {"name": "wordlist_path", "label": "Wordlist", "type": "text", "default": "/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt", "placeholder": "ruta/a/wordlist.txt"},
+            {"name": "custom_ffuf_headers", "label": "Cabeceras Adicionales (una por línea)", "type": "textarea", "cli_format": "-H \"{value}\"", "default": "", "placeholder": "User-Agent: MiAgente\nCookie: session=123", "description": "Añade cabeceras HTTP personalizadas a las peticiones de FFUF."}
         ],
-        "dangerous": True, # Genera mucho tráfico
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -timeout 5 -recursion -recursion-depth 2",
+        "dangerous": True,
         "needs_shell": False,
     },
     "dirsearch_common": {
         "name": "Dirsearch (Common)",
-        "command_template": "dirsearch -u {target_url} -e php,html,js,txt,asp,aspx,jsp -w {wordlist_path} --output={output_file} --format=json",
+        "command_template": "dirsearch -u {target_url} -e {extensions} -w {wordlist_path} --output={output_file} --format=json",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
@@ -338,12 +373,14 @@ TOOLS_CONFIG = {
             {"name": "wordlist_path", "label": "Wordlist", "type": "text", "default": "/usr/share/wordlists/dirb/common.txt", "placeholder": "ruta/a/wordlist.txt"},
             {"name": "extensions", "label": "Extensiones (-e)", "type": "text", "default": "php,html,js,txt", "placeholder": "php,html,js"}
         ],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --threads 30 --recursive",
         "dangerous": True,
         "needs_shell": False,
     },
      "gobuster_dir": {
         "name": "Gobuster (dir)",
-        "command_template": "gobuster dir -u {target_url} -w {wordlist_path} -x php,txt,html -o {output_file}",
+        "command_template": "gobuster dir -u {target_url} -w {wordlist_path} -x {extensions} -o {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
@@ -357,19 +394,21 @@ TOOLS_CONFIG = {
             {"name": "wordlist_path", "label": "Wordlist (-w)", "type": "text", "default": "/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt", "placeholder": "ruta/a/wordlist.txt"},
             {"name": "extensions", "label": "Extensiones (-x)", "type": "text", "default": "php,txt,html", "placeholder": "php,txt,html"}
         ],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -t 50 -k --no-error",
         "dangerous": True,
         "needs_shell": False,
     },
     "feroxbuster": {
         "name": "Feroxbuster",
-        "command_template": "feroxbuster -u {target_url} -w {wordlist_path} --depth 3 -x php,html,js -o {output_file}",
+        "command_template": "feroxbuster -u {target_url} -w {wordlist_path} --depth {depth} -x {extensions} -o {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
         "category_display_name": "Descubrimiento de Contenido",
         "category_icon_class": "icon-folder-open",
         "icon_class": "icon-rocket",
-        "timeout": 2400, # Puede ser más largo con recursión
+        "timeout": 2400,
         "default_enabled": False,
         "description": "Descubrimiento recursivo de contenido rápido.",
         "cli_params_config": [
@@ -377,6 +416,8 @@ TOOLS_CONFIG = {
             {"name": "depth", "label": "Profundidad (--depth)", "type": "number", "default": "3", "placeholder": "3"},
             {"name": "extensions", "label": "Extensiones (-x)", "type": "text", "default": "php,html,js", "placeholder": "php,html,js"}
         ],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --threads 60 -s 200,301,403",
         "dangerous": True,
         "needs_shell": False,
     },
@@ -395,13 +436,14 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "wordlist_path", "label": "Wordlist", "type": "text", "default": "/usr/share/wordlists/dirb/common.txt", "placeholder": "ruta/a/common.txt"}
         ],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -S -r -z 100",
         "dangerous": True,
         "needs_shell": False,
     },
-
     "nuclei_vulns": {
         "name": "Nuclei (Vulns Scan)",
-        "command_template": "nuclei -u {target_url} -tags cve,security,misconfiguration -severity critical,high,medium -o {output_file_json} -json",
+        "command_template": "nuclei -u {target_url} -tags {tags} -severity {severity} -o {output_file_json} -json",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Automated Vuln Analysis",
@@ -415,29 +457,33 @@ TOOLS_CONFIG = {
             {"name": "tags", "label": "Tags (-tags)", "type": "text", "default": "cve,security,misconfiguration", "placeholder": "cve,rce"},
             {"name": "severity", "label": "Severidad (-severity)", "type": "text", "default": "critical,high,medium", "placeholder": "critical,high"}
         ],
-        "dangerous": False, # Mayormente no intrusivo, pero depende de las plantillas
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -etags ssl -stats",
+        "dangerous": False,
         "needs_shell": False,
     },
-    "zaproxy_quick": { # OWASP ZAP
+    "zaproxy_quick": {
         "name": "OWASP ZAP (Quick Scan)",
-        "command_template": "zap.sh -cmd -quickurl {target_url} -quickprogress -quickout {output_file_xml}", # Asume zap.sh en PATH
+        "command_template": "zap.sh -cmd -quickurl {target_url} -quickprogress -quickout {output_file_xml}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Automated Vuln Analysis",
         "category_display_name": "Análisis Automatizado de Vulnerabilidades",
         "category_icon_class": "icon-shield-alt",
         "icon_class": "icon-spider",
-        "timeout": 3600, # Puede ser largo
+        "timeout": 3600,
         "default_enabled": False,
         "description": "Escaneo DAST rápido con OWASP ZAP.",
         "cli_params_config": [],
-        "dangerous": True, # Escaneo activo DAST
-        "needs_shell": True, # zap.sh es un script
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -autorun /path/to/script.zst",
+        "dangerous": True,
+        "needs_shell": True,
     },
     "nikto": {
         "name": "Nikto",
-        "command_template": "nikto -h {target_url} -Format txt -output {output_file} -Tuning x 1,2,3,4,5,b",
-        "target_type": "url", # Nikto puede tomar host, pero url es más común para -h
+        "command_template": "nikto -h {target_url} -Format txt -output {output_file} -Tuning {tuning}",
+        "target_type": "url",
         "phase": "identification_web",
         "category": "Automated Vuln Analysis",
         "category_display_name": "Análisis Automatizado de Vulnerabilidades",
@@ -449,32 +495,35 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "tuning", "label": "Tuning (-Tuning)", "type": "text", "default": "x 1,2,3,4,5,b", "placeholder": "x 1,2,3"}
         ],
-        "dangerous": True, # Puede ser ruidoso
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -ask no -Plugins tests",
+        "dangerous": True,
         "needs_shell": False,
     },
     "wapiti": {
         "name": "Wapiti",
-        "command_template": "wapiti -u {target_url} -f txt -o {output_file_dir} --scope domain -m \"-all,+sql,+xss,+crlf,+xxe\"",
+        "command_template": "wapiti -u {target_url} -f txt -o {output_file_dir} --scope domain -m {modules}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Automated Vuln Analysis",
         "category_display_name": "Análisis Automatizado de Vulnerabilidades",
         "category_icon_class": "icon-shield-alt",
-        "icon_class": "icon-kiwi-bird", # Wapiti es un ave :)
+        "icon_class": "icon-kiwi-bird",
         "timeout": 2400,
         "default_enabled": False,
         "description": "Escáner de caja negra para XSS, SQLi (detección), etc.",
         "cli_params_config": [
             {"name": "modules", "label": "Módulos (-m)", "type": "text", "default": "\"-all,+sql,+xss,+crlf,+xxe\"", "placeholder": "\"-all,+sqli,+xss\""}
         ],
-        "dangerous": True, # Escaneo activo
-        "needs_shell": False, # Wapiti es un ejecutable Python, pero el comando puede tener comillas
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --level 2 -p http://proxy:port",
+        "dangerous": True,
+        "needs_shell": False, # El valor de modules puede tener comillas, shlex.quote lo manejará
     },
-
     "wpscan": {
         "name": "WPScan",
-        "command_template": "wpscan --url {target_wordpress_url} --enumerate vp,vt,u --api-token {wpscan_api_token} -o {output_file} -f cli-no-color --disable-tls-checks", # Añadido disable-tls-checks por si acaso
-        "target_type": "url", # Específicamente URL de WordPress
+        "command_template": "wpscan --url {target_wordpress_url} --enumerate vp,vt,u --api-token {wpscan_api_token} -o {output_file} -f cli-no-color --disable-tls-checks",
+        "target_type": "url",
         "phase": "identification_web",
         "category": "CMS Specific Analysis",
         "category_display_name": "Análisis Específico de CMS",
@@ -486,42 +535,48 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "wpscan_api_token", "label": "API Token WPScan", "type": "password", "default": "", "placeholder": "TU_API_TOKEN_WPSCAN", "description": "Token API de wpscan.com para detección de vulnerabilidades actualizada."}
         ],
-        "dangerous": False, # Enumeración, pero puede ser detectado
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --random-user-agent --plugins-detection aggressive",
+        "dangerous": False,
         "needs_shell": False,
     },
     "joomscan": {
         "name": "JoomScan",
         "command_template": "joomscan --url {target_joomla_url} -ec -o {output_file}",
-        "target_type": "url", # Específicamente URL de Joomla
-        "phase": "identification_web",
-        "category": "CMS Specific Analysis",
-        "category_display_name": "Análisis Específico de CMS",
-        "category_icon_class": "icon-puzzle-piece",
-        "icon_class": "icon-joomla", # Asumiendo que tienes un ícono para Joomla
-        "timeout": 1200,
-        "default_enabled": False,
-        "description": "Escáner de vulnerabilidades para Joomla CMS.",
-        "cli_params_config": [],
-        "dangerous": False,
-        "needs_shell": False,
-    },
-    "droopescan": {
-        "name": "Droopescan",
-        "command_template": "droopescan scan -u {target_url} -t 32 -o cli > {output_file}", # Redirigir salida cli
         "target_type": "url",
         "phase": "identification_web",
         "category": "CMS Specific Analysis",
         "category_display_name": "Análisis Específico de CMS",
         "category_icon_class": "icon-puzzle-piece",
-        "icon_class": "icon-drupal", # O un ícono genérico de CMS
+        "icon_class": "icon-joomla",
+        "timeout": 1200,
+        "default_enabled": False,
+        "description": "Escáner de vulnerabilidades para Joomla CMS.",
+        "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --enumerate-components",
+        "dangerous": False,
+        "needs_shell": False,
+    },
+    "droopescan": {
+        "name": "Droopescan",
+        "command_template": "droopescan scan -u {target_url} -t {threads} -o cli > {output_file}",
+        "target_type": "url",
+        "phase": "identification_web",
+        "category": "CMS Specific Analysis",
+        "category_display_name": "Análisis Específico de CMS",
+        "category_icon_class": "icon-puzzle-piece",
+        "icon_class": "icon-drupal",
         "timeout": 900,
         "default_enabled": False,
         "description": "Identifica múltiples CMS (Drupal, Silverstripe, Joomla, WordPress) y enumera componentes.",
         "cli_params_config": [
             {"name": "threads", "label": "Hilos (-t)", "type": "number", "default": "32", "placeholder": "32"}
         ],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -e a",
         "dangerous": False,
-        "needs_shell": True, # Por la redirección '>'
+        "needs_shell": True,
     },
     "cmsmap": {
         "name": "CMSmap",
@@ -531,25 +586,26 @@ TOOLS_CONFIG = {
         "category": "CMS Specific Analysis",
         "category_display_name": "Análisis Específico de CMS",
         "category_icon_class": "icon-puzzle-piece",
-        "icon_class": "icon-cogs", # Icono genérico
+        "icon_class": "icon-cogs",
         "timeout": 1200,
         "default_enabled": False,
         "description": "Identifica CMS y ejecuta comprobaciones básicas de vulnerabilidades.",
         "cli_params_config": [],
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -f D -F",
         "dangerous": False,
         "needs_shell": False,
     },
-
     "sqlmap_batch": {
         "name": "SQLMap (Detection)",
-        "command_template": "sqlmap -u \"{target_url_with_params}\" --batch --level=3 --risk=1 --technique=BEUSTQ --forms --crawl=2 -o --output-dir={output_file_dir}", # SQLMap guarda en directorio
-        "target_type": "url_with_params", # e.g., http://example.com/vuln.php?id=1
+        "command_template": "sqlmap -u \"{target_url_with_params}\" --batch --level={level} --risk={risk} --technique=BEUSTQ --forms --crawl={crawl_depth} -o --output-dir={output_file_dir}",
+        "target_type": "url_with_params",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
         "category_display_name": "Detección Específica de Vulnerabilidades",
         "category_icon_class": "icon-bomb",
         "icon_class": "icon-database",
-        "timeout": 3600, # Puede ser largo
+        "timeout": 3600,
         "default_enabled": False,
         "description": "Detección de inyección SQL (sin explotación).",
         "cli_params_config": [
@@ -557,8 +613,10 @@ TOOLS_CONFIG = {
             {"name": "risk", "label": "Riesgo (--risk)", "type": "select", "default": "1", "options": ["1","2","3"]},
             {"name": "crawl_depth", "label": "Profundidad Crawl (--crawl)", "type": "number", "default": "2", "placeholder": "2"}
         ],
-        "dangerous": True, # Incluso en detección, puede ser intrusivo
-        "needs_shell": False, # SQLMap es un script Python, pero el comando puede tener comillas
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --dbms=mysql --threads=5",
+        "dangerous": True,
+        "needs_shell": False,
     },
     "nuclei_specific_vulns": {
         "name": "Nuclei (Specific Vulns)",
@@ -575,12 +633,14 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "nuclei_templates", "label": "Plantillas (-t)", "type": "text", "default": "http/misconfiguration/,http/vulnerabilities/", "placeholder": "ruta/a/plantillas/,http/cves/"}
         ],
-        "dangerous": False, # Depende de las plantillas
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: -pt http -timeout 10",
+        "dangerous": False,
         "needs_shell": False,
     },
     "commix": {
         "name": "Commix (Command Inj. Detection)",
-        "command_template": "commix -u \"{target_url_with_params}\" --batch --level=3 -o {output_file}", # Commix puede necesitar --output-dir
+        "command_template": "commix -u \"{target_url_with_params}\" --batch --level={level} -o {output_file}",
         "target_type": "url_with_params",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
@@ -593,13 +653,15 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "level", "label": "Nivel (--level)", "type": "select", "default": "3", "options": ["1","2","3","4","5"]}
         ],
-        "dangerous": True, # Puede ser muy intrusivo
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --os=linux --technique=time",
+        "dangerous": True,
         "needs_shell": False,
     },
     "xsser": {
         "name": "XSSer (XSS Detection)",
-        "command_template": "xsser -u \"{target_url}\" --params \"{url_params_for_xsser}\" -Cw --heuristic --user-agent \"Mozilla/5.0\" -o {output_file_xml}", # XSSer puede necesitar -o para archivo
-        "target_type": "url_and_params", # Tipo especial, necesita URL base y parámetros separados
+        "command_template": "xsser -u \"{target_url}\" --params \"{url_params_for_xsser}\" -Cw --heuristic --user-agent \"Mozilla/5.0\" -o {output_file_xml}",
+        "target_type": "url_and_params",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
         "category_display_name": "Detección Específica de Vulnerabilidades",
@@ -610,13 +672,15 @@ TOOLS_CONFIG = {
         "description": "Detección de Cross-Site Scripting (XSS).",
         "cli_params_config": [
         ],
-        "dangerous": True, # Intenta inyectar XSS
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --payload \"<script>alert(1)</script>\"",
+        "dangerous": True,
         "needs_shell": False,
     },
     "lfisuite_scan": {
         "name": "LFISuite (LFI/RFI Scan)",
-        "command_template": "lfisuite -u \"{target_url_with_lfi_fuzz_param}\" --scan -w {lfi_wordlist} -o {output_file_dir}", # LFISuite puede guardar en directorio
-        "target_type": "url_with_lfi_fuzz_param", # e.g., http://example.com/page.php?file=FUZZ
+        "command_template": "lfisuite -u \"{target_url_with_lfi_fuzz_param}\" --scan -w {lfi_wordlist} -o {output_file_dir}",
+        "target_type": "url_with_lfi_fuzz_param",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
         "category_display_name": "Detección Específica de Vulnerabilidades",
@@ -628,7 +692,9 @@ TOOLS_CONFIG = {
         "cli_params_config": [
             {"name": "lfi_wordlist", "label": "Wordlist LFI (-w)", "type": "text", "default": "/usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt", "placeholder": "ruta/a/lfi_wordlist.txt"}
         ],
-        "dangerous": True, # Intenta incluir archivos
+        "allow_additional_args": True,
+        "additional_args_placeholder": "ej: --threads 10 --skip-urlencode",
+        "dangerous": True,
         "needs_shell": False,
     },
 }
@@ -640,7 +706,7 @@ PROFILES_CONFIG = {
         "icon_class": "icon-search-plus",
         "tools": ["amass_enum", "subfinder", "findomain", "theharvester", "dnsrecon", "nmap_dns_scripts"],
         "params_override": {
-            "amass_enum": {"min-for-recursive": "2"}, # Ejemplo de override
+            "amass_enum": {"min-for-recursive": "2"}, 
         }
     },
     "Quick Web Scan (URL)": {
@@ -686,8 +752,8 @@ def get_tool_config():
     compatible con el scanner/engine.py original si aún se usa.
     """
     return {
-        "raw_commands": TOOLS_CONFIG, # Para compatibilidad con el engine.py original
-        "presets": PROFILES_CONFIG    # Para compatibilidad con el engine.py original
+        "raw_commands": TOOLS_CONFIG, 
+        "presets": PROFILES_CONFIG   
     }
 
 
@@ -720,12 +786,9 @@ def save_job_summary(job_path: str, summary_data_to_save: dict):
     Args:
         job_path: Ruta al directorio del job.
         summary_data_to_save: Diccionario con los datos del job a guardar/actualizar.
-                              Se espera que este diccionario sea la fuente de verdad completa
-                              o una actualización que se fusionará correctamente.
     """
     summary_file_path = Path(job_path) / 'summary.json'
     
-
     current_summary_on_disk = {}
     if summary_file_path.exists():
         try:
@@ -738,26 +801,23 @@ def save_job_summary(job_path: str, summary_data_to_save: dict):
             job_id_for_log = Path(job_path).name
             print(f"WARN: No se pudo leer summary.json en {job_path} (Job ID: {job_id_for_log}): {e}. Se intentará sobrescribir.")
 
-    
     if 'logs' in summary_data_to_save:
         current_summary_on_disk['logs'] = summary_data_to_save['logs']
-    elif 'logs' not in current_summary_on_disk: # Asegurar que 'logs' exista
+    elif 'logs' not in current_summary_on_disk:
          current_summary_on_disk['logs'] = []
-
 
     if 'tool_progress' in summary_data_to_save:
         current_summary_on_disk['tool_progress'] = summary_data_to_save['tool_progress']
-    elif 'tool_progress' not in current_summary_on_disk: # Asegurar que 'tool_progress' exista
+    elif 'tool_progress' not in current_summary_on_disk:
         current_summary_on_disk['tool_progress'] = {}
 
     for key, value in summary_data_to_save.items():
-        if key not in ['logs', 'tool_progress']: # Ya manejados
+        if key not in ['logs', 'tool_progress']:
             current_summary_on_disk[key] = value
             
     current_summary_on_disk.setdefault('job_id', Path(job_path).name)
     current_summary_on_disk.setdefault('status', 'UNKNOWN')
     current_summary_on_disk.setdefault('overall_progress', 0)
-
 
     try:
         with open(summary_file_path, 'w', encoding='utf-8') as f:
@@ -776,7 +836,7 @@ def get_scan_status_from_file(job_path: str) -> dict:
         Diccionario con los datos del escaneo o estructura de error si falla
     """
     summary_file_path = Path(job_path) / 'summary.json'
-    job_id_from_path = Path(job_path).name # Para usar en caso de error
+    job_id_from_path = Path(job_path).name 
 
     if summary_file_path.exists():
         try:
@@ -788,9 +848,9 @@ def get_scan_status_from_file(job_path: str) -> dict:
             summary_data.setdefault('logs', [])
             summary_data.setdefault('tool_progress', {})
             summary_data.setdefault('targets', [])
-            summary_data.setdefault('start_time', None)
-            summary_data.setdefault('creation_timestamp', None) # Añadido por si se usa
-            summary_data.setdefault('end_timestamp', None)
+            summary_data.setdefault('start_time', None) # Corregido de start_timestamp
+            summary_data.setdefault('creation_timestamp', None) 
+            summary_data.setdefault('end_timestamp', None) # Corregido de end_time
             summary_data.setdefault('zip_path', None)
             summary_data.setdefault('error_message', None)
             return summary_data
@@ -799,7 +859,7 @@ def get_scan_status_from_file(job_path: str) -> dict:
     
     return {
         'job_id': job_id_from_path,
-        'status': 'NOT_FOUND', # O 'ERROR_LOADING_SUMMARY'
+        'status': 'NOT_FOUND', 
         'error_message': 'summary.json no encontrado o corrupto.',
         'overall_progress': 0,
         'logs': [{'timestamp': get_current_timestamp(), 'level': 'error', 'message': 'summary.json no encontrado o corrupto.', 'is_html': False}],
@@ -824,14 +884,13 @@ def list_all_jobs(job_path_base: str) -> list:
     base = Path(job_path_base)
     if base.exists() and base.is_dir():
         for job_dir in base.iterdir():
-            if job_dir.is_dir() and (job_dir / 'summary.json').exists(): # Solo procesar si summary.json existe
+            if job_dir.is_dir() and (job_dir / 'summary.json').exists():
                 job_summary = get_scan_status_from_file(str(job_dir))
                 jobs.append({
-                    'id': job_summary.get('job_id', job_dir.name), # 'id' para consistencia con frontend
+                    'id': job_summary.get('job_id', job_dir.name),
                     'status': job_summary.get('status', 'UNKNOWN'),
-                    'timestamp': job_summary.get('start_timestamp') or job_summary.get('creation_timestamp'),
+                    'timestamp': job_summary.get('start_time') or job_summary.get('creation_timestamp'), # Usar start_time o creation_timestamp
                     'targets': job_summary.get('targets', []),
                     'zip_path': job_summary.get('zip_path')
                 })
     return sorted(jobs, key=lambda j: j.get('timestamp') or '0', reverse=True)
-

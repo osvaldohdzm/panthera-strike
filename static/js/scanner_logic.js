@@ -29,10 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let appConfig = { tools: {}, profiles: {}, phases: {} };
     let currentJobId = localStorage.getItem('currentJobId');
     let statusPollInterval;
-
     let displayedLogCount = 0;
     let currentJobIdForLogs = null;
-
 
     function updateTargetsCount() {
         if (targetsTextarea && targetsCountDisplay) {
@@ -60,19 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const entry = document.createElement('div');
         entry.classList.add('log-entry', `log-type-${type.toLowerCase()}`);
-
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        let iconClass = 'icon-info-circle'; // Default
+        let iconClass = 'icon-info-circle';
         if (type === 'error') iconClass = 'icon-times-circle';
         else if (type === 'warn') iconClass = 'icon-exclamation-triangle';
         else if (type === 'success') iconClass = 'icon-check-circle';
         else if (type === 'command') iconClass = 'icon-terminal';
-
         const iconSpan = `<span class="log-icon"><i class="${iconClass}"></i></span>`;
         const timestampSpan = `<span class="log-timestamp">[${timestamp}]</span>`;
         const messageSpan = `<span class="log-message-content"></span>`;
         entry.innerHTML = `${iconSpan}${timestampSpan}${messageSpan}`;
-
         if (isHtml) {
             entry.querySelector('.log-message-content').innerHTML = message;
         } else {
@@ -99,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const profilesContainer = document.querySelector('.scan-profiles-buttons');
         if (!profilesContainer || !appConfig.profiles) return;
         profilesContainer.innerHTML = '';
-
         Object.keys(appConfig.profiles).forEach(profileName => {
             const profile = appConfig.profiles[profileName];
             const button = document.createElement('button');
@@ -117,6 +111,58 @@ document.addEventListener('DOMContentLoaded', () => {
         profilesContainer.appendChild(deselectAllButton);
     }
 
+    function updateParamsModifiedIndicator(toolId) {
+        const toolConfig = appConfig.tools[toolId];
+        if (!toolConfig) return;
+
+        const paramsToggleButton = document.getElementById(`params-toggle-${toolId}`);
+        if (!paramsToggleButton) return;
+
+        let modified = false;
+        // Verificar si la herramienta está seleccionada
+        const toolCheckboxInput = document.querySelector(`input.tool-item-checkbox[value="${toolId}"]`);
+        if (!toolCheckboxInput || !toolCheckboxInput.checked) {
+            paramsToggleButton.classList.remove('params-modified');
+            const restoreButton = document.getElementById(`restore-${toolId}`);
+            if (restoreButton) restoreButton.disabled = true; // Deshabilitar si la herramienta no está seleccionada
+            return;
+        }
+
+        if (toolConfig.cli_params_config) {
+            for (const paramConf of toolConfig.cli_params_config) {
+                const inputField = document.getElementById(`cli-${toolId}-${paramConf.name}`);
+                if (inputField) {
+                    let currentValue;
+                    if (paramConf.type === 'checkbox') {
+                        currentValue = inputField.checked;
+                    } else {
+                        currentValue = inputField.value;
+                    }
+                    // Usar paramConf.default como el valor original por defecto.
+                    const defaultValue = paramConf.default !== undefined ? paramConf.default : (paramConf.type === 'checkbox' ? false : '');
+                    if (currentValue !== defaultValue) {
+                        modified = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!modified && toolConfig.allow_additional_args) {
+            const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
+            if (additionalArgsInput && additionalArgsInput.value.trim() !== '') {
+                modified = true;
+            }
+        }
+
+        paramsToggleButton.classList.toggle('params-modified', modified);
+
+        const restoreButton = document.getElementById(`restore-${toolId}`);
+        if (restoreButton) {
+            restoreButton.disabled = !modified;
+        }
+    }
+
     function populateToolSelection() {
         if (!toolListDiv || !appConfig.tools || !appConfig.phases) {
             console.error("populateToolSelection: Elementos DOM o configuración faltante.");
@@ -128,9 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const toolsByPhaseAndCategory = {};
         for (const toolKey in appConfig.tools) {
             const tool = appConfig.tools[toolKey];
-            const phaseKey = tool.phase; // e.g., "reconnaissance_infra_web"
-            const categoryKey = tool.category; // e.g., "Asset Discovery"
-
+            const phaseKey = tool.phase;
+            const categoryKey = tool.category;
             if (!toolsByPhaseAndCategory[phaseKey]) {
                 toolsByPhaseAndCategory[phaseKey] = {
                     meta: appConfig.phases[phaseKey] || { name: phaseKey, order: 99, icon_class: 'icon-question-circle' },
@@ -144,6 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     tools: []
                 };
             }
+            // Guardar una copia del default para la lógica de "restaurar" y "modificado"
+            // 'original_default' se usará explícitamente para restaurar.
+            // 'paramConf.default' se usará para la comparación en 'updateParamsModifiedIndicator'.
+            if (tool.cli_params_config) {
+                tool.cli_params_config.forEach(p => p.original_default = p.default);
+            }
             toolsByPhaseAndCategory[phaseKey].categories[categoryKey].tools.push({ ...tool, id: toolKey });
         }
 
@@ -153,16 +204,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return orderA - orderB;
         });
 
-
         for (const phaseKey of sortedPhaseKeys) {
             const phaseData = toolsByPhaseAndCategory[phaseKey];
             const phaseId = `phase-toggle-${uniqueIdCounter++}`;
             const phaseDiv = document.createElement('div');
             phaseDiv.className = 'pentest-phase';
-
             const phaseDisplayName = phaseData.meta.name || phaseKey;
             const phaseIconClass = phaseData.meta.icon_class || 'icon-layer-group';
-
             const phaseHeader = document.createElement('div');
             phaseHeader.className = 'pentest-phase-header';
             phaseHeader.innerHTML = `
@@ -178,10 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const categoryId = `category-toggle-${uniqueIdCounter++}`;
                 const categoryDiv = document.createElement('div');
                 categoryDiv.className = 'tool-category';
-
                 const categoryDisplayName = categoryData.display_name;
                 const categoryIconClass = categoryData.icon_class;
-
                 const categoryHeader = document.createElement('div');
                 categoryHeader.className = 'tool-category-header';
                 categoryHeader.innerHTML = `
@@ -191,13 +237,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </label>
                     <h5><i class="${categoryIconClass}"></i> ${categoryDisplayName}</h5>
                     <span class="accordion-arrow"><i class="icon-chevron-down"></i></span>`;
-
                 const toolItemsContainer = document.createElement('div');
-                toolItemsContainer.className = 'tool-items-container'; // Inicialmente colapsado
-
+                toolItemsContainer.className = 'tool-items-container';
                 categoryHeader.onclick = (e) => {
                     if (e.target.type === 'checkbox' || e.target.classList.contains('slider') || e.target.closest('.toggle-switch')) return;
-
                     toolItemsContainer.classList.toggle('expanded');
                     const arrowIcon = categoryHeader.querySelector('.accordion-arrow i');
                     if (arrowIcon) {
@@ -207,35 +250,88 @@ document.addEventListener('DOMContentLoaded', () => {
                 categoryDiv.appendChild(categoryHeader);
 
                 categoryData.tools.forEach(tool => {
-                    const toolItemId = `tool-toggle-${tool.id}-${uniqueIdCounter++}`;
+                    const toolItemId = `tool-toggle-${tool.id}-${uniqueIdCounter++}`; // ID único para el checkbox de la herramienta
                     const toolItemDiv = document.createElement('div');
                     toolItemDiv.className = 'tool-item';
-                    let cliParamsHtml = '';
-                    if (tool.cli_params_config && tool.cli_params_config.length > 0) {
-                        cliParamsHtml += `<div class="tool-cli-params-group" id="cli-group-${tool.id}" style="display:none;"><h6><i class="icon-sliders-h"></i> Parámetros Adicionales:</h6>`;
-                        tool.cli_params_config.forEach(paramConf => {
-                            cliParamsHtml += `<div class="cli-param-row">
-                                <label for="cli-${tool.id}-${paramConf.name}" title="${paramConf.description || ''}">${paramConf.label}:</label>`;
-                            if (paramConf.type === 'select') {
-                                cliParamsHtml += `<select id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}" title="${paramConf.description || ''}">`;
-                                (paramConf.options || []).forEach(opt => {
-                                    const value = typeof opt === 'string' ? opt : opt.value; // Si options es [{value:'v', label:'l'}] o ['v1','v2']
-                                    const label = typeof opt === 'string' ? opt : opt.label;
-                                    cliParamsHtml += `<option value="${value}" ${value === paramConf.default ? 'selected' : ''}>${label}</option>`;
-                                });
-                                cliParamsHtml += `</select>`;
-                            } else if (paramConf.type === 'password') {
-                                cliParamsHtml += `<input type="password" id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}" placeholder="${paramConf.placeholder || ''}" value="${paramConf.default || ''}" title="${paramConf.description || ''}">`;
-                            }
-                            else {
-                                cliParamsHtml += `<input type="${paramConf.type || 'text'}" id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}" placeholder="${paramConf.placeholder || ''}" value="${paramConf.default || ''}" title="${paramConf.description || ''}">`;
-                            }
-                            cliParamsHtml += `</div>`;
-                        });
-                        cliParamsHtml += `</div>`;
+
+                    let paramsToggleButtonHtml = '';
+                    const hasPredefinedParams = tool.cli_params_config && tool.cli_params_config.length > 0;
+                    const allowsAdditionalArgs = tool.allow_additional_args;
+
+                    if (hasPredefinedParams || allowsAdditionalArgs) {
+                        paramsToggleButtonHtml = `
+                            <button class="tool-params-toggle-btn" id="params-toggle-${tool.id}" title="Configurar parámetros de ${tool.name}">
+                                <i class="icon-sliders-h"></i>
+                            </button>`;
                     }
+
+                    let toolDetailsContentHtml = '';
+                    if (hasPredefinedParams || allowsAdditionalArgs) {
+                        toolDetailsContentHtml += `<div class="tool-details-header">
+                                                      <h6><i class="icon-cogs"></i> Configuración de ${tool.name}</h6>
+                                                      <button class="restore-defaults-btn" id="restore-${tool.id}" title="Restaurar parámetros a sus valores por defecto" disabled>
+                                                          <i class="icon-undo"></i> Restaurar
+                                                      </button>
+                                                    </div>`;
+                    }
+
+                    if (hasPredefinedParams) {
+                        toolDetailsContentHtml += `<div class="tool-cli-params-group">`;
+                        tool.cli_params_config.forEach(paramConf => {
+                            toolDetailsContentHtml += `<div class="cli-param-row ${paramConf.type === 'checkbox' ? 'cli-param-checkbox' : ''}">`;
+                            if (paramConf.type === 'checkbox') {
+                                toolDetailsContentHtml += `
+                                    <input type="checkbox" id="cli-${tool.id}-${paramConf.name}" 
+                                           name="cli_param_${tool.id}_${paramConf.name}" 
+                                           ${(paramConf.default !== undefined ? paramConf.default : false) ? 'checked' : ''} 
+                                           title="${paramConf.description || ''}"
+                                           data-tool-id="${tool.id}" data-param-name="${paramConf.name}">
+                                    <label for="cli-${tool.id}-${paramConf.name}" title="${paramConf.description || ''}">${paramConf.label}</label>`;
+                            } else {
+                                toolDetailsContentHtml += `<label for="cli-${tool.id}-${paramConf.name}" title="${paramConf.description || ''}">${paramConf.label}:</label>`;
+                                if (paramConf.type === 'select') {
+                                    toolDetailsContentHtml += `<select id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}" title="${paramConf.description || ''}" data-tool-id="${tool.id}" data-param-name="${paramConf.name}">`;
+                                    (paramConf.options || []).forEach(opt => {
+                                        const value = typeof opt === 'string' ? opt : opt.value;
+                                        const label = typeof opt === 'string' ? opt : opt.label;
+                                        toolDetailsContentHtml += `<option value="${value}" ${value === paramConf.default ? 'selected' : ''}>${label}</option>`;
+                                    });
+                                    toolDetailsContentHtml += `</select>`;
+                                } else if (paramConf.type === 'textarea') {
+                                    toolDetailsContentHtml += `<textarea id="cli-${tool.id}-${paramConf.name}" 
+                                                                         name="cli_param_${tool.id}_${paramConf.name}" 
+                                                                         placeholder="${paramConf.placeholder || ''}" 
+                                                                         title="${paramConf.description || ''}"
+                                                                         data-tool-id="${tool.id}" data-param-name="${paramConf.name}">${paramConf.default || ''}</textarea>`;
+                                } else { // text, password, number, etc.
+                                    toolDetailsContentHtml += `<input type="${paramConf.type || 'text'}" 
+                                                                       id="cli-${tool.id}-${paramConf.name}" 
+                                                                       name="cli_param_${tool.id}_${paramConf.name}" 
+                                                                       placeholder="${paramConf.placeholder || ''}" 
+                                                                       value="${paramConf.default || ''}" 
+                                                                       title="${paramConf.description || ''}"
+                                                                       data-tool-id="${tool.id}" data-param-name="${paramConf.name}">`;
+                                }
+                            }
+                            toolDetailsContentHtml += `</div>`;
+                        });
+                        toolDetailsContentHtml += `</div>`;
+                    }
+
+                    if (allowsAdditionalArgs) {
+                        toolDetailsContentHtml += `<div class="cli-param-row additional-args-row">
+                                                      <label for="cli-additional-${tool.id}" title="Argumentos CLI adicionales, separados por espacio. No incluyas el objetivo aquí.">Argumentos Adicionales:</label>
+                                                      <input type="text" id="cli-additional-${tool.id}" 
+                                                             name="cli_additional_args_${tool.id}" 
+                                                             class="additional-args-input" 
+                                                             placeholder="${tool.additional_args_placeholder || 'ej: --opcion valor -flag'}"
+                                                             data-tool-id="${tool.id}">
+                                                    </div>`;
+                    }
+
                     const toolIconClass = tool.icon_class || 'icon-cog';
                     const dangerousIndicator = tool.dangerous ? `<span class="tool-dangerous-indicator" title="Esta herramienta puede ser intrusiva o disruptiva"><i class="icon-exclamation-triangle"></i></span>` : '';
+
                     toolItemDiv.innerHTML = `
                         <div class="tool-item-main">
                             <label class="toggle-switch">
@@ -245,38 +341,108 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="tool-icon"><i class="${toolIconClass}"></i></span>
                             <span class="toggle-label" title="${tool.description || tool.name}">${tool.name}</span>
                             ${dangerousIndicator}
+                            ${paramsToggleButtonHtml} 
                         </div>
-                        <div class="tool-details" style="display:none;"> ${cliParamsHtml}</div>`;
+                        <div class="tool-details" id="details-${tool.id}">${toolDetailsContentHtml}</div>`;
+                    toolItemsContainer.appendChild(toolItemDiv);
 
+                    const paramsToggleButton = toolItemDiv.querySelector(`#params-toggle-${tool.id}`);
+                    const toolDetailsDiv = toolItemDiv.querySelector(`#details-${tool.id}`);
                     const toolCheckboxInput = toolItemDiv.querySelector('.tool-item-checkbox');
-                    if (toolCheckboxInput) {
-                        toolCheckboxInput.addEventListener('change', (e) => {
-                            const toolDetails = toolItemDiv.querySelector('.tool-details');
-                            if (toolDetails) toolDetails.style.display = e.target.checked ? 'block' : 'none';
+
+                    if (paramsToggleButton && toolDetailsDiv) {
+                        paramsToggleButton.addEventListener('click', () => {
+                            toolDetailsDiv.classList.toggle('expanded');
+                            paramsToggleButton.classList.toggle('active', toolDetailsDiv.classList.contains('expanded'));
                         });
-                        if (tool.default_enabled) {
-                            const toolDetails = toolItemDiv.querySelector('.tool-details');
-                            if (toolDetails) toolDetails.style.display = 'block';
+                    }
+
+                    if (toolCheckboxInput && toolDetailsDiv && (hasPredefinedParams || allowsAdditionalArgs)) {
+                        toolCheckboxInput.addEventListener('change', (e) => {
+                            const isChecked = e.target.checked;
+                            if (!isChecked) {
+                                toolDetailsDiv.classList.remove('expanded');
+                                if (paramsToggleButton) paramsToggleButton.classList.remove('active');
+                            }
+                            // La visibilidad del panel de detalles ahora se controla por la clase 'expanded',
+                            // no directamente por 'display: block/none' aquí.
+                            // El toggle button lo maneja.
+                            updateParamsModifiedIndicator(tool.id);
+                        });
+                        // Estado inicial del panel de detalles si la herramienta está marcada por defecto
+                        if (toolCheckboxInput.checked && (hasPredefinedParams || allowsAdditionalArgs)) {
+                            // No auto-expandir al cargar, el usuario debe hacer click en el toggle.
+                            // updateParamsModifiedIndicator se llamará más adelante para todos.
                         }
                     }
-                    toolItemsContainer.appendChild(toolItemDiv);
-                });
+
+                    const restoreButton = toolItemDiv.querySelector(`#restore-${tool.id}`);
+                    if (restoreButton) {
+                        restoreButton.addEventListener('click', () => {
+                            if (tool.cli_params_config) {
+                                tool.cli_params_config.forEach(paramConf => {
+                                    const inputField = toolItemDiv.querySelector(`#cli-${tool.id}-${paramConf.name}`);
+                                    if (inputField) {
+                                        if (paramConf.type === 'checkbox') {
+                                            inputField.checked = paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.default || false);
+                                        } else {
+                                            inputField.value = paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.default || '');
+                                        }
+                                    }
+                                });
+                            }
+                            if (tool.allow_additional_args) {
+                                const additionalArgsInput = toolItemDiv.querySelector(`#cli-additional-${tool.id}`);
+                                if (additionalArgsInput) {
+                                    additionalArgsInput.value = '';
+                                }
+                            }
+                            updateParamsModifiedIndicator(tool.id);
+                            logToTerminal(`Parámetros de '${tool.name}' restaurados a los valores por defecto.`, 'info');
+                        });
+                    }
+
+                    // Event listeners para actualizar el indicador de "params-modified"
+                    toolItemDiv.querySelectorAll(`[data-tool-id="${tool.id}"]`).forEach(input => {
+                        input.addEventListener('input', () => updateParamsModifiedIndicator(tool.id)); // Para text, textarea
+                        input.addEventListener('change', () => updateParamsModifiedIndicator(tool.id)); // Para checkbox, select
+                    });
+
+                    // Estado inicial del indicador y botón restaurar
+                    if (toolCheckboxInput.checked) {
+                        updateParamsModifiedIndicator(tool.id);
+                    } else {
+                        if (restoreButton) restoreButton.disabled = true;
+                        if (paramsToggleButton) paramsToggleButton.classList.remove('params-modified');
+                    }
+
+                }); // Fin categoryData.tools.forEach
                 categoryDiv.appendChild(toolItemsContainer);
                 phaseDiv.appendChild(categoryDiv);
-            }
+            } // Fin for categoryKey
             toolListDiv.appendChild(phaseDiv);
-        }
+        } // Fin for phaseKey
+
         addCheckboxEventListeners();
-        updateAllParentCheckboxes(); // Asegurar que los padres reflejen el estado inicial de los hijos
+        updateAllParentCheckboxes();
         document.querySelectorAll('.tool-items-container').forEach(container => {
+            // Por defecto, los contenedores de herramientas y sus detalles están colapsados
             container.classList.remove('expanded');
-            const header = container.previousElementSibling; // El .tool-category-header
-            if (header) {
-                const arrowIcon = header.querySelector('.accordion-arrow i');
+            const catHeader = container.previousElementSibling;
+            if (catHeader && catHeader.classList.contains('tool-category-header')) {
+                const arrowIcon = catHeader.querySelector('.accordion-arrow i');
                 if (arrowIcon) arrowIcon.className = 'icon-chevron-down';
             }
+            container.querySelectorAll('.tool-details').forEach(detailDiv => {
+                detailDiv.classList.remove('expanded');
+                const toolItemMain = detailDiv.previousElementSibling;
+                if (toolItemMain) {
+                    const paramsToggle = toolItemMain.querySelector('.tool-params-toggle-btn');
+                    if (paramsToggle) paramsToggle.classList.remove('active');
+                }
+            });
         });
-    }
+    } // Fin populateToolSelection
 
     function addCheckboxEventListeners() {
         if (!toolListDiv) return;
@@ -295,37 +461,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 toolListDiv.querySelectorAll(`.tool-category-checkbox[data-phase-parent-id="${phaseId}"]`).forEach(catCb => {
                     catCb.checked = checkbox.checked;
                     catCb.indeterminate = false;
-                    toggleChildren(catCb, checkbox.checked); // Propagar a herramientas
+                    toggleChildren(catCb, checkbox.checked);
                 });
             }
         } else if (type === 'category') {
             toggleChildren(checkbox, checkbox.checked);
-            updateParentCheckboxState(checkbox.dataset.phaseParentId); // Actualizar fase padre
+            updateParentCheckboxState(checkbox.dataset.phaseParentId);
         } else if (type === 'tool') {
-            updateParentCheckboxState(checkbox.dataset.categoryParentId); // Actualizar categoría padre
+            updateParentCheckboxState(checkbox.dataset.categoryParentId);
+            // updateParamsModifiedIndicator se llama desde el listener individual del toolCheckbox
+            // y también en toggleChildren, y en updateAllParentCheckboxes.
         }
     }
 
     function toggleChildren(parentCheckbox, isChecked) {
         const parentType = parentCheckbox.dataset.type;
         let childrenSelector = '';
-        if (parentType === 'category') { // Solo las categorías tienen herramientas como hijos directos en esta lógica
+        if (parentType === 'category') {
             childrenSelector = `.tool-item-checkbox[data-category-parent-id="${parentCheckbox.id}"]`;
         }
 
         if (childrenSelector) {
-            const categoryDiv = parentCheckbox.closest('.tool-category'); // El contenedor de la categoría
+            const categoryDiv = parentCheckbox.closest('.tool-category');
             if (!categoryDiv) return;
 
             categoryDiv.querySelectorAll(childrenSelector).forEach(childCb => {
                 childCb.checked = isChecked;
-                childCb.indeterminate = false; // Los hijos directos no son indeterminados
+                childCb.indeterminate = false;
                 const toolItem = childCb.closest('.tool-item');
                 if (toolItem) {
                     const toolDetailsDiv = toolItem.querySelector('.tool-details');
+                    const paramsToggleBtn = toolItem.querySelector(`.tool-params-toggle-btn[id="params-toggle-${childCb.value}"]`);
                     if (toolDetailsDiv) {
-                        toolDetailsDiv.style.display = isChecked ? 'block' : 'none';
+                        if (!isChecked) { // Si se desmarca masivamente
+                            toolDetailsDiv.classList.remove('expanded');
+                            if (paramsToggleBtn) paramsToggleBtn.classList.remove('active');
+                        }
+                        // No auto-expandir al marcar masivamente. El usuario lo hará si quiere.
                     }
+                    updateParamsModifiedIndicator(childCb.value); // Actualizar indicador
                 }
             });
         }
@@ -335,10 +509,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!parentId) return;
         const parentCheckbox = document.getElementById(parentId);
         if (!parentCheckbox) return;
-
         const parentType = parentCheckbox.dataset.type;
         let childrenCheckboxesNodeList;
-
         if (parentType === 'phase') {
             childrenCheckboxesNodeList = toolListDiv ? toolListDiv.querySelectorAll(`.tool-category-checkbox[data-phase-parent-id="${parentId}"]`) : [];
         } else if (parentType === 'category') {
@@ -346,21 +518,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!categoryDiv) return;
             childrenCheckboxesNodeList = categoryDiv.querySelectorAll(`.tool-item-checkbox[data-category-parent-id="${parentId}"]`);
         } else {
-            return; // No es un padre que necesite actualización de esta manera
-        }
-
-        const childrenArray = Array.from(childrenCheckboxesNodeList);
-        if (childrenArray.length === 0) { // Si no hay hijos, el estado del padre es simplemente su propio 'checked'
-            parentCheckbox.indeterminate = false;
             return;
         }
-
+        const childrenArray = Array.from(childrenCheckboxesNodeList);
+        if (childrenArray.length === 0) {
+            parentCheckbox.indeterminate = false;
+            // parentCheckbox.checked se mantiene si no hay hijos (o se actualiza si es parte de una cadena más grande)
+            return;
+        }
         const allChecked = childrenArray.every(child => child.checked && !child.indeterminate);
         const someChecked = childrenArray.some(child => child.checked || child.indeterminate);
-
         parentCheckbox.checked = allChecked;
         parentCheckbox.indeterminate = !allChecked && someChecked;
-
         if (parentType === 'category' && parentCheckbox.dataset.phaseParentId) {
             updateParentCheckboxState(parentCheckbox.dataset.phaseParentId);
         }
@@ -368,46 +537,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateAllParentCheckboxes() {
         if (!toolListDiv) return;
+        // Actualizar indicadores de parámetros para todas las herramientas al inicio o tras cambios masivos
         toolListDiv.querySelectorAll('.tool-item-checkbox').forEach(toolCb => {
-            const toolItem = toolCb.closest('.tool-item');
-            if (toolItem) {
-                const toolDetailsDiv = toolItem.querySelector('.tool-details');
-                if (toolDetailsDiv) {
-                    toolDetailsDiv.style.display = toolCb.checked ? 'block' : 'none';
-                }
-            }
+            updateParamsModifiedIndicator(toolCb.value);
+            // La lógica de expansión/colapso de detalles ahora se maneja por su propio toggle o
+            // por la selección/deselección de la herramienta.
         });
         toolListDiv.querySelectorAll('.tool-category-checkbox').forEach(catCb => {
-            updateParentCheckboxState(catCb.id); // Esto actualizará la categoría y luego su fase padre
+            updateParentCheckboxState(catCb.id);
+        });
+        // Es posible que las fases también necesiten una actualización si se cargan con herramientas pre-seleccionadas
+        toolListDiv.querySelectorAll('.pentest-phase-header input[type="checkbox"]').forEach(phaseCb => {
+            updateParentCheckboxState(phaseCb.id);
         });
     }
 
-
     window.applyScanProfile = function (profileName) {
-        deselectAllTools(); // Primero deselecciona todo
+        deselectAllTools();
         const profile = appConfig.profiles[profileName];
         if (profile && profile.tools && toolListDiv) {
             profile.tools.forEach(toolId => {
                 const toolCheckbox = toolListDiv.querySelector(`input[name="selected_tools"][value="${toolId}"]`);
                 if (toolCheckbox) {
                     toolCheckbox.checked = true;
+                    // Disparar evento change para que se actualice el indicador de modificado y otros estados
+                    toolCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             });
-
             if (profile.params_override) {
                 for (const toolId in profile.params_override) {
                     const toolParams = profile.params_override[toolId];
                     for (const paramName in toolParams) {
                         const inputField = document.getElementById(`cli-${toolId}-${paramName}`);
                         if (inputField) {
-                            inputField.value = toolParams[paramName];
+                            if (inputField.type === 'checkbox') {
+                                inputField.checked = toolParams[paramName];
+                            } else {
+                                inputField.value = toolParams[paramName];
+                            }
+                            // Disparar evento input/change para actualizar el indicador de modificado
+                            inputField.dispatchEvent(new Event('input', { bubbles: true }));
+                            inputField.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }
+                    // Si hay un override de argumentos adicionales
+                    if (toolParams.additional_args !== undefined) {
+                        const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
+                        if (additionalArgsInput) {
+                            additionalArgsInput.value = toolParams.additional_args;
+                            additionalArgsInput.dispatchEvent(new Event('input', { bubbles: true }));
                         }
                     }
                 }
             }
             logToTerminal(`Perfil '${profileName}' aplicado.`, 'success');
         }
-        updateAllParentCheckboxes(); // Actualiza el estado visual de todos los checkboxes y detalles
+        updateAllParentCheckboxes(); // Esto actualizará los padres y los indicadores de parámetros
         document.querySelectorAll('.button-profile').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.profileName === profileName) {
@@ -421,11 +606,33 @@ document.addEventListener('DOMContentLoaded', () => {
             toolListDiv.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
                 checkbox.indeterminate = false;
-                if (checkbox.dataset.type === 'tool') { // Ocultar detalles de herramientas
+                if (checkbox.dataset.type === 'tool') {
                     const toolItem = checkbox.closest('.tool-item');
                     if (toolItem) {
                         const toolDetailsDiv = toolItem.querySelector('.tool-details');
-                        if (toolDetailsDiv) toolDetailsDiv.style.display = 'none';
+                        const paramsToggleBtn = toolItem.querySelector(`.tool-params-toggle-btn`);
+                        if (toolDetailsDiv) toolDetailsDiv.classList.remove('expanded');
+                        if (paramsToggleBtn) {
+                            paramsToggleBtn.classList.remove('active');
+                        }
+
+                        // Resetear los campos de este toolId a default
+                        const toolId = checkbox.value;
+                        const tool = appConfig.tools[toolId];
+                        if (tool && tool.cli_params_config) {
+                            tool.cli_params_config.forEach(paramConf => {
+                                const inputField = document.getElementById(`cli-${toolId}-${paramConf.name}`);
+                                if (inputField) {
+                                    if (paramConf.type === 'checkbox') inputField.checked = paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.default || false);
+                                    else inputField.value = paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.default || '');
+                                }
+                            });
+                        }
+                        if (tool && tool.allow_additional_args) {
+                            const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
+                            if (additionalArgsInput) additionalArgsInput.value = '';
+                        }
+                        updateParamsModifiedIndicator(toolId); // Actualizar indicador y botón restaurar
                     }
                 }
             });
@@ -445,30 +652,52 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedToolsPayload = [];
         document.querySelectorAll('input[name="selected_tools"]:checked').forEach(cb => {
             const toolId = cb.value;
-            const toolConfig = appConfig.tools[toolId]; // Obtener la config completa de la herramienta
+            const toolConfig = appConfig.tools[toolId];
             let params = {};
+
             if (toolConfig && toolConfig.cli_params_config) {
                 toolConfig.cli_params_config.forEach(pConf => {
                     const inputField = document.getElementById(`cli-${toolId}-${pConf.name}`);
-                    if (inputField && inputField.value.trim() !== '') { // Usar valor del input si no está vacío
-                        params[pConf.name] = inputField.value;
-                    } else if (pConf.default && pConf.default.trim() !== '') { // Usar default si input está vacío pero default no
+                    if (inputField) {
+                        if (pConf.type === 'checkbox') {
+                            params[pConf.name] = inputField.checked;
+                        } else {
+                            // Solo incluir el parámetro si tiene un valor o si el default no es vacío
+                            // y el campo es vacío (para permitir enviar valores vacíos explícitamente si es necesario)
+                            // Para simplificar, tomamos el valor del campo. Si está vacío y el backend
+                            // espera un default, el backend debe manejarlo.
+                            params[pConf.name] = inputField.value;
+                        }
+                    } else { // Si el campo no existe por alguna razón, usar el default de config
                         params[pConf.name] = pConf.default;
                     }
                 });
             }
-            selectedToolsPayload.push({ id: toolId, cli_params: params });
+
+            let additionalArgs = '';
+            if (toolConfig && toolConfig.allow_additional_args) {
+                const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
+                if (additionalArgsInput && additionalArgsInput.value.trim() !== '') {
+                    additionalArgs = additionalArgsInput.value.trim();
+                }
+            }
+
+            selectedToolsPayload.push({
+                id: toolId,
+                cli_params: params,
+                additional_args: additionalArgs
+            });
         });
 
         if (selectedToolsPayload.length === 0) {
             logToTerminal("Por favor, seleccione al menos una herramienta de escaneo.", "error");
             return;
         }
-        const advancedScanOptions = { // Recoger opciones avanzadas si existen
+        const advancedScanOptions = {
             customScanTime: document.getElementById('customScanTime')?.value || null,
             followRedirects: document.getElementById('followRedirects')?.checked || false,
             scanIntensity: document.getElementById('scanIntensity')?.value || 'normal',
-            tool_timeout: document.getElementById('toolTimeout')?.value || null, // Nuevo campo
+            tool_timeout: document.getElementById('toolTimeout')?.value || null,
         };
 
         logToTerminal(`Iniciando escaneo para objetivo(s): ${targets.join(', ')}...`, 'command');
@@ -484,8 +713,8 @@ document.addEventListener('DOMContentLoaded', () => {
             overallProgressBar.setAttribute('aria-valuenow', '0');
             overallProgressBar.textContent = '0%';
         }
-        if (cancelJobButton) cancelJobButton.style.display = 'inline-block'; // Mostrar botón de cancelar
-        if (downloadJobZipLink) { // Ocultar y deshabilitar link de descarga
+        if (cancelJobButton) cancelJobButton.style.display = 'inline-block';
+        if (downloadJobZipLink) {
             downloadJobZipLink.style.display = 'none';
             downloadJobZipLink.classList.add('disabled');
             downloadJobZipLink.href = '#';
@@ -494,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scanButton.innerHTML = '<i class="icon-spinner icon-spin"></i> Escaneando...';
             scanButton.disabled = true;
         }
-        if (scanOutput) scanOutput.innerHTML = ''; // Limpiar logs anteriores
+        if (scanOutput) scanOutput.innerHTML = '';
         displayedLogCount = 0;
         currentJobIdForLogs = null;
 
@@ -512,8 +741,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 logToTerminal(`Escaneo iniciado con Job ID: ${currentJobId}`, "success");
                 localStorage.setItem('currentJobId', currentJobId);
                 clearTimeout(statusPollInterval);
-                refreshStatus(currentJobId, true); // Iniciar polling
-                if (jobsListArea) loadJobs(); // Actualizar lista de jobs
+                refreshStatus(currentJobId, true);
+                if (jobsListArea) loadJobs();
             } else {
                 logToTerminal(`Error al iniciar escaneo (HTTP ${response.status}): ${data.error || 'Error desconocido del servidor'}`, "error");
                 if (jobInfoPanel) jobInfoPanel.style.display = 'none';
@@ -532,11 +761,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 scanButton.disabled = false;
             }
         }
-    }
+    } // Fin startScan
 
     async function refreshStatus(jobIdToRefresh = null, initialCall = false) {
         const effectiveJobId = jobIdToRefresh || currentJobId;
-        if (!effectiveJobId) { // No hay job activo o seleccionado
+        if (!effectiveJobId) {
             if (jobInfoPanel) jobInfoPanel.style.display = 'none';
             if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'none';
             if (cancelJobButton) cancelJobButton.style.display = 'none';
@@ -547,7 +776,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (initialCall) { // Mostrar panel de info del job si es la primera llamada para este job
+        if (initialCall) {
             if (jobIdDisplay) jobIdDisplay.textContent = effectiveJobId;
             if (jobInfoPanel) jobInfoPanel.style.display = 'block';
             if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'block';
@@ -558,7 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 if (response.status === 404) {
                     logToTerminal(`Job ID ${effectiveJobId} no encontrado. Pudo haber sido purgado o es inválido.`, "warn");
-                    if (effectiveJobId === currentJobId) { // Si era el job activo, limpiar
+                    if (effectiveJobId === currentJobId) {
                         localStorage.removeItem('currentJobId');
                         currentJobId = null; currentJobIdForLogs = null; displayedLogCount = 0;
                         if (jobInfoPanel) jobInfoPanel.style.display = 'none';
@@ -572,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const errorData = await response.json().catch(() => ({ error: "Error desconocido al obtener estado." }));
                     logToTerminal(`Error al obtener estado del Job ${effectiveJobId} (HTTP ${response.status}): ${errorData.error || 'Error de servidor'}`, "error");
                 }
-                return; // No continuar si hay error
+                return;
             }
 
             const data = await response.json();
@@ -581,7 +810,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (jobIdDisplay) jobIdDisplay.textContent = data.job_id; // Actualizar por si acaso
+            if (jobIdDisplay) jobIdDisplay.textContent = data.job_id;
             if (jobStatusBadge) {
                 jobStatusBadge.textContent = data.status || 'Desconocido';
                 jobStatusBadge.className = `status-badge status-${(data.status || 'unknown').toLowerCase().replace(/_/g, '-')}`;
@@ -597,8 +826,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentJobInfoDiv && currentJobInfoDiv.style.display === 'none') currentJobInfoDiv.style.display = 'block';
 
 
-            if (currentJobIdForLogs !== data.job_id || initialCall) { // Si cambiamos de job o es la primera carga de este job
-                if (scanOutput) scanOutput.innerHTML = ''; // Limpiar logs anteriores
+            if (currentJobIdForLogs !== data.job_id || initialCall) {
+                if (scanOutput) scanOutput.innerHTML = '';
                 displayedLogCount = 0;
                 if (currentJobIdForLogs !== data.job_id || (initialCall && (!scanOutput || scanOutput.innerHTML === ''))) {
                     logToTerminal(`Mostrando logs para Job ID: ${data.job_id}`, 'info');
@@ -607,48 +836,48 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (data.logs && Array.isArray(data.logs)) {
-                const newLogs = data.logs.slice(displayedLogCount); // Solo procesar logs nuevos
+                const newLogs = data.logs.slice(displayedLogCount);
                 newLogs.forEach(log => {
-                    let logDisplayType = (log.level || 'info').toLowerCase(); // Usar log.level para determinar el tipo de UI
+                    let logDisplayType = (log.level || 'info').toLowerCase();
                     const validDisplayTypes = ['info', 'error', 'warn', 'success', 'command'];
                     if (!validDisplayTypes.includes(logDisplayType)) {
-                        logDisplayType = (logDisplayType === 'debug') ? 'info' : 'info'; // Mapear debug o desconocidos a info
+                        logDisplayType = (logDisplayType === 'debug') ? 'info' : 'info';
                     }
                     logToTerminal(log.message, logDisplayType, log.is_html || false);
                 });
-                displayedLogCount = data.logs.length; // Actualizar contador de logs mostrados
+                displayedLogCount = data.logs.length;
             }
 
-            const terminalStates = ['COMPLETED', 'CANCELLED', 'ERROR', 'COMPLETED_WITH_ERRORS']; // Estados que detienen el polling
+            const terminalStates = ['COMPLETED', 'CANCELLED', 'ERROR', 'COMPLETED_WITH_ERRORS'];
             if (terminalStates.includes(data.status?.toUpperCase())) {
                 if (cancelJobButton) cancelJobButton.style.display = 'none';
                 if (data.zip_path && downloadJobZipLink) {
-                    downloadJobZipLink.href = `${SCRIPT_ROOT}${data.zip_path}`; // SCRIPT_ROOT para URL correcta
+                    downloadJobZipLink.href = `${SCRIPT_ROOT}${data.zip_path}`;
                     downloadJobZipLink.style.display = 'inline-block';
                     downloadJobZipLink.classList.remove('disabled');
                 } else if (downloadJobZipLink) {
                     downloadJobZipLink.style.display = 'none';
                     downloadJobZipLink.classList.add('disabled');
                 }
-                if (effectiveJobId === currentJobId) { // Solo re-habilitar botón si es el job actualmente "activo" en la UI
+                if (effectiveJobId === currentJobId) {
                     if (scanButton) { scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo'; scanButton.disabled = false; }
                 }
                 clearTimeout(statusPollInterval);
-                if (jobsListArea) loadJobs(); // Actualizar lista de jobs al finalizar
-            } else { // Job todavía en progreso
-                if (cancelJobButton) cancelJobButton.style.display = 'inline-block'; // Asegurar que esté visible
-                if (downloadJobZipLink) { // Asegurar que esté oculto y deshabilitado
+                if (jobsListArea) loadJobs();
+            } else {
+                if (cancelJobButton) cancelJobButton.style.display = 'inline-block';
+                if (downloadJobZipLink) {
                     downloadJobZipLink.style.display = 'none';
                     downloadJobZipLink.classList.add('disabled');
                 }
-                clearTimeout(statusPollInterval); // Limpiar timeout anterior
-                statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 3000); // Polling cada 3 segundos
+                clearTimeout(statusPollInterval);
+                statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 3000);
             }
 
         } catch (error) {
             logToTerminal(`Error de red al obtener estado del Job ${effectiveJobId}: ${error.message || error}`, "error");
-            clearTimeout(statusPollInterval); // Limpiar timeout anterior
-            statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 7000); // Reintentar más tarde si hay error de red
+            clearTimeout(statusPollInterval);
+            statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 7000);
         }
     }
 
@@ -664,16 +893,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(`${SCRIPT_ROOT}/api/scan/cancel/${jobIdToCancel}`, { method: 'POST' });
-            const data = await response.json(); // Siempre intentar parsear JSON
+            const data = await response.json();
             if (response.ok) {
                 logToTerminal(`Solicitud de cancelación enviada para el trabajo ${jobIdToCancel}. Estado: ${data.message || 'OK'}.`, "info");
                 if (jobStatusBadge) {
                     jobStatusBadge.textContent = "Cancelando...";
                     jobStatusBadge.className = 'status-badge status-cancelling';
                 }
-                if (cancelJobButton) cancelJobButton.style.display = 'none'; // Ocultar botón tras solicitar cancelación
-                clearTimeout(statusPollInterval); // Limpiar polling actual
-                statusPollInterval = setTimeout(() => refreshStatus(jobIdToCancel), 1500); // Verificar estado pronto
+                if (cancelJobButton) cancelJobButton.style.display = 'none';
+                clearTimeout(statusPollInterval);
+                statusPollInterval = setTimeout(() => refreshStatus(jobIdToCancel), 1500);
             } else {
                 logToTerminal(`Error al cancelar escaneo (HTTP ${response.status}): ${data.error || data.message || 'Error desconocido'}`, "error");
             }
@@ -689,30 +918,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${SCRIPT_ROOT}/api/jobs`);
             if (!response.ok) throw new Error(`HTTP error ${response.status}`);
             const jobs = await response.json();
-            jobsListArea.innerHTML = ''; // Limpiar placeholder
+            jobsListArea.innerHTML = '';
             if (!jobs || jobs.length === 0) {
                 jobsListArea.innerHTML = '<li class="empty-placeholder">No hay trabajos anteriores.</li>';
                 return;
             }
-            jobs.forEach(job => { // 'job.id' ya es el job_id
+            jobs.forEach(job => {
                 const li = document.createElement('li');
                 const statusClass = (job.status || 'unknown').toLowerCase().replace(/_/g, '-');
                 li.classList.add('job-card', `status-${statusClass}`);
-                if (job.id === currentJobId) { // Marcar el job activo
+                if (job.id === currentJobId) {
                     li.classList.add('active-job-card');
                 }
                 let targetsDisplay = Array.isArray(job.targets) ? job.targets.join(', ') : (job.targets || 'N/A');
                 if (targetsDisplay.length > 35) targetsDisplay = targetsDisplay.substring(0, 32) + '...';
 
-                let statusIconClass = 'icon-question-circle'; // Default
+                let statusIconClass = 'icon-question-circle';
                 const upperStatus = (job.status || '').toUpperCase();
                 if (upperStatus === 'COMPLETED') statusIconClass = 'icon-check-circle-green';
-                else if (upperStatus === 'COMPLETED_WITH_ERRORS') statusIconClass = 'icon-check-circle-orange'; // Nuevo estado
+                else if (upperStatus === 'COMPLETED_WITH_ERRORS') statusIconClass = 'icon-check-circle-orange';
                 else if (upperStatus === 'RUNNING') statusIconClass = 'icon-spinner icon-spin blue';
                 else if (upperStatus === 'ERROR') statusIconClass = 'icon-times-circle-red';
                 else if (upperStatus === 'CANCELLED') statusIconClass = 'icon-ban grey';
                 else if (upperStatus === 'PENDING' || upperStatus === 'INITIALIZING' || upperStatus === 'REQUEST_CANCEL' || upperStatus === 'CANCELLING') statusIconClass = 'icon-clock orange';
-
 
                 li.innerHTML = `
                     <div class="job-card-header">
@@ -743,11 +971,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const viewDetailsBtn = li.querySelector('.view-details-btn');
                 if (viewDetailsBtn) {
                     viewDetailsBtn.onclick = (e) => {
-                        e.stopPropagation(); // Evitar que el click en el botón active el click en el li
+                        e.stopPropagation();
                         viewJobDetails(job.id);
                     };
                 }
-                li.onclick = () => viewJobDetails(job.id); // Click en cualquier parte del card carga detalles
+                li.onclick = () => viewJobDetails(job.id);
                 jobsListArea.appendChild(li);
             });
         } catch (error) {
@@ -759,15 +987,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function viewJobDetails(jobId) {
         if (!jobId) return;
         logToTerminal(`Cargando detalles para el trabajo ${jobId}...`, "info");
-        currentJobId = jobId; // Establecer como job activo en la UI
-        localStorage.setItem('currentJobId', jobId); // Guardar en localStorage
-        clearTimeout(statusPollInterval); // Detener polling anterior
+        currentJobId = jobId;
+        localStorage.setItem('currentJobId', jobId);
+        clearTimeout(statusPollInterval);
 
-        if (scanOutput) scanOutput.innerHTML = ''; // Limpiar logs al ver un nuevo job
+        if (scanOutput) scanOutput.innerHTML = '';
         displayedLogCount = 0;
-        currentJobIdForLogs = jobId; // Establecer para el manejo de logs
+        currentJobIdForLogs = jobId;
 
-        refreshStatus(jobId, true); // true para initialCall, esto actualizará la UI del job y cargará logs iniciales
+        refreshStatus(jobId, true);
 
         document.querySelectorAll('.job-card.active-job-card').forEach(card => card.classList.remove('active-job-card'));
         if (jobsListArea) {
@@ -775,11 +1003,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (activeCard) activeCard.classList.add('active-job-card');
         }
 
-        const terminalPanel = document.getElementById('terminal-panel'); // Asumiendo que el panel de output tiene este ID
+        const terminalPanel = document.getElementById('terminal-panel');
         if (terminalPanel) {
             terminalPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } else { // Fallback si no existe, intentar cambiar a la pestaña de Output
-            const outputTabButton = document.querySelector('.tab-link[onclick*="OutputTab"]'); // Asumiendo que el botón de la pestaña tiene este onclick
+        } else {
+            const outputTabButton = document.querySelector('.tab-link[onclick*="OutputTab"]');
             if (outputTabButton) outputTabButton.click();
         }
     }
@@ -796,7 +1024,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateTargetsCount();
                 };
                 reader.readAsText(file);
-                importTargetsFile.value = ''; // Resetear input para permitir re-seleccionar el mismo archivo
+                importTargetsFile.value = '';
             }
         };
     }
@@ -807,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let logText = "";
                 scanOutput.querySelectorAll('.log-entry').forEach(entry => {
                     const timestamp = entry.querySelector('.log-timestamp')?.textContent || "";
-                    const message = entry.querySelector('.log-message-content')?.textContent || ""; // Solo texto
+                    const message = entry.querySelector('.log-message-content')?.textContent || "";
                     logText += `${timestamp} ${message}\n`;
                 });
                 navigator.clipboard.writeText(logText.trim())
@@ -824,7 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let logData = "";
             scanOutput.querySelectorAll('.log-entry').forEach(entry => {
                 const timestamp = entry.querySelector('.log-timestamp')?.textContent || "";
-                const message = entry.querySelector('.log-message-content')?.textContent || ""; // Solo texto
+                const message = entry.querySelector('.log-message-content')?.textContent || "";
                 logData += `${timestamp} ${message}\n`;
             });
             const blob = new Blob([logData.trim()], { type: 'text/plain;charset=utf-8' });
@@ -857,33 +1085,33 @@ document.addEventListener('DOMContentLoaded', () => {
             activeTabContent.style.display = "block";
             activeTabContent.classList.add("active");
         }
-        if (evt && evt.currentTarget) { // evt puede ser null si se llama programáticamente
+        if (evt && evt.currentTarget) {
             evt.currentTarget.classList.add("active");
         }
     }
 
     if (scanButton) scanButton.onclick = startScan;
     if (refreshButton) refreshButton.onclick = () => {
-        if (currentJobId) refreshStatus(currentJobId, true); // Forzar recarga completa del job actual
+        if (currentJobId) refreshStatus(currentJobId, true);
         else logToTerminal("No hay un trabajo activo para refrescar.", "info");
     };
     if (cancelJobButton) cancelJobButton.onclick = cancelScan;
 
-    const defaultTabButton = document.querySelector('.tabs .tab-link[data-default-tab="true"]') || document.querySelector('.tabs .tab-link'); // Primer tab como fallback
+    const defaultTabButton = document.querySelector('.tabs .tab-link[data-default-tab="true"]') || document.querySelector('.tabs .tab-link');
     if (defaultTabButton) {
-        const mockEvent = { currentTarget: defaultTabButton }; // Simular evento para la función openTab
+        const mockEvent = { currentTarget: defaultTabButton };
         const tabNameMatch = defaultTabButton.getAttribute('onclick')?.match(/openTab\(event, ['"](.*?)['"]\)/);
         if (tabNameMatch && tabNameMatch[1]) {
             openTab(mockEvent, tabNameMatch[1]);
         }
     }
 
-    fetchAppConfig().then(() => { // Cargar config primero
-        if (jobsListArea) loadJobs(); // Luego cargar historial de jobs
-        updateTargetsCount(); // Actualizar contador de objetivos inicial
-        if (currentJobId) { // Si hay un job guardado en localStorage, intentar cargarlo
+    fetchAppConfig().then(() => {
+        if (jobsListArea) loadJobs();
+        updateTargetsCount();
+        if (currentJobId) {
             viewJobDetails(currentJobId);
-        } else { // Si no hay job activo, asegurar que el panel de info esté oculto
+        } else {
             if (jobInfoPanel) jobInfoPanel.style.display = 'none';
             if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'none';
             if (cancelJobButton) cancelJobButton.style.display = 'none';
