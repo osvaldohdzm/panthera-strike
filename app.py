@@ -33,9 +33,6 @@ import subprocess # Asegurándonos que está importado para run_scan_process
 from utils import helpers
 
 
-# Placeholder for the scan engine logic
-# In a real application, this would be in a separate module (e.g., scanner/engine.py)
-# and would contain the actual tool execution logic.
 def run_scan_process(
     job_id,
     job_path,
@@ -48,13 +45,11 @@ def run_scan_process(
 ):
     app_logger.info(f"Motor de escaneo iniciado para job {job_id} en {job_path}")
 
-    # Ensure tool_outputs directory exists
     tool_outputs_dir = Path(job_path) / "tool_outputs"
     os.makedirs(tool_outputs_dir, exist_ok=True)
 
     job_summary_path = Path(job_path) / "summary.json"
 
-    # Initial summary data structure (will be updated by the main thread before this starts)
     current_summary_data = {}
     if job_summary_path.exists():
         try:
@@ -79,7 +74,6 @@ def run_scan_process(
 
     try:
         for target_idx, target_item in enumerate(targets):
-            # Target can be a simple string or an object if more details are needed
             target_value = (
                 target_item
                 if isinstance(target_item, str)
@@ -93,7 +87,6 @@ def run_scan_process(
                 )  # Params specific to this tool invocation
                 tool_definition = tool_definitions_for_thread.get(tool_id, {})
 
-                # Check for cancellation request
                 cursor_cancel = conn_thread.cursor()
                 cursor_cancel.execute("SELECT status FROM job WHERE id = ?", (job_id,))
                 job_status_db = cursor_cancel.fetchone()
@@ -141,7 +134,6 @@ def run_scan_process(
                     }
                     continue
 
-                # Replace placeholders
                 final_command = command_template
                 final_command = final_command.replace("{target}", target_value)
                 final_command = final_command.replace(
@@ -171,10 +163,7 @@ def run_scan_process(
                     "{output_file_dir}", str(tool_outputs_dir)
                 )
 
-                # Replace tool-specific CLI parameters from user_cli_params_for_tool and advanced_options
-                # Priority: user_cli_params_for_tool > advanced_options (tool specific) > advanced_options (global)
 
-                # Global advanced options might influence parameters too (e.g., Nmap timing)
                 if tool_id == "nmap_top_ports" and advanced_options.get(
                     "customScanTime"
                 ):
@@ -194,9 +183,7 @@ def run_scan_process(
                         f"{{{param_key}}}", str(param_value)
                     )
 
-                # Remove any remaining unreplaced placeholders like {some_other_param}
                 final_command = re.sub(r"\{[a-zA-Z0-9_]+\}", "", final_command)
-                # Ensure multiple spaces are condensed to one, but not if they are quoted
                 final_command = ' '.join(final_command.split())
 
 
@@ -223,7 +210,6 @@ def run_scan_process(
                 tool_run_status = "error"  # Default to error
                 tool_error_message = ""
                 try:
-                    # Actual tool execution
                     process = subprocess.run(
                         final_command,
                         shell=tool_definition.get(
@@ -333,7 +319,6 @@ def run_scan_process(
         ):
             final_job_status = "COMPLETED_WITH_ERRORS"
 
-        # Check final cancellation status from DB one last time
         cursor_final_cancel = conn_thread.cursor()
         cursor_final_cancel.execute("SELECT status FROM job WHERE id = ?", (job_id,))
         job_final_status_db = cursor_final_cancel.fetchone()
@@ -515,7 +500,6 @@ def scan_job_thread_target(
     final_status = "ERROR"  # Default in case of unexpected crash in run_scan_process
     error_msg_thread = None
     try:
-        # Pass the logger to the scan process
         final_status = run_scan_process(
             job_id,
             job_path,
@@ -536,7 +520,6 @@ def scan_job_thread_target(
         active_scan_threads.pop(job_id, None)
         try:
             with sqlite3.connect(db_path) as conn_final:
-                # Ensure end_timestamp is set, and status reflects outcome
                 final_update_query = "UPDATE job SET status = ?, end_timestamp = ?, overall_progress = 100"
                 params = [final_status, datetime.datetime.now().isoformat()]
                 if error_msg_thread:
@@ -551,10 +534,8 @@ def scan_job_thread_target(
                     f"Job {job_id} finalizado en DB con estado: {final_status}"
                 )
 
-                # Attempt to create ZIP archive if completed successfully or with errors
                 if final_status in ["COMPLETED", "COMPLETED_WITH_ERRORS"]:
                     zip_filename_base = f"{job_id}_results"
-                    # Corregir para que el zip se guarde en RESULTS_DIR directamente, no en un subdirectorio de job_path
                     zip_path_on_disk = Path(app.config["RESULTS_DIR"]) / f"{zip_filename_base}.zip"
                     archive_root_dir = Path(job_path).parent # El directorio que contiene la carpeta del job (ej. scan_results)
                     archive_base_name = Path(app.config["RESULTS_DIR"]) / zip_filename_base # Nombre base para el archivo sin extensión
@@ -579,7 +560,6 @@ def scan_job_thread_target(
                         app_logger_for_thread.error(
                             f"Error al crear ZIP para job {job_id}: {e_zip}"
                         )
-                        # Log this error in summary.json as well
                         summary_path = Path(job_path) / "summary.json"
                         s_data = {}
                         if summary_path.exists():
@@ -675,10 +655,8 @@ def start_scan_route():
             }
         ],
         "tool_progress": { # Inicializar progreso para cada herramienta/objetivo combinación
-             # Esto se llenará dinámicamente por el motor de escaneo
         },
     }
-    # Inicializar tool_progress con todas las herramientas planeadas
     for target_val in targets:
         for tool_entry in selected_tools_payload:
             tool_prog_key = f"{tool_entry['id']}_on_{target_val}"
@@ -697,7 +675,6 @@ def start_scan_route():
 
     db = get_db()
     try:
-        # El estado inicial en DB es PENDING. El hilo lo cambiará a RUNNING.
         db.execute(
             """INSERT INTO job (id, user_id, status, targets, selected_tools_config, advanced_options, creation_timestamp, start_timestamp, results_path, overall_progress)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
@@ -738,7 +715,6 @@ def start_scan_route():
 
     tool_definitions = helpers.get_tools_definition()  # Cargar una vez
 
-    # Pasar una copia del logger de la app al hilo
     thread_logger = app.logger # Usar app.logger, no current_app.logger aquí
 
     scan_thread = threading.Thread(
@@ -757,7 +733,6 @@ def start_scan_route():
     active_scan_threads[job_id] = scan_thread
     scan_thread.start()
     
-    # Actualizar estado a INITIALIZING o RUNNING en DB y summary después de iniciar hilo
     try:
         db.execute("UPDATE job SET status = ?, start_timestamp = ? WHERE id = ?", 
                    ("INITIALIZING", datetime.datetime.now().isoformat(), job_id))
@@ -789,7 +764,6 @@ def scan_status_route(job_id):
     if not job_data_db:
         return jsonify({"error": "Job no encontrado o no autorizado."}), 404
 
-    # Cargar el summary.json para obtener logs y tool_progress detallado
     job_path = job_data_db["results_path"]
     summary_file_path = Path(job_path) / "summary.json"
     summary_data_file = {}
@@ -883,11 +857,9 @@ def cancel_scan_route(job_id):
         )
 
     try:
-        # Actualizar estado en DB a REQUEST_CANCEL. El hilo del job debería detectarlo.
         db.execute("UPDATE job SET status = ? WHERE id = ?", ("REQUEST_CANCEL", job_id))
         db.commit()
 
-        # Actualizar summary.json también
         summary_file_path = Path(job_path) / "summary.json"
         s_data = {}
         if summary_file_path.exists():
@@ -940,8 +912,6 @@ def download_job_results_zip(zip_filename):
     job_data = cur.fetchone()
 
     if not job_data:
-        # Intentar buscar por job ID si el zip_filename es solo el ID del job (menos seguro, pero como fallback)
-        # Esto asume que zip_filename podría ser job_id + "_results.zip"
         if zip_filename.endswith("_results.zip"):
             possible_job_id = zip_filename.replace("_results.zip", "")
             cur_fallback = db.execute(
@@ -977,7 +947,6 @@ def download_job_results_zip(zip_filename):
 
 
 if __name__ == "__main__":
-    # Crear la base de datos y el usuario por defecto si no existen al iniciar
     with app.app_context(): # Asegura que app.logger y otras extensiones estén disponibles
         if not Path(app.config["DATABASE"]).exists():
             app.logger.info(
@@ -985,7 +954,6 @@ if __name__ == "__main__":
             )
             init_db_command()
         else:
-            # Verificar si la tabla 'job' existe, si no, podría ser una DB antigua
             conn = get_db()
             cursor_check = conn.cursor()
             cursor_check.execute(
@@ -997,7 +965,6 @@ if __name__ == "__main__":
                 )
             cursor_check.close()
 
-    # --- MODIFICACIÓN PARA PUERTOS DINÁMICOS ---
     env_mode = os.environ.get("APP_ENV_MODE", "PROD").upper()
     run_host = "0.0.0.0"  # Por defecto para PROD y si se quiere acceso de red local
     run_port = 5000       # Puerto por defecto para PROD
@@ -1007,8 +974,6 @@ if __name__ == "__main__":
         run_port = 5001       # Puerto para modo DEBUG
         run_host = "127.0.0.1" # Escuchar solo en localhost para DEBUG (acceso vía Tor local)
         flask_debug_mode = True
-        # app.logger está disponible aquí porque estamos fuera del app_context() del if __name__
-        # pero la instancia 'app' ya existe. Flask configura su logger al crear la instancia.
         app.logger.info(f"MODO DEBUG activado. Escuchando en http://{run_host}:{run_port}")
     elif env_mode == "DEMO":
         run_port = 5002       # Puerto para modo DEMO
@@ -1016,14 +981,11 @@ if __name__ == "__main__":
         flask_debug_mode = False # O True si se desea modo debug en DEMO
         app.logger.info(f"MODO DEMO activado. Escuchando en http://{run_host}:{run_port}")
     elif env_mode == "PROD":
-        # flask_debug_mode ya es False
         app.logger.info(f"MODO PRODUCCIÓN activado. Escuchando en http://{run_host}:{run_port}")
     else:
         app.logger.warning(
             f"APP_ENV_MODE '{env_mode}' no reconocido. Usando configuración de PRODUCCIÓN por defecto (http://{run_host}:{run_port})."
         )
-        # Se mantiene la configuración de PROD por defecto (puerto 5000, debug False)
 
-    # --- FIN DE MODIFICACIÓN ---
 
     app.run(host=run_host, port=run_port, debug=flask_debug_mode)
