@@ -59,11 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const entry = document.createElement('div');
         entry.classList.add('log-entry', `log-type-${type.toLowerCase()}`);
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        let iconClass = 'fas fa-info-circle'; // Default FontAwesome
+        let iconClass = 'fas fa-info-circle'; 
         if (type === 'error') iconClass = 'fas fa-times-circle';
         else if (type === 'warn') iconClass = 'fas fa-exclamation-triangle';
         else if (type === 'success') iconClass = 'fas fa-check-circle';
-        else if (type === 'command') iconClass = 'fas fa-terminal'; // o 'fas fa-dollar-sign'
+        else if (type === 'command') iconClass = 'fas fa-terminal'; 
         const iconSpan = `<span class="log-icon"><i class="${iconClass}"></i></span>`;
         const timestampSpan = `<span class="log-timestamp">[${timestamp}]</span>`;
         const messageSpan = `<span class="log-message-content"></span>`;
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const deselectAllButton = document.createElement('button');
         deselectAllButton.className = 'button-profile-deselect';
-        deselectAllButton.innerHTML = '<i class="far fa-square"></i> <span>Desmarcar Todas</span>'; // Usar far para un cuadrado vacío
+        deselectAllButton.innerHTML = '<i class="far fa-square"></i> <span>Desmarcar Todas</span>'; 
         deselectAllButton.onclick = () => deselectAllTools();
         profilesContainer.appendChild(deselectAllButton);
     }
@@ -114,10 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateParamsModifiedIndicator(toolId) {
         const toolConfig = appConfig.tools[toolId];
         if (!toolConfig) return;
-
+    
         const paramsToggleButton = document.getElementById(`params-toggle-${toolId}`);
         if (!paramsToggleButton) return;
-
+    
         let modified = false;
         const toolCheckboxInput = document.querySelector(`input.tool-item-checkbox[value="${toolId}"]`);
         if (!toolCheckboxInput || !toolCheckboxInput.checked) {
@@ -139,22 +139,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     const defaultValue = paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.type === 'checkbox' ? false : '');
                     if (currentValue !== defaultValue) {
-                        modified = true;
-                        break;
+                         modified = true;
+                         break;
                     }
                 }
             }
         }
-
+    
         if (!modified && toolConfig.allow_additional_args) {
             const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
             if (additionalArgsInput && additionalArgsInput.value.trim() !== '') {
                 modified = true;
             }
         }
-
+        
         paramsToggleButton.classList.toggle('params-modified', modified);
-
+    
         const restoreButton = document.getElementById(`restore-${toolId}`);
         if (restoreButton) {
             restoreButton.disabled = !modified;
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 categoryHeader.onclick = (e) => {
                     if (e.target.type === 'checkbox' || e.target.classList.contains('slider') || e.target.closest('.toggle-switch')) return;
                     toolItemsContainer.classList.toggle('expanded');
-                    categoryHeader.classList.toggle('expanded'); // Para la flecha
+                    categoryHeader.classList.toggle('expanded'); 
                     const arrowIcon = categoryHeader.querySelector('.accordion-arrow i');
                     if (arrowIcon) {
                         arrowIcon.className = toolItemsContainer.classList.contains('expanded') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
@@ -323,10 +323,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                                            data-tool-id="${tool.id}">
                                                   </div>`;
                     }
-
+                    
                     const toolIconClass = tool.icon_class || 'fas fa-cog';
                     const dangerousIndicator = tool.dangerous ? `<span class="tool-dangerous-indicator" title="Esta herramienta puede ser intrusiva o disruptiva"><i class="fas fa-exclamation-triangle"></i></span>` : '';
-
+                    
                     toolItemDiv.innerHTML = `
                         <div class="tool-item-main">
                             <label class="toggle-switch">
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             updateParamsModifiedIndicator(tool.id);
                         });
                     }
-
+                    
                     const restoreButton = toolItemDiv.querySelector(`#restore-${tool.id}`);
                     if (restoreButton) {
                         restoreButton.addEventListener('click', () => {
@@ -393,30 +393,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         input.addEventListener('input', () => updateParamsModifiedIndicator(tool.id));
                         input.addEventListener('change', () => updateParamsModifiedIndicator(tool.id));
                     });
-                    if (toolCheckboxInput.checked) {
-                        updateParamsModifiedIndicator(tool.id);
-                    } else {
+                    if (toolCheckboxInput.checked) { 
+                         updateParamsModifiedIndicator(tool.id);
+                    } else { 
                         if (restoreButton) restoreButton.disabled = true;
                     }
-                });
+                }); 
                 categoryDiv.appendChild(toolItemsContainer);
                 phaseDiv.appendChild(categoryDiv);
-            }
+            } 
             toolListDiv.appendChild(phaseDiv);
-        }
+        } 
 
         addCheckboxEventListeners();
         updateAllParentCheckboxes();
         document.querySelectorAll('.tool-items-container').forEach(container => {
             container.classList.remove('expanded');
-            const header = container.previousElementSibling;
+            const header = container.previousElementSibling; 
             if (header && header.classList.contains('tool-category-header')) {
                 header.classList.remove('expanded');
                 const arrowIcon = header.querySelector('.accordion-arrow i');
                 if (arrowIcon) arrowIcon.className = 'fas fa-chevron-down';
             }
         });
-    }
+    } 
 
     function addCheckboxEventListeners() {
         if (!toolListDiv) return;
@@ -465,12 +465,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const toolDetailsDiv = toolItem.querySelector('.tool-details');
                     const paramsToggleBtn = toolItem.querySelector(`.tool-params-toggle-btn[id="params-toggle-${childCb.value}"]`);
                     if (toolDetailsDiv) {
-                        if (!isChecked) {
+                        if (!isChecked) { 
                             toolDetailsDiv.classList.remove('expanded');
                             if (paramsToggleBtn) paramsToggleBtn.classList.remove('active');
                         }
                     }
-                    updateParamsModifiedIndicator(childCb.value);
+                    updateParamsModifiedIndicator(childCb.value); 
                 }
             });
         }
@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateAllParentCheckboxes() {
         if (!toolListDiv) return;
         toolListDiv.querySelectorAll('.tool-item-checkbox').forEach(toolCb => {
-            updateParamsModifiedIndicator(toolCb.value);
+             updateParamsModifiedIndicator(toolCb.value);
         });
         toolListDiv.querySelectorAll('.tool-category-checkbox').forEach(catCb => {
             updateParentCheckboxState(catCb.id);
@@ -526,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const toolCheckbox = toolListDiv.querySelector(`input[name="selected_tools"][value="${toolId}"]`);
                 if (toolCheckbox) {
                     toolCheckbox.checked = true;
-                    toolCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+                    toolCheckbox.dispatchEvent(new Event('change', { bubbles: true })); 
                 }
             });
             if (profile.params_override) {
@@ -577,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const paramsToggleBtn = toolItem.querySelector(`.tool-params-toggle-btn`);
                         if (toolDetailsDiv) toolDetailsDiv.classList.remove('expanded');
                         if (paramsToggleBtn) {
-                            paramsToggleBtn.classList.remove('active');
+                             paramsToggleBtn.classList.remove('active');
                         }
                         const toolId = checkbox.value;
                         const tool = appConfig.tools[toolId];
@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
                             if (additionalArgsInput) additionalArgsInput.value = '';
                         }
-                        updateParamsModifiedIndicator(toolId);
+                        updateParamsModifiedIndicator(toolId); 
                     }
                 }
             });
@@ -615,16 +615,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('input[name="selected_tools"]:checked').forEach(cb => {
             const toolId = cb.value;
             const toolConfig = appConfig.tools[toolId];
-            let params = {};
+            let params = {}; 
 
             if (toolConfig && toolConfig.cli_params_config) {
                 toolConfig.cli_params_config.forEach(pConf => {
                     const inputField = document.getElementById(`cli-${toolId}-${pConf.name}`);
                     if (inputField) {
                         if (pConf.type === 'checkbox') {
-                            params[pConf.name] = inputField.checked;
+                            params[pConf.name] = inputField.checked; 
                         } else {
-                            params[pConf.name] = inputField.value;
+                            params[pConf.name] = inputField.value; 
                         }
                     } else {
                         params[pConf.name] = pConf.original_default !== undefined ? pConf.original_default : pConf.default;
@@ -682,10 +682,10 @@ document.addEventListener('DOMContentLoaded', () => {
             scanButton.disabled = true;
         }
         if (scanOutput) scanOutput.innerHTML = '';
-        const toolProgressDetailsDiv = document.getElementById('toolProgressDetails');
-        if (toolProgressDetailsDiv) {
-            toolProgressDetailsDiv.innerHTML = '<p class="empty-placeholder">Esperando inicio de escaneo...</p>';
-        }
+        const toolProgressDetailsDiv = document.getElementById('toolProgressDetails'); 
+        if (toolProgressDetailsDiv) { 
+            toolProgressDetailsDiv.innerHTML = '<p class="empty-placeholder">Esperando inicio de escaneo...</p>'; 
+        } 
         displayedLogCount = 0;
         currentJobIdForLogs = null;
 
@@ -723,11 +723,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 scanButton.disabled = false;
             }
         }
-    }
+    } 
 
     async function refreshStatus(jobIdToRefresh = null, initialCall = false) {
         const effectiveJobId = jobIdToRefresh || currentJobId;
-        if (!effectiveJobId) {
+        if (!effectiveJobId) { 
             if (jobInfoPanel) jobInfoPanel.style.display = 'none';
             if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'none';
             if (cancelJobButton) cancelJobButton.style.display = 'none';
@@ -738,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (initialCall) {
+        if (initialCall) { 
             if (jobIdDisplay) jobIdDisplay.textContent = effectiveJobId;
             if (jobInfoPanel) jobInfoPanel.style.display = 'block';
             if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'block';
@@ -749,7 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 if (response.status === 404) {
                     logToTerminal(`Job ID ${effectiveJobId} no encontrado. Pudo haber sido purgado o es inválido.`, "warn");
-                    if (effectiveJobId === currentJobId) {
+                    if (effectiveJobId === currentJobId) { 
                         localStorage.removeItem('currentJobId');
                         currentJobId = null; currentJobIdForLogs = null; displayedLogCount = 0;
                         if (jobInfoPanel) jobInfoPanel.style.display = 'none';
@@ -765,7 +765,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const errorData = await response.json().catch(() => ({ error: "Error desconocido al obtener estado." }));
                     logToTerminal(`Error al obtener estado del Job ${effectiveJobId} (HTTP ${response.status}): ${errorData.error || 'Error de servidor'}`, "error");
                 }
-                return;
+                return; 
             }
 
             const data = await response.json();
@@ -774,7 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (jobIdDisplay) jobIdDisplay.textContent = data.job_id;
+            if (jobIdDisplay) jobIdDisplay.textContent = data.job_id; 
             if (jobStatusBadge) {
                 jobStatusBadge.textContent = data.status || 'Desconocido';
                 jobStatusBadge.className = `status-badge status-${(data.status || 'unknown').toLowerCase().replace(/_/g, '-')}`;
@@ -790,8 +790,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentJobInfoDiv && currentJobInfoDiv.style.display === 'none') currentJobInfoDiv.style.display = 'block';
 
 
-            if (currentJobIdForLogs !== data.job_id || initialCall) {
-                if (scanOutput) scanOutput.innerHTML = '';
+            if (currentJobIdForLogs !== data.job_id || initialCall) { 
+                if (scanOutput) scanOutput.innerHTML = ''; 
                 displayedLogCount = 0;
                 if (currentJobIdForLogs !== data.job_id || (initialCall && (!scanOutput || scanOutput.innerHTML === ''))) {
                     logToTerminal(`Mostrando logs para Job ID: ${data.job_id}`, 'info');
@@ -800,22 +800,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (data.logs && Array.isArray(data.logs)) {
-                const newLogs = data.logs.slice(displayedLogCount);
+                const newLogs = data.logs.slice(displayedLogCount); 
                 newLogs.forEach(log => {
-                    let logDisplayType = (log.level || 'info').toLowerCase();
+                    let logDisplayType = (log.level || 'info').toLowerCase(); 
                     const validDisplayTypes = ['info', 'error', 'warn', 'success', 'command'];
                     if (!validDisplayTypes.includes(logDisplayType)) {
-                        logDisplayType = (logDisplayType === 'debug') ? 'info' : 'info';
+                        logDisplayType = (logDisplayType === 'debug') ? 'info' : 'info'; 
                     }
                     logToTerminal(log.message, logDisplayType, log.is_html || false);
                 });
-                displayedLogCount = data.logs.length;
+                displayedLogCount = data.logs.length; 
             }
-
+            
             const toolProgressDetailsDiv = document.getElementById('toolProgressDetails');
             if (toolProgressDetailsDiv) {
                 if (data.tool_progress && Object.keys(data.tool_progress).length > 0) {
-                    toolProgressDetailsDiv.innerHTML = '';
+                    toolProgressDetailsDiv.innerHTML = ''; 
                     const sortedToolKeys = Object.keys(data.tool_progress).sort((a, b) => {
                         const statusA = data.tool_progress[a].status.toLowerCase();
                         const statusB = data.tool_progress[b].status.toLowerCase();
@@ -830,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const toolProg = data.tool_progress[toolKey];
                         const itemDiv = document.createElement('div');
                         itemDiv.className = 'tool-progress-item';
-                        let statusIcon = 'fas fa-hourglass-half';
+                        let statusIcon = 'fas fa-hourglass-half'; 
                         let statusText = toolProg.status ? toolProg.status.charAt(0).toUpperCase() + toolProg.status.slice(1) : 'Desconocido';
                         let statusClass = `tool-status-${toolProg.status ? toolProg.status.toLowerCase().replace(/_/g, '-') : 'unknown'}`;
 
@@ -842,8 +842,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             else if (lowerStatus === 'skipped') statusIcon = 'fas fa-forward';
                             else if (lowerStatus === 'cancelled') statusIcon = 'fas fa-ban';
                         }
-
-                        const toolDefinitionFromConfig = appConfig.tools[toolProg.id]; // Usar toolProg.id (que debe ser el tool_id)
+                        
+                        const toolDefinitionFromConfig = appConfig.tools[toolProg.id]; 
                         const iconClass = toolDefinitionFromConfig ? toolDefinitionFromConfig.icon_class : 'fas fa-cog';
 
                         itemDiv.innerHTML = `
@@ -858,41 +858,41 @@ document.addEventListener('DOMContentLoaded', () => {
                         itemDiv.title = titleText;
                         toolProgressDetailsDiv.appendChild(itemDiv);
                     });
-                } else if (initialCall || !toolProgressDetailsDiv.innerHTML.includes('tool-progress-item')) {
+                } else if (initialCall || !toolProgressDetailsDiv.innerHTML.includes('tool-progress-item')) { 
                     toolProgressDetailsDiv.innerHTML = '<p class="empty-placeholder">No hay detalles de herramientas para este trabajo aún.</p>';
                 }
             }
 
-            const terminalStates = ['COMPLETED', 'CANCELLED', 'ERROR', 'COMPLETED_WITH_ERRORS'];
+            const terminalStates = ['COMPLETED', 'CANCELLED', 'ERROR', 'COMPLETED_WITH_ERRORS']; 
             if (terminalStates.includes(data.status?.toUpperCase())) {
                 if (cancelJobButton) cancelJobButton.style.display = 'none';
                 if (data.zip_path && downloadJobZipLink) {
-                    downloadJobZipLink.href = `${SCRIPT_ROOT}${data.zip_path}`;
+                    downloadJobZipLink.href = `${SCRIPT_ROOT}${data.zip_path}`; 
                     downloadJobZipLink.style.display = 'inline-block';
                     downloadJobZipLink.classList.remove('disabled');
                 } else if (downloadJobZipLink) {
                     downloadJobZipLink.style.display = 'none';
                     downloadJobZipLink.classList.add('disabled');
                 }
-                if (effectiveJobId === currentJobId) {
+                if (effectiveJobId === currentJobId) { 
                     if (scanButton) { scanButton.innerHTML = '<i class="fas fa-bolt"></i> Iniciar Escaneo'; scanButton.disabled = false; }
                 }
                 clearTimeout(statusPollInterval);
-                if (jobsListArea) loadJobs();
-            } else {
-                if (cancelJobButton) cancelJobButton.style.display = 'inline-block';
-                if (downloadJobZipLink) {
+                if (jobsListArea) loadJobs(); 
+            } else { 
+                if (cancelJobButton) cancelJobButton.style.display = 'inline-block'; 
+                if (downloadJobZipLink) { 
                     downloadJobZipLink.style.display = 'none';
                     downloadJobZipLink.classList.add('disabled');
                 }
-                clearTimeout(statusPollInterval);
-                statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 3000);
+                clearTimeout(statusPollInterval); 
+                statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 3000); 
             }
 
         } catch (error) {
             logToTerminal(`Error de red al obtener estado del Job ${effectiveJobId}: ${error.message || error}`, "error");
-            clearTimeout(statusPollInterval);
-            statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 7000);
+            clearTimeout(statusPollInterval); 
+            statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 7000); 
         }
     }
 
@@ -908,16 +908,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(`${SCRIPT_ROOT}/api/scan/cancel/${jobIdToCancel}`, { method: 'POST' });
-            const data = await response.json();
+            const data = await response.json(); 
             if (response.ok) {
                 logToTerminal(`Solicitud de cancelación enviada para el trabajo ${jobIdToCancel}. Estado: ${data.message || 'OK'}.`, "info");
                 if (jobStatusBadge) {
                     jobStatusBadge.textContent = "Cancelando...";
                     jobStatusBadge.className = 'status-badge status-cancelling';
                 }
-                if (cancelJobButton) cancelJobButton.style.display = 'none';
-                clearTimeout(statusPollInterval);
-                statusPollInterval = setTimeout(() => refreshStatus(jobIdToCancel), 1500);
+                if (cancelJobButton) cancelJobButton.style.display = 'none'; 
+                clearTimeout(statusPollInterval); 
+                statusPollInterval = setTimeout(() => refreshStatus(jobIdToCancel), 1500); 
             } else {
                 logToTerminal(`Error al cancelar escaneo (HTTP ${response.status}): ${data.error || data.message || 'Error desconocido'}`, "error");
             }
@@ -933,25 +933,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${SCRIPT_ROOT}/api/jobs`);
             if (!response.ok) throw new Error(`HTTP error ${response.status}`);
             const jobs = await response.json();
-            jobsListArea.innerHTML = '';
+            jobsListArea.innerHTML = ''; 
             if (!jobs || jobs.length === 0) {
                 jobsListArea.innerHTML = '<li class="empty-placeholder">No hay trabajos anteriores.</li>';
                 return;
             }
-            jobs.forEach(job => {
+            jobs.forEach(job => { 
                 const li = document.createElement('li');
                 const statusClass = (job.status || 'unknown').toLowerCase().replace(/_/g, '-');
                 li.classList.add('job-card', `status-${statusClass}`);
-                if (job.id === currentJobId) {
+                if (job.id === currentJobId) { 
                     li.classList.add('active-job-card');
                 }
                 let targetsDisplay = Array.isArray(job.targets) ? job.targets.join(', ') : (job.targets || 'N/A');
                 if (targetsDisplay.length > 35) targetsDisplay = targetsDisplay.substring(0, 32) + '...';
 
-                let statusIconClass = 'fas fa-question-circle';
+                let statusIconClass = 'fas fa-question-circle'; 
                 const upperStatus = (job.status || '').toUpperCase();
                 if (upperStatus === 'COMPLETED') statusIconClass = 'fas fa-check-circle icon-check-circle-green';
-                else if (upperStatus === 'COMPLETED_WITH_ERRORS') statusIconClass = 'fas fa-exclamation-circle icon-check-circle-orange';
+                else if (upperStatus === 'COMPLETED_WITH_ERRORS') statusIconClass = 'fas fa-exclamation-circle icon-check-circle-orange'; 
                 else if (upperStatus === 'RUNNING') statusIconClass = 'fas fa-spinner fa-spin icon-spinner blue';
                 else if (upperStatus === 'ERROR') statusIconClass = 'fas fa-times-circle icon-times-circle-red';
                 else if (upperStatus === 'CANCELLED') statusIconClass = 'fas fa-ban icon-ban grey';
@@ -986,11 +986,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const viewDetailsBtn = li.querySelector('.view-details-btn');
                 if (viewDetailsBtn) {
                     viewDetailsBtn.onclick = (e) => {
-                        e.stopPropagation();
+                        e.stopPropagation(); 
                         viewJobDetails(job.id);
                     };
                 }
-                li.onclick = () => viewJobDetails(job.id);
+                li.onclick = () => viewJobDetails(job.id); 
                 jobsListArea.appendChild(li);
             });
         } catch (error) {
@@ -1002,15 +1002,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function viewJobDetails(jobId) {
         if (!jobId) return;
         logToTerminal(`Cargando detalles para el trabajo ${jobId}...`, "info");
-        currentJobId = jobId;
-        localStorage.setItem('currentJobId', jobId);
-        clearTimeout(statusPollInterval);
+        currentJobId = jobId; 
+        localStorage.setItem('currentJobId', jobId); 
+        clearTimeout(statusPollInterval); 
 
-        if (scanOutput) scanOutput.innerHTML = '';
+        if (scanOutput) scanOutput.innerHTML = ''; 
         displayedLogCount = 0;
-        currentJobIdForLogs = jobId;
+        currentJobIdForLogs = jobId; 
 
-        refreshStatus(jobId, true);
+        refreshStatus(jobId, true); 
 
         document.querySelectorAll('.job-card.active-job-card').forEach(card => card.classList.remove('active-job-card'));
         if (jobsListArea) {
@@ -1018,11 +1018,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (activeCard) activeCard.classList.add('active-job-card');
         }
 
-        const terminalPanel = document.getElementById('terminal-panel');
+        const terminalPanel = document.getElementById('terminal-panel'); 
         if (terminalPanel) {
             terminalPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } else {
-            const outputTabButton = document.querySelector('.tab-link[onclick*="OutputTab"]');
+        } else { 
+            const outputTabButton = document.querySelector('.tab-link[onclick*="OutputTab"]'); 
             if (outputTabButton) outputTabButton.click();
         }
     }
@@ -1039,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateTargetsCount();
                 };
                 reader.readAsText(file);
-                importTargetsFile.value = '';
+                importTargetsFile.value = ''; 
             }
         };
     }
@@ -1050,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let logText = "";
                 scanOutput.querySelectorAll('.log-entry').forEach(entry => {
                     const timestamp = entry.querySelector('.log-timestamp')?.textContent || "";
-                    const message = entry.querySelector('.log-message-content')?.textContent || "";
+                    const message = entry.querySelector('.log-message-content')?.textContent || ""; 
                     logText += `${timestamp} ${message}\n`;
                 });
                 navigator.clipboard.writeText(logText.trim())
@@ -1067,7 +1067,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let logData = "";
             scanOutput.querySelectorAll('.log-entry').forEach(entry => {
                 const timestamp = entry.querySelector('.log-timestamp')?.textContent || "";
-                const message = entry.querySelector('.log-message-content')?.textContent || "";
+                const message = entry.querySelector('.log-message-content')?.textContent || ""; 
                 logData += `${timestamp} ${message}\n`;
             });
             const blob = new Blob([logData.trim()], { type: 'text/plain;charset=utf-8' });
@@ -1100,33 +1100,33 @@ document.addEventListener('DOMContentLoaded', () => {
             activeTabContent.style.display = "block";
             activeTabContent.classList.add("active");
         }
-        if (evt && evt.currentTarget) {
+        if (evt && evt.currentTarget) { 
             evt.currentTarget.classList.add("active");
         }
     }
 
     if (scanButton) scanButton.onclick = startScan;
     if (refreshButton) refreshButton.onclick = () => {
-        if (currentJobId) refreshStatus(currentJobId, true);
+        if (currentJobId) refreshStatus(currentJobId, true); 
         else logToTerminal("No hay un trabajo activo para refrescar.", "info");
     };
     if (cancelJobButton) cancelJobButton.onclick = cancelScan;
 
-    const defaultTabButton = document.querySelector('.tabs .tab-link[data-default-tab="true"]') || document.querySelector('.tabs .tab-link');
+    const defaultTabButton = document.querySelector('.tabs .tab-link[data-default-tab="true"]') || document.querySelector('.tabs .tab-link'); 
     if (defaultTabButton) {
-        const mockEvent = { currentTarget: defaultTabButton };
+        const mockEvent = { currentTarget: defaultTabButton }; 
         const tabNameMatch = defaultTabButton.getAttribute('onclick')?.match(/openTab\(event, ['"](.*?)['"]\)/);
         if (tabNameMatch && tabNameMatch[1]) {
             openTab(mockEvent, tabNameMatch[1]);
         }
     }
 
-    fetchAppConfig().then(() => {
-        if (jobsListArea) loadJobs();
-        updateTargetsCount();
-        if (currentJobId) {
+    fetchAppConfig().then(() => { 
+        if (jobsListArea) loadJobs(); 
+        updateTargetsCount(); 
+        if (currentJobId) { 
             viewJobDetails(currentJobId);
-        } else {
+        } else { 
             if (jobInfoPanel) jobInfoPanel.style.display = 'none';
             if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'none';
             if (cancelJobButton) cancelJobButton.style.display = 'none';

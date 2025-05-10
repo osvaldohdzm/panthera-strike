@@ -149,7 +149,8 @@ section .signin .content .form .inputBox {
     width: 100%;
 }
 
-section .signin .content .form .inputBox input {
+section .signin .content .form .inputBox input[type="text"],
+section .signin .content .form .inputBox input[type="password"] {
     position: relative;
     width: 100%;
     background: #333;

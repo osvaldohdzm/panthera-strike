@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/scanner_styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script>
-        const SCRIPT_ROOT = "{{ url_for('static', filename='') }}".replace(/\/static\/$/, '') || "";
+        const SCRIPT_ROOT = "{{ request.script_root|tojson|safe }}";
     </script>
 </head>
 
@@ -75,36 +75,44 @@
             </section>
 
             <section class="config-section advanced-options-section card">
-                <h2><i class="fas fa-cogs"></i> Opciones Avanzadas (Ejemplo)</h2>
+                <h2><i class="fas fa-cogs"></i> Opciones Avanzadas</h2>
                 <div class="options-grid">
                     <div class="option-item">
-                        <label for="customScanTime">Tiempo de Escaneo Personalizado (ej. Nmap -T):</label>
+                        <label for="customScanTime">Timing Nmap (-T):</label>
                         <select id="customScanTime">
-                            <option value="">Default</option>
-                            <option value="T0">T0 (Paranoid)</option>
-                            <option value="T1">T1 (Sneaky)</option>
-                            <option value="T2">T2 (Polite)</option>
-                            <option value="T3">T3 (Normal)</option>
-                            <option value="T4">T4 (Aggressive)</option>
-                            <option value="T5">T5 (Insane)</option>
+                            <option value="">Default (T3/T4)</option>
+                            <option value="-T0">T0 (Paranoid)</option>
+                            <option value="-T1">T1 (Sneaky)</option>
+                            <option value="-T2">T2 (Polite)</option>
+                            <option value="-T3">T3 (Normal)</option>
+                            <option value="-T4">T4 (Aggressive)</option>
+                            <option value="-T5">T5 (Insane)</option>
                         </select>
                     </div>
                     <div class="option-item">
-                        <label for="followRedirects">Seguir Redirecciones HTTP:</label>
-                        <input type="checkbox" id="followRedirects" checked>
+                        <label for="toolTimeout">Timeout por Herramienta (segundos):</label>
+                        <input type="number" id="toolTimeout" placeholder="Default (ej. 3600s por herramienta)">
                     </div>
                     <div class="option-item">
-                        <label for="scanIntensity">Intensidad del Escaneo:</label>
+                        <label for="scanIntensity">Intensidad del Escaneo (Global):</label>
                         <select id="scanIntensity">
                             <option value="light">Ligero</option>
                             <option value="normal" selected>Normal</option>
                             <option value="deep">Profundo</option>
                         </select>
                     </div>
+                    <div class="option-item">
+                        <label for="followRedirects">Seguir Redirecciones HTTP:</label>
+                        <div>
+                            <input type="checkbox" id="followRedirects" checked>
+                            <label for="followRedirects"
+                                style="font-weight: normal; flex-basis: auto; margin-bottom: 0;">Activado</label>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <section class="actions-section">
+            <section class="actions-section" style="text-align: center; margin-top: 2rem;">
                 <button id="startScanButton" class="button-primary button-large">
                     <i class="fas fa-bolt"></i> Iniciar Escaneo
                 </button>
@@ -132,14 +140,22 @@
                     <button id="cancelJobButton" class="button-danger" style="display: none;"><i
                             class="fas fa-stop-circle"></i> Cancelar Trabajo</button>
                     <a id="downloadJobZipLink" href="#" class="button-success button-like disabled"
-                        style="display: none;" target="_blank"><i class="fas fa-file-archive"></i> Descargar Resultados
+                        style="display: none;" target="_blank" rel="noopener noreferrer"><i
+                            class="fas fa-file-archive"></i> Descargar Resultados
                         (ZIP)</a>
+                </div>
+                <div id="tool-progress-details-container" style="margin-top: 1.5rem;">
+                    <h4><i class="fas fa-tasks"></i> Progreso Detallado por Herramienta:</h4>
+                    <div id="toolProgressDetails" class="tool-progress-list">
+                        <p class="empty-placeholder">No hay detalles de herramientas para mostrar aún.</p>
+                    </div>
                 </div>
             </div>
 
-            <div id="terminal-panel" class="card">
+            <div id="terminal-panel" class="card terminal-container">
                 <div class="terminal-header">
                     <div class="terminal-window-controls">
+                        {/* Los botones se insertarán aquí por JS según el tema */}
                     </div>
                     <div class="terminal-title-container">
                         <h3><i class="fas fa-terminal"></i> Salida del Terminal</h3>
@@ -150,8 +166,9 @@
                         <button id="downloadLogButton" class="button-small" title="Descargar Log"><i
                                 class="fas fa-download"></i></button>
                     </div>
-                </div>
-                <div id="scanOutput">
+                </div> {/* FIN DE .terminal-header */}
+
+                <div id="scanOutput" class="terminal-output">
                     <p class="log-entry log-type-info"><span class="log-icon"><i
                                 class="fas fa-info-circle"></i></span><span class="log-timestamp">[--:--:--]</span>
                         <span class="log-message-content">Esperando inicio de escaneo...</span>
@@ -211,29 +228,26 @@
                 let primaryColorVarName = `--primary-color-${theme}`;
                 if (theme === 'actual') primaryColorVarName = '--primary-color';
                 else if (theme === 'redteam' && !getComputedStyle(document.documentElement).getPropertyValue(primaryColorVarName).trim()) {
-                    primaryColorVarName = '--primary-color'; // Tomar la de :root si la específica no existe (ya que está en :root)
+                    primaryColorVarName = '--primary-color';
                 }
-
 
                 let primaryColorValue = getComputedStyle(document.documentElement).getPropertyValue(primaryColorVarName).trim();
 
-                // Fallback más robusto
                 if (!primaryColorValue) {
                     const rootPrimaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
                     if (rootPrimaryColor) {
                         primaryColorValue = rootPrimaryColor;
                     } else {
-                        primaryColorValue = getComputedStyle(document.documentElement).getPropertyValue('--primary-color-redteam').trim(); // Ultimo recurso
+                        primaryColorValue = getComputedStyle(document.documentElement).getPropertyValue('--primary-color-redteam').trim();
                     }
                 }
-
 
                 const rgb = hexToRgb(primaryColorValue);
                 if (rgb) {
                     document.documentElement.style.setProperty('--rgb-primary-color', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
                 } else {
                     console.warn(`No se pudo convertir ${primaryColorValue} (variable: ${primaryColorVarName}) a RGB para el tema ${theme}. Usando fallback.`);
-                    document.documentElement.style.setProperty('--rgb-primary-color', '229, 57, 53'); // Fallback RedTeam
+                    document.documentElement.style.setProperty('--rgb-primary-color', '229, 57, 53');
                 }
             }
 
