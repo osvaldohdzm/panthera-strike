@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -rf scan_results/*
+rm -rf instance/*

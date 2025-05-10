@@ -27,7 +27,7 @@
     --shadow-sm-global: 0 2px 4px rgba(0, 0, 0, 0.2);
     --shadow-md-global: 0 4px 8px rgba(0, 0, 0, 0.3);
 
-    
+
     --primary-color: var(--primary-color-redteam);
     --secondary-color: var(--secondary-color-redteam);
     --success-color: var(--success-color-redteam);
@@ -94,9 +94,9 @@
 
     --rgb-primary-color: 0, 123, 255;
     --border-radius: 0.3rem;
-    
+
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    
+
     --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
@@ -138,9 +138,9 @@
 
     --rgb-primary-color: 94, 39, 80;
     --border-radius: 0.25rem;
-    
+
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    
+
     --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -176,9 +176,9 @@
 
     --rgb-primary-color: 0, 122, 255;
     --border-radius: 0.5rem;
-    
+
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-    
+
     --shadow-md: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -194,30 +194,41 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* --- Header Styles Start --- */
 header {
     background-color: var(--dark-color);
     color: var(--light-color);
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.5rem;
+    /* Ajustar padding */
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    /* Para espaciar los grupos principales */
     box-shadow: var(--shadow-sm);
     border-bottom: 1px solid var(--card-border-color);
+    flex-wrap: wrap;
+    /* Permitir que los elementos se envuelvan en pantallas pequeñas */
 }
 
 .logo-container {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    /* Evitar que el logo se encoja demasiado */
+    margin-right: 1.5rem;
+    /* Espacio a la derecha del logo/título */
 }
 
 #pantheraLogo {
-    height: 40px;
-    margin-right: 15px;
+    height: 38px;
+    /* Ligeramente más pequeño */
+    margin-right: 12px;
 }
 
 header h1 {
     margin: 0;
-    font-size: 1.75rem;
+    font-size: 1.6rem;
+    /* Ligeramente más pequeño */
     font-weight: 600;
     white-space: nowrap;
 }
@@ -225,14 +236,79 @@ header h1 {
 nav.tabs {
     display: flex;
     gap: 0.25rem;
+    /* margin-left: auto; /* Quitado */
+    /* margin-right: 1.5rem; /* Quitado */
+    flex-grow: 1;
+    /* Permitir que las pestañas ocupen espacio si es necesario */
+    justify-content: center;
+    /* Centrar las pestañas si hay espacio */
+    min-width: 0;
+    /* Para permitir que se encoja en flexbox */
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    /* Espacio entre el selector de tema y el botón de logout */
     margin-left: auto;
-    margin-right: 1.5rem;
+    /* Empuja este grupo a la derecha */
 }
 
 .theme-selector-container {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    /* Espacio entre el icono/label y el select */
 }
+
+.theme-selector-container label {
+    margin-right: 0;
+    /* Quitar margen si se usa gap */
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+#themeSwitcher {
+    /* Renombrado de themeSelector a themeSwitcher para consistencia con JS si es necesario */
+    padding: 0.4rem 0.8rem;
+    background-color: var(--card-bg);
+    /* Usar variables de tema */
+    color: var(--text-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius);
+    font-size: 0.9em;
+    font-family: var(--font-family-sans-serif);
+    min-width: 120px;
+    /* Ancho mínimo para que no se vea muy pequeño */
+}
+
+[data-theme="redteam"] #themeSwitcher {
+    background-color: var(--terminal-bg-redteam);
+    /* Fondo más oscuro para RedTeam */
+    color: var(--text-color-redteam);
+    border-color: var(--border-color-redteam);
+}
+
+#themeSwitcher:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--rgb-primary-color), 0.3);
+}
+
+.button-logout {
+    padding: 0.5rem 1rem;
+    /* Ajustar padding para que sea similar a otros botones pequeños */
+    font-size: 0.9rem;
+    /* Los estilos de .button-like y .button-danger-outline (o .button-secondary) ya se deberían aplicar si la clase está en el HTML */
+}
+
+.button-logout i {
+    margin-right: 0.4rem;
+}
+
+/* --- Header Styles End --- */
+
 
 main {
     flex-grow: 1;
@@ -614,6 +690,9 @@ button:disabled,
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+
 }
 
 .button-profile,
@@ -677,8 +756,15 @@ button:disabled,
 }
 
 .tool-category-header.expanded .accordion-arrow {
+    /* Ya tenías .expanded .accordion-arrow, esto es más específico si es necesario */
     transform: rotate(180deg);
 }
+
+.pentest-phase-header.expanded .accordion-arrow {
+    /* Para el acordeón de fases de pentest */
+    transform: rotate(90deg);
+}
+
 
 .tool-items-container {
     padding-left: 1.5rem;
@@ -731,7 +817,8 @@ button:disabled,
     cursor: pointer;
     margin-left: auto;
     padding: 5px 8px;
-    color: #555;
+    color: var(--text-muted);
+    /* Usar variable de tema */
     font-size: 1.1em;
     transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
 }
@@ -742,6 +829,7 @@ button:disabled,
 
 .tool-params-toggle-btn.active {
     color: var(--primary-color);
+    /* transform: rotate(90deg); Opcional: si el icono es una flecha */
 }
 
 .tool-params-toggle-btn.params-modified i {
@@ -758,6 +846,7 @@ button:disabled,
     background-color: var(--warning-color);
     border-radius: 50%;
     border: 1px solid var(--card-bg);
+    /* Borde para destacar sobre el icono y tema */
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -768,12 +857,16 @@ button:disabled,
     opacity: 0;
     margin-top: 0;
     padding: 0 15px;
+    /* Padding horizontal cuando está colapsado */
     background-color: var(--body-bg);
+    /* Fondo ligeramente diferente */
     border-left: 3px solid transparent;
+    /* Borde izquierdo para indicar estado */
 }
 
 .tool-details.expanded {
     max-height: 1500px;
+    /* Un valor suficientemente grande para el contenido */
     opacity: 1;
     margin-top: 8px;
     padding-top: 10px;
@@ -781,6 +874,7 @@ button:disabled,
     padding-left: 15px;
     padding-right: 15px;
     border-left: 3px solid var(--primary-color);
+    /* Color cuando está expandido */
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
@@ -808,6 +902,7 @@ button:disabled,
 .restore-defaults-btn {
     background-color: var(--secondary-color);
     color: var(--light-color);
+    /* Adecuado para fondos oscuros */
     border: none;
     padding: 4px 10px;
     border-radius: var(--border-radius);
@@ -817,8 +912,16 @@ button:disabled,
 }
 
 [data-theme="redteam"] .restore-defaults-btn {
+    /* Específico para redteam si se necesita texto más claro */
     color: var(--text-color-redteam);
 }
+
+[data-theme="actual"] .restore-defaults-btn {
+    /* Para tema claro, el texto debería ser oscuro o blanco si el botón es oscuro */
+    color: white;
+    /* Asumiendo que --secondary-color es oscuro en el tema actual */
+}
+
 
 .restore-defaults-btn i {
     margin-right: 4px;
@@ -826,16 +929,19 @@ button:disabled,
 
 .restore-defaults-btn:hover:not(:disabled) {
     filter: brightness(0.9);
+    /* Oscurecer ligeramente el botón */
 }
 
 .restore-defaults-btn:disabled {
     background-color: var(--text-muted);
+    /* Un gris más apagado para deshabilitado */
     cursor: not-allowed;
     opacity: 0.7;
 }
 
 .tool-cli-params-group {
     margin-bottom: 10px;
+    /* Espacio antes de los argumentos adicionales */
 }
 
 .cli-param-row {
@@ -867,6 +973,7 @@ button:disabled,
     min-width: 200px;
     box-sizing: border-box;
     background-color: var(--body-bg);
+    /* Usar variables de tema */
     color: var(--text-color);
 }
 
@@ -903,6 +1010,9 @@ button:disabled,
     flex-basis: 180px;
 }
 
+/* .additional-args-input no necesita estilos específicos si hereda de .cli-param-row input */
+
+
 .toggle-switch {
     position: relative;
     display: inline-block;
@@ -936,17 +1046,23 @@ button:disabled,
     left: 3px;
     bottom: 3px;
     background-color: var(--light-color);
+    /* Color del círculo deslizante */
     transition: .4s;
     border-radius: 50%;
 }
 
 [data-theme="redteam"] .slider:before {
     background-color: var(--text-color-redteam);
+    /* Ajuste para redteam */
 }
 
 [data-theme="ubuntu"] .slider:before {
     background-color: var(--dark-color);
+    /* Ajuste para ubuntu */
 }
+
+/* ... otros temas si es necesario ... */
+
 
 input:checked+.slider {
     background-color: var(--success-color);
@@ -966,10 +1082,14 @@ input:indeterminate+.slider {
 
 input:indeterminate+.slider:before {
     transform: translateX(12px);
+    /* Posición intermedia del círculo */
     content: "~";
+    /* Opcional: carácter para estado indeterminado */
     color: white;
+    /* Color del carácter */
     text-align: center;
     line-height: 20px;
+    /* Alineación vertical del carácter */
 }
 
 .job-details-card {
@@ -1055,6 +1175,7 @@ input:indeterminate+.slider:before {
 .status-completed-with-errors {
     background-color: var(--warning-color);
     color: var(--text-color);
+    /* Asegurar contraste con fondo warning */
 }
 
 .status-error {
@@ -1063,6 +1184,7 @@ input:indeterminate+.slider:before {
 
 .status-cancelled {
     background-color: #757575;
+    /* Un gris neutro */
 }
 
 .status-unknown {
@@ -1071,20 +1193,26 @@ input:indeterminate+.slider:before {
 
 [data-theme="redteam"] .status-pending,
 [data-theme="redteam"] .status-initiating,
+[data-theme="redteam"] .status-initializing,
 [data-theme="redteam"] .status-unknown,
 [data-theme="redteam"] .status-cancelled {
     color: var(--text-color-redteam);
+    /* Texto claro para fondos oscuros */
 }
 
 [data-theme="redteam"] .status-running,
 [data-theme="redteam"] .status-cancelling,
+[data-theme="redteam"] .status-request-cancel,
 [data-theme="redteam"] .status-completed {
     color: var(--body-bg-redteam);
+    /* Texto oscuro para fondos claros/medios */
 }
 
 [data-theme="redteam"] .status-completed-with-errors {
     color: var(--body-bg-redteam);
+    /* Texto oscuro para fondo warning */
 }
+
 
 .terminal-container {
     display: flex;
@@ -1104,10 +1232,13 @@ input:indeterminate+.slider:before {
     font-family: var(--font-family-sans-serif);
     margin-bottom: 0;
     background-color: color-mix(in srgb, var(--card-bg) 95%, var(--body-bg));
+    /* Ligero mix para diferenciar del card puro */
 }
 
+/* Sobrescribir para temas específicos donde el header del terminal es distinto */
 [data-theme="ubuntu"] .terminal-header {
     background-color: #3D3A36;
+    /* Ubuntu dark titlebar */
     color: #F2F1EF;
     padding: 0.4rem 0.8rem;
     border-bottom-color: #2E2C2A;
@@ -1117,6 +1248,7 @@ input:indeterminate+.slider:before {
 [data-theme="macos"] .terminal-header {
     justify-content: flex-start;
     background: linear-gradient(to bottom, #E8E8E8, #DCDCDC);
+    /* macOS titlebar gradient */
     color: #333;
     border-bottom: 1px solid #BFBFBF;
     padding: 0.5rem 0.8rem;
@@ -1124,11 +1256,14 @@ input:indeterminate+.slider:before {
 
 [data-theme="redteam"] .terminal-header {
     background-color: var(--header-bg-redteam);
+    /* Usar un color de header más oscuro para redteam */
     border-bottom-color: var(--border-color-redteam);
 }
 
+
 .terminal-window-controls {
     order: -1;
+    /* Mueve los controles a la izquierda por defecto, si aplica al tema */
     display: flex;
     gap: 8px;
     align-items: center;
@@ -1194,6 +1329,7 @@ input:indeterminate+.slider:before {
     border-color: #1DAD2B;
 }
 
+
 .terminal-title-container {
     flex-grow: 1;
     text-align: center;
@@ -1204,13 +1340,17 @@ input:indeterminate+.slider:before {
     font-size: 1rem;
     font-weight: 500;
     border-bottom: none;
+    /* No heredar de .card h3 */
     color: inherit;
+    /* Heredar color del .terminal-header */
     font-family: inherit;
+    /* Heredar fuente del .terminal-header */
 }
 
 .terminal-header h3 i {
     margin-right: 0.5rem;
     color: var(--primary-color);
+    /* Icono principal con color primario del tema */
 }
 
 [data-theme="redteam"] .terminal-header h3 i {
@@ -1220,6 +1360,7 @@ input:indeterminate+.slider:before {
 [data-theme="ubuntu"] .terminal-header h3 i {
     color: var(--accent-color);
 }
+
 
 .terminal-actions {
     margin-left: auto;
@@ -1231,21 +1372,27 @@ input:indeterminate+.slider:before {
     background-color: transparent;
     color: var(--text-muted);
     border: 1px solid transparent;
+    /* Sin borde por defecto */
 }
 
 [data-theme="ubuntu"] .terminal-actions button {
     color: #AEA79F;
 }
 
+/* Color específico para ubuntu */
 [data-theme="macos"] .terminal-actions button {
     color: #8E8E93;
 }
 
+/* Color específico para macOS */
+
 .terminal-actions button:hover {
     color: var(--primary-color);
     background-color: var(--card-bg);
+    /* Un fondo sutil al pasar el mouse */
     border-color: var(--card-border-color);
 }
+
 
 .terminal-output {
     background-color: var(--terminal-bg);
@@ -1290,6 +1437,7 @@ input:indeterminate+.slider:before {
 .log-icon {
     margin-right: 0.75em;
     margin-top: 0.1em;
+    /* Alineación con el texto */
 }
 
 .log-timestamp {
@@ -1303,6 +1451,7 @@ input:indeterminate+.slider:before {
 
 .log-type-info .log-icon,
 .log-type-info .log-message-content {
+    /* Aplicar color al icono y al mensaje */
     color: var(--terminal-log-info);
 }
 
@@ -1327,6 +1476,7 @@ input:indeterminate+.slider:before {
     font-weight: bold;
 }
 
+/* Ajustes específicos para Ubuntu Terminal Theme (si las variables globales no son suficientes) */
 [data-theme="ubuntu"] .log-type-info .log-message-content {
     color: var(--terminal-log-info-text);
 }
@@ -1371,6 +1521,7 @@ input:indeterminate+.slider:before {
 [data-theme="ubuntu"] .log-timestamp {
     color: var(--terminal-timestamp-color);
 }
+
 
 .job-list {
     list-style-type: none;
@@ -1426,7 +1577,9 @@ input:indeterminate+.slider:before {
 .job-card.status-pending,
 .job-card.status-initializing {
     border-left-color: var(--warning-color);
+    /* O --secondary-color si prefieres */
 }
+
 
 .job-card-header {
     display: flex;
@@ -1472,7 +1625,9 @@ input:indeterminate+.slider:before {
 .job-targets strong,
 .job-timestamp strong {
     min-width: 90px;
+    /* Para alinear los dos puntos o valores */
 }
+
 
 .job-card-actions {
     margin-top: 1rem;
@@ -1516,37 +1671,15 @@ input:indeterminate+.slider:before {
     width: auto;
     margin-right: 0.5rem;
     transform: scale(1.1);
+    /* Hacer el checkbox un poco más grande */
 }
 
 .option-item input[type="checkbox"]+label {
+    /* Para el texto al lado del checkbox */
     font-weight: normal;
 }
 
-.theme-selector-container label {
-    margin-right: 8px;
-    font-size: 0.9em;
-    color: var(--text-muted);
-}
-
-[data-theme="redteam"] .theme-selector-container label {
-    color: var(--text-muted-redteam);
-}
-
-#themeSwitcher {
-    padding: 0.4rem 0.8rem;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    border: 1px solid var(--card-border-color);
-    border-radius: var(--border-radius);
-    font-size: 0.9em;
-    font-family: var(--font-family-sans-serif);
-}
-
-#themeSwitcher:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(var(--rgb-primary-color), 0.3);
-}
+/* Theme Switcher en el header ya está estilizado arriba con #themeSwitcher */
 
 #tool-progress-details-container h4 {
     margin-bottom: 0.75rem;
@@ -1565,10 +1698,12 @@ input:indeterminate+.slider:before {
     max-height: 300px;
     overflow-y: auto;
     padding-right: 10px;
+    /* Espacio para la barra de scroll */
     border: 1px solid var(--card-border-color);
     border-radius: var(--border-radius);
     padding: 0.75rem;
     background-color: var(--body-bg);
+    /* Ligeramente diferente del card para anidar */
 }
 
 .tool-progress-item {
@@ -1579,7 +1714,9 @@ input:indeterminate+.slider:before {
     margin-bottom: 0.5rem;
     border-radius: var(--border-radius);
     background-color: var(--card-bg);
+    /* Cada item como un mini-card */
     border: 1px solid transparent;
+    /* Para posible borde en hover/focus */
     font-size: 0.9em;
 }
 
@@ -1591,21 +1728,26 @@ input:indeterminate+.slider:before {
     font-weight: 500;
     color: var(--text-color);
     flex-grow: 1;
+    /* Para que el nombre ocupe el espacio */
 }
 
 .tool-progress-name i {
+    /* Icono de la herramienta */
     margin-right: 0.5rem;
     opacity: 0.7;
 }
 
 .tool-progress-status {
+    /* Badge de estado para cada herramienta */
     display: inline-flex;
+    /* Para alinear icono y texto dentro del badge */
     align-items: center;
     padding: 0.2em 0.5em;
     border-radius: var(--border-radius);
     font-size: 0.85em;
     font-weight: bold;
     min-width: 90px;
+    /* Ancho mínimo para consistencia */
     text-align: center;
     justify-content: center;
 }
@@ -1641,13 +1783,22 @@ input:indeterminate+.slider:before {
     color: var(--body-bg-redteam);
 }
 
-.tool-status-error,
+.tool-status-error {
+    background-color: var(--danger-color);
+    color: white;
+}
+
 .tool-status-timeout {
     background-color: var(--danger-color);
     color: white;
 }
 
-.tool-status-skipped,
+/* Mismo que error o un color warning */
+.tool-status-skipped {
+    background-color: var(--text-muted);
+    color: var(--card-bg);
+}
+
 .tool-status-cancelled {
     background-color: var(--text-muted);
     color: var(--card-bg);
@@ -1659,43 +1810,27 @@ input:indeterminate+.slider:before {
 }
 
 .tool-progress-list .empty-placeholder {
+    /* Si no hay herramientas en progreso */
     font-size: 0.9em;
     padding: 1rem;
 }
 
-@media (max-width: 992px) {
+
+/* --- Media Queries --- */
+@media (max-width: 1024px) {
+
+    /* Un punto de quiebre intermedio para el header */
     header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-        padding: 1rem;
-    }
-
-    .logo-container {
-        justify-content: center;
-        margin-bottom: 0.5rem;
-    }
-
-    header h1 {
-        text-align: center;
-        font-size: 1.5rem;
+        padding: 0.75rem 1rem;
     }
 
     nav.tabs {
-        order: 1;
-        margin-left: 0;
-        margin-right: 0;
-        width: 100%;
-        overflow-x: auto;
-        justify-content: center;
+        margin-left: 1rem;
+        margin-right: 1rem;
     }
 
-    .theme-selector-container {
-        order: 0;
-        margin-left: 0;
-        padding-left: 0;
-        justify-content: center;
-        margin-bottom: 0.75rem;
+    .header-actions {
+        gap: 0.75rem;
     }
 }
 
@@ -1735,6 +1870,49 @@ input:indeterminate+.slider:before {
     .job-card-actions button {
         flex-grow: 1;
     }
+
+    /* --- Media Queries para el Header (768px) --- */
+    header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .logo-container {
+        justify-content: center;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    header h1 {
+        text-align: center;
+        font-size: 1.5rem;
+    }
+
+    nav.tabs {
+        order: 2;
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 0.5rem;
+    }
+
+    .tab-link {
+        flex-shrink: 0;
+    }
+
+    .header-actions {
+        order: 1;
+        margin-left: 0;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 0.5rem;
+        box-sizing: border-box;
+    }
+
+    /* .theme-selector-container y .button-logout se ajustarán dentro de .header-actions */
 }
 
 @media (max-width: 480px) {
@@ -1751,4 +1929,73 @@ input:indeterminate+.slider:before {
     header h1 {
         font-size: 1.3rem;
     }
+
+    /* --- Media Queries para el Header (480px) --- */
+    .button-logout {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .theme-selector-container label {
+        font-size: 0.85em;
+    }
+
+    #themeSwitcher {
+        /* O #themeSelector si ese es el ID final */
+        font-size: 0.85em;
+        padding: 0.3rem 0.6rem;
+    }
+}
+
+
+/* Estilos para el botón de descarga ZIP (ya existentes y mejorados) */
+.download-zip-btn {
+    padding: 0.8rem 1.6rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: var(--border-radius, 0.4rem);
+    box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.2));
+    transition: all 0.25s ease-in-out;
+    gap: 0.8rem;
+}
+
+.download-zip-btn i.fa-download {
+    font-size: 1.1em;
+    transition: transform 0.25s ease-in-out;
+}
+
+.download-zip-btn:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--success-color) 85%, black);
+    border-color: color-mix(in srgb, var(--success-color) 85%, black);
+    box-shadow: var(--shadow-md, 0 4px 8px rgba(0, 0, 0, 0.3));
+    transform: translateY(-2px) scale(1.02);
+}
+
+.download-zip-btn:hover:not(:disabled) i.fa-download {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.download-zip-btn:active:not(:disabled) {
+    background-color: color-mix(in srgb, var(--success-color) 75%, black);
+    transform: translateY(0px) scale(0.98);
+}
+
+[data-theme="redteam"] .download-zip-btn {
+    color: var(--text-color-redteam);
+}
+
+[data-theme="redteam"] .download-zip-btn:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--success-color-redteam) 75%, #000000 25%);
+    border-color: color-mix(in srgb, var(--success-color-redteam) 75%, #000000 25%);
+}
+
+[data-theme="actual"] .download-zip-btn {
+    color: white;
+}
+
+[data-theme="actual"] .download-zip-btn:hover:not(:disabled) {
+    background-color: #1e7e34;
+    border-color: #1c7430;
 }

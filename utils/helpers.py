@@ -560,7 +560,7 @@ TOOLS_CONFIG = {
         "default_enabled": False,
         "description": "Escáner de vulnerabilidades para WordPress.",
         "cli_params_config": [
-            {"name": "wpscan_api_token_cmd", "label": "API Token WPScan", "type": "password", "default": "", "placeholder": "TU_API_TOKEN_WPSCAN", "description": "Token API de wpscan.com para detección de vulnerabilidades actualizada. Si se deja vacío, no se usará el flag --api-token."}
+            {"name": "wpscan_api_token_cmd", "label": "API Token WPScan", "type": "text", "default": "", "placeholder": "TU_API_TOKEN_WPSCAN", "description": "Token API de wpscan.com para detección de vulnerabilidades actualizada. Si se deja vacío, no se usará el flag --api-token."}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: --random-user-agent --plugins-detection aggressive",
@@ -768,6 +768,33 @@ PROFILES_CONFIG = {
         }
     }
 }
+
+
+TARGET_PLACEHOLDERS_MAP = {
+    "{target}": "target_value",  # Valor genérico del target
+    "{target_domain}": "target_value",
+    "{target_url}": "target_value",
+    "{target_host_or_ip}": "target_value",
+    "{target_ip_range}": "target_value",
+    "{target_domain_or_ip}": "target_value",
+    "{target_wordpress_url}": "target_value",
+    "{target_joomla_url}": "target_value",
+    "{target_url_with_params}": "target_value", # El usuario debe proveer la URL completa con params
+    "{target_url_with_lfi_fuzz_param}": "target_value", # El usuario debe proveer la URL con FUZZ
+    "{target_file_subdomains}": "initial_targets_file_path",
+    "{target_file_live_hosts}": "initial_targets_file_path", # Podría ser diferente si generas otro archivo
+    "{target_wordlist_file_massdns}": "initial_targets_file_path" # Para MassDNS si usa la lista de targets inicial
+}
+
+OUTPUT_PLACEHOLDERS_LIST = [
+    "{output_file}",
+    "{output_file_base}",
+    "{output_file_json}",
+    "{output_file_xml}",
+    "{output_file_dir}",
+    "{output_file_dir_sqlmap}" # Añadido si lo usas
+]
+
 
 
 def get_tools_definition():
