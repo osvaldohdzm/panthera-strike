@@ -5,6 +5,8 @@ set -e
 
 git clean -fd
 
+git reset --hard
+
 # Fetch the latest updates from the remote
 echo "Fetching from origin..."
 git fetch origin
