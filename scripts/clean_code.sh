@@ -1,35 +1,51 @@
 #!/bin/bash
 
 # clean_code.sh
-# Este script limpia los comentarios de los archivos Python y HTML
-# de forma selectiva en el proyecto.
+# Limpia comentarios en archivos Python, HTML y CSS.
 
-# Directorio raíz del proyecto (asumiendo que el script está en ./scripts)
+# Directorio raíz del proyecto
 PROJECT_ROOT="$(dirname "$0")/.."
 
 echo "Iniciando limpieza de código..."
 
-# 1. Limpiar comentarios en archivos Python (.py)
-#    Borra líneas que son completamente comentarios (iniciando con #, posiblemente con espacios antes)
-#    No afecta a los comentarios que están en la misma línea que el código.
+# Detectar sed compatible
+if sed --version >/dev/null 2>&1; then
+    # GNU sed
+    SED_INPLACE=(-i)
+else
+    # BSD/macOS sed
+    SED_INPLACE=(-i '')
+fi
+
+# 1. Limpiar archivos Python (.py)
 echo "Limpiando archivos Python..."
-find "$PROJECT_ROOT" -type f -name "*.py" -print0 | while IFS= read -r -d $'\0' file; do
+find "$PROJECT_ROOT" -type f -name "*.py" -print0 | while IFS= read -r -d '' file; do
     echo "Procesando archivo Python: $file"
-    # Usamos sed con la opción -i para editar in-place (crea un backup si se le da una extensión, ej: -i.bak)
-    # La expresión regular '^s*#.*$' elimina las líneas que comienzan con # (y posibles espacios antes)
-    sed -i '/^\s*#.*$/d' "$file"
+    sed "${SED_INPLACE[@]}" '/^\s*#.*$/d' "$file"
 done
 
-# 2. Limpiar comentarios en archivos HTML (.html)
-#    Borra comentarios HTML echo "Limpiando archivos HTML..."
-find "$PROJECT_ROOT" -type f -name "*.html" -print0 | while IFS= read -r -d $'\0' file; do
+# 2. Limpiar archivos HTML (.html)
+echo "Limpiando archivos HTML..."
+find "$PROJECT_ROOT" -type f -name "*.html" -print0 | while IFS= read -r -d '' file; do
     echo "Procesando archivo HTML: $file"
-    # Usamos sed para reemplazar los comentarios HTML con nada.
-    # La 'g' al final es para reemplazar todas las ocurrencias en una línea.
-    # Nota: Esto puede tener limitaciones con comentarios HTML multilínea muy complejos
-    # o anidados, aunque para la mayoría de los casos debería funcionar.
-    # Para casos más complejos, herramientas específicas de parsing HTML podrían ser más robustas.
-    sed -i -e 's///g' "$file"
+    sed "${SED_INPLACE[@]}" -E ':a;N;$!ba;s/<!--(.|\n)*?-->//g' "$file"
+done
+
+# 3. Limpiar archivos CSS (.css)
+echo "Limpiando archivos CSS..."
+find "$PROJECT_ROOT" -type f -name "*.css" -print0 | while IFS= read -r -d '' file; do
+    echo "Procesando archivo CSS: $file"
+    sed "${SED_INPLACE[@]}" -E ':a;N;$!ba;s/\/\*([^*]|\*[^/])*\*\///g' "$file"
+done
+
+# 4. Limpiar archivos JavaScript (.js)
+echo "Limpiando archivos JavaScript..."
+find "$PROJECT_ROOT" -type f -name "*.js" -print0 | while IFS= read -r -d '' file; do
+    echo "Procesando archivo JavaScript: $file"
+    # 4.1 Eliminar comentarios multilínea
+    sed "${SED_INPLACE[@]}" -E ':a;N;$!ba;s/\/\*([^*]|\*[^/])*\*\///g' "$file"
+    # 4.2 Eliminar líneas que son solo comentarios con //
+    sed "${SED_INPLACE[@]}" -E '/^\s*\/\/.*$/d' "$file"
 done
 
 echo "Limpieza de código completada."

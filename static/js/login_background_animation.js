@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
 
-        // Cálculo de hexágonos por fila y número de filas
-        // Se añade un extra para asegurar cobertura en los bordes debido a los desplazamientos y márgenes
         const hexagonsPerRow = Math.ceil(screenWidth / hexWidth) + 2; 
         const numberOfRows = Math.ceil(screenHeight / effectiveHexHeight) + 2;
 

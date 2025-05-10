@@ -1,6 +1,4 @@
-// static/js/login_combined_animations.js
 $(document).ready(function () {
-    // --- HUD Animation ---
     const $hudWrapper = $('#animacion-hud-wrapper');
     if ($hudWrapper.length) {
         const $anim2Container = $('#anim2-container');
@@ -123,7 +121,6 @@ $(document).ready(function () {
         }
     } // end if $hudWrapper.length
 
-    // --- Background Hexagon Animation ---
     const $sectionElementForHex = $('body > section'); // More specific selector if needed
 
     if ($sectionElementForHex.length) {
@@ -149,7 +146,6 @@ $(document).ready(function () {
             }
         }
         createHexGrid();
-        // Optional: Recreate grid on window resize (debounced for performance)
         let resizeTimeout;
         $(window).on('resize', function() {
             clearTimeout(resizeTimeout);

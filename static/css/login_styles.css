@@ -1,4 +1,4 @@
-/* static/css/login_styles.css */
+
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 * {
@@ -17,98 +17,23 @@ body {
     overflow: hidden; 
 }
 
-/* Contenedor Animación Fondo Hexagonal (Antiguo - Comentado) */
-/*
-section {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center; 
-    align-content: center; 
-    flex-wrap: wrap;
-    overflow: hidden;
-    gap: 0; 
-    z-index: 1;
-}
-*/
 
-/* Estilos para cada HEXÁGONO (Antiguo - Comentado) */
-/*
-section span {
-    position: relative;
-    z-index: 2;
-    display: block; 
-    --hex-width: 60px; 
-    --hex-gap: 1px;  
-    --hex-height: calc(var(--hex-width) * 0.8660254); 
-    width: var(--hex-width);
-    height: var(--hex-height);
-    background-color: #181818; 
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    margin-left: calc(var(--hex-gap) / 2);
-    margin-right: calc(var(--hex-gap) / 2);
-    margin-bottom: calc(var(--hex-height) * -0.25 + var(--hex-gap));
-    transition: background-color 0.1s ease-out, 
-                transform 0.1s ease-out, 
-                filter 0.1s ease-out;
-}
-section span:nth-child(odd) {
-    transform: translateX(calc(var(--hex-width) / 2));
-}
-section span:hover {
-    background-color: #ff0000; 
-    transform: scale(1.15);    
-    z-index: 3;                
-    filter: drop-shadow(0 0 6px rgba(255, 50, 50, 0.9)) 
-            drop-shadow(0 0 12px rgba(255, 0, 0, 0.7));
-    transition-duration: 0.05s; 
-}
-*/
 
-/* --- Media Queries for Responsive Hexagon Sizes (Antiguo - Comentado) --- */
-/*
-@media (min-width: 1600px) { 
-    section span {
-        --hex-width: 70px;
-        --hex-gap: 2px;
-    }
-}
-@media (max-width: 1200px) { 
-    section span {
-        --hex-width: 60px;
-        --hex-gap: 1px;
-    }
-}
-@media (max-width: 900px) { 
-    section span {
-        --hex-width: 50px; 
-        --hex-gap: 1px;  
-    }
-}
-@media (max-width: 600px) { 
-    section span {
-        --hex-width: 40px; 
-        --hex-gap: 1px;  
-    }
-    section .signin {
-        width: 90%;
-        padding: 20px;
-    }
-    section .signin .content h2 {
-        font-size: 1.5em;
-    }
-}
-*/
 
-/* NUEVOS ESTILOS PARA EL FONDO DE HEXÁGONOS */
+
+
+
+
+
+
+
 section {
     position: absolute;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
     background: #111;
-    z-index: 1; /* Asegura que el fondo esté detrás del formulario */
+    z-index: 1; 
 }
 
 .container {
@@ -157,37 +82,28 @@ section {
 
 .hexagon:hover {
     transition: 0s;
-    background: #ff0000; /* Cambiado a rojo */
+    background: #ff0000; 
     filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.7))
             drop-shadow(0 0 10px rgba(255, 0, 0, 0.5))
-            drop-shadow(0 0 15px rgba(255, 0, 0, 0.3)); /* Sombra roja */
-    /* Animación de rotación de color eliminada */
+            drop-shadow(0 0 15px rgba(255, 0, 0, 0.3)); 
+    
 }
 
-/* @keyframes hue-rotate ya no es necesario y se puede eliminar o comentar si se prefiere */
-/*
-@keyframes hue-rotate {
-    0% {
-        filter: hue-rotate(0deg) drop-shadow(0 0 10px #0f0) drop-shadow(0 0 20px #0f0) drop-shadow(0 0 30px #0f0);
-    }
-    100% {
-        filter: hue-rotate(360deg) drop-shadow(0 0 10px #0f0) drop-shadow(0 0 20px #0f0) drop-shadow(0 0 30px #0f0);
-    }
-}
-*/
 
-/* Ajustes para que el formulario de login esté por encima */
+
+
+
 section .signin {
-    position: relative; /* Asegurar que z-index funcione correctamente */
-    z-index: 1000; /* Debe ser mayor que el z-index de la sección de hexágonos */
+    position: relative; 
+    z-index: 1000; 
 }
 
-/* Media queries para la nueva estructura si fueran necesarias, por ahora no se añaden */
-
-/* ... (Rest of the .signin, .alert, .close styles remain unchanged) ... */
 
 
-/* Formulario de Inicio de Sesión */
+
+
+
+
 section .signin {
     position: absolute; 
     top: 50%;          
@@ -294,7 +210,7 @@ input[type="submit"]:active {
     opacity: 0.6;
 }
 
-/* Estilos de Alerta (para mensajes flash) */
+
 .alert {
     position: relative;
     padding: .75rem 1.25rem;
@@ -305,7 +221,7 @@ input[type="submit"]:active {
     z-index: 1001; 
     width: 100%; 
 }
-/* --- Inicio: Corrección para botón de cierre de alerta --- */
+
 .alert .close {
     padding: 0.5rem 1rem;
     margin: -0.75rem -1.25rem -0.75rem auto;
@@ -333,7 +249,7 @@ input[type="submit"]:active {
 .alert .close span {
     display: inline;
 }
-/* --- Fin: Corrección para botón de cierre de alerta --- */
+
 
 .alert-danger {
     color: #721c24;

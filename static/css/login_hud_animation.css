@@ -1,20 +1,18 @@
-/* === ESTILOS PARA LA ANIMACIÓN HUD (ANIMACIÓN 02) === */
-/* Estos estilos se basan en el archivo static/css/animation-2.css proporcionado,
-   eliminando redundancias como import de fuentes, body, section, signin, etc.,
-   que ya están en login_styles.css */
+
+
 
    #animacion-hud-wrapper {
-    width: 100%;           /* Ocupa todo el ancho disponible en .content */
-    max-width: 380px;      /* Ancho máximo aumentado de 340px a 380px */
-    height: 210px;         /* Altura aumentada de 180px a 210px */
-    position: relative;    /* Se mantiene en el flujo, no absolute */
-    margin-bottom: 25px;   /* Más espacio antes del título "Iniciar Sesión" */
-    background: #1A1A1A;   /* Fondo oscuro para la HUD */
+    width: 100%;           
+    max-width: 380px;      
+    height: 210px;         
+    position: relative;    
+    margin-bottom: 25px;   
+    background: #1A1A1A;   
     overflow: hidden;
-    border: 1px solid #550000; /* Borde rojo más visible */
-    border-radius: 6px;   /* Redondeo ligero para el contenedor */
-    color: #CCCCCC;        /* Color de texto por defecto (blanco/gris claro) */
-    font-family: 'Courier New', Courier, monospace; /* Fuente más "tech" */
+    border: 1px solid #550000; 
+    border-radius: 6px;   
+    color: #CCCCCC;        
+    font-family: 'Courier New', Courier, monospace; 
 }
 
 #animacion-hud-wrapper * {
@@ -22,7 +20,7 @@
     box-sizing: border-box; 
 }
 
-#animacion-hud-wrapper #anim2-container > div { /* Asegura que los hijos directos de anim2-container son absolutos si lo necesitan */
+#animacion-hud-wrapper #anim2-container > div { 
     position: absolute;
 }
 
@@ -32,7 +30,7 @@
     -moz-perspective: 600px;
     -webkit-animation: anim2-start 0.8s ease-out;
     -moz-animation: anim2-start 0.8s ease-out;
-    overflow: hidden; /* Para contener elementos que puedan desbordarse */
+    overflow: hidden; 
 }
 
 @-webkit-keyframes anim2-start {
@@ -44,7 +42,7 @@
     to   { -moz-transform: scale(1); opacity: 1; }
 }
 
-/* Elementos generales de la HUD con temática roja */
+
 #anim2-a1 { top: 4px; left: 20px; height: 4px; width: 70px; border:1px dotted #990000; }
 #anim2-a11 { position: absolute; left: 0; top: 0; height: 100%; background:#AA0000; -webkit-animation: anim2-kf-a11 4s ease-in-out infinite; -moz-animation: anim2-kf-a11 4s ease-in-out infinite;}
 @-webkit-keyframes anim2-kf-a11 { from {width:70%;} 10% {width:20%;} 20% {width:90%;} 30% {width:60%;} 40% {width:100%;} 50% {width:10%;} 60% {width:30%;} 70% {width:20%;} 80% {width:50%;} 90% {width:10%;} to {width:70%;} }
@@ -59,7 +57,7 @@
 
 #anim2-a3-placeholder { top:15px; left:5px; height:calc(100% - 70px); width:35px; font-size:10px; overflow-y: auto; color: #FF0000;}
 #anim2-a3-placeholder span { display: block; margin-bottom: 2px; text-shadow:0 0 3px #FF0000; }
-/* Keyframes para opacidad usados por JS para los spans de #anim2-a3-placeholder */
+
 @-webkit-keyframes anim2-kf-opacity { from { opacity:0; } 50% { opacity:1; } to { opacity:0; } }
 @-moz-keyframes anim2-kf-opacity { from { opacity:0; } 50% { opacity:1; } to { opacity:0; } }
 
@@ -71,7 +69,7 @@
 #anim2-a5 span { display:block; position:relative; float:left; height:30px; width:18px; border-right:1px solid #440000;}
 #anim2-a5 span:first-child { margin-left:6px; border-left:1px solid #440000;}
 #anim2-a5 span b { position:absolute; top:2px; left:2px; right:2px; bottom:2px; background:#AA0000; opacity:0; }
-/* Keyframes para #anim2-a5 span b usados por JS */
+
 @-webkit-keyframes anim2-kf-a5-b { from {opacity:0;} 50% {opacity:1;} to {opacity:0;} }
 @-moz-keyframes anim2-kf-a5-b { from {opacity:0;} 50% {opacity:1;} to {opacity:0;} }
 
@@ -104,20 +102,20 @@
 @-moz-keyframes anim2-kf-a10 { from {width:70px;} 20% {width:10px;} 40% {width:100px;} 60% {width:30px;} 80% {width:90px;} to {width:70px;} }
 
 
-#anim2-b1 { bottom:32px; width:80px; height:40px; left:45px; } /* Ajustado left */
+#anim2-b1 { bottom:32px; width:80px; height:40px; left:45px; } 
 #anim2-b1 span { position:absolute; bottom:0; height:100%; width:5px; background:#FF0000; }
-/* Keyframes para #anim2-b1 span usados por JS */
+
 @-webkit-keyframes anim2-kf-b1 { from {height:100%;} 20% {height:10%;} 40% {height:60%;} 60% {height:5%;} 80% {height:40%;} to {height:100%;} }
 @-moz-keyframes anim2-kf-b1 { from {height:100%;} 20% {height:10%;} 40% {height:60%;} 60% {height:5%;} 80% {height:40%;} to {height:100%;} }
 
 
-/* --- Estilos de #anim2-figure y sus hijos --- */
+
 #anim2-figure {
     top: 50%; left: 50%; 
-    width: 200px;  /* Aumentado para ocupar más espacio */
-    height: 200px; /* Aumentado proporcionalmente */
-    margin-top: -100px; /* Ajustado a la mitad de la nueva altura */
-    margin-left: -100px;/* Ajustado a la mitad del nuevo ancho */
+    width: 200px;  
+    height: 200px; 
+    margin-top: -100px; 
+    margin-left: -100px;
     -webkit-transform: rotateY(-30deg) rotateX(10deg) scale(0.85);
     -moz-transform: rotateY(-30deg) rotateX(10deg) scale(0.85);
     -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d;
@@ -127,7 +125,7 @@
 @-webkit-keyframes anim2-kf-figure { from {-webkit-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} 20% {-webkit-transform:rotateY(30deg) rotateX(30deg) scale(0.8);} 40% {-webkit-transform:rotateY(30deg) rotateX(-30deg) scale(0.8);} 60% {-webkit-transform:rotateY(-10deg) rotateX(30deg) scale(0.8);} 80% {-webkit-transform:rotateY(30deg) rotateX(-10deg) scale(0.8);} to {-webkit-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} }
 @-moz-keyframes anim2-kf-figure { from {-moz-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} 20% {-moz-transform:rotateY(30deg) rotateX(30deg) scale(0.8);} 40% {-moz-transform:rotateY(30deg) rotateX(-30deg) scale(0.8);} 60% {-moz-transform:rotateY(-10deg) rotateX(30deg) scale(0.8);} 80% {-moz-transform:rotateY(30deg) rotateX(-10deg) scale(0.8);} to {-moz-transform:rotateY(-30deg) rotateX(30deg) scale(0.8);} }
 
-#anim2-figure #anim2-a7 { /* Este es un #anim2-a7 DENTRO de figure */
+#anim2-figure #anim2-a7 { 
     position: absolute; left:-90px; top:10px; color:#FF0000; font-size: 10px;
     -webkit-transform:scale(0.5); -moz-transform:scale(0.5);
     -webkit-animation:anim2-kf-fa7-red 2s ease-in-out infinite; -moz-animation:anim2-kf-fa7-red 2s ease-in-out infinite;
@@ -138,9 +136,9 @@
 @-webkit-keyframes anim2-kf-fa7-red { from {color:#FF0000;} 25% {color:#DD0000;} 50% {color:#FFFFFF;} 75% {color:#DD0000;} to {color:#FF0000;} }
 @-moz-keyframes anim2-kf-fa7-red { from {color:#FF0000;} 25% {color:#DD0000;} 50% {color:#FFFFFF;} 75% {color:#DD0000;} to {color:#FF0000;} }
 
-#anim2-figure div, #anim2-figure span { -webkit-transform-style:preserve-3d; -moz-transform-style:preserve-3d; position:absolute; /* Necesario para muchos elementos internos de figure */}
+#anim2-figure div, #anim2-figure span { -webkit-transform-style:preserve-3d; -moz-transform-style:preserve-3d; position:absolute; }
 
-/* Elementos F1 */
+
 #anim2-f1 { left: -2px; top: -2px; height: 100%; width: 100%; border-radius: 50%; border-width: 2px; border-style: solid; box-shadow:0 0 5px #AA0000; -webkit-animation:anim2-kf-f1-red 4s ease-in-out infinite; -moz-animation:anim2-kf-f1-red 4s ease-in-out infinite; }
 @-webkit-keyframes anim2-kf-f1-red { from {-webkit-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} 10% {-webkit-transform:rotateZ(30deg); opacity:1.0; border-color:#FF0000;} 50% {-webkit-transform:rotateZ(-40deg); opacity:1.0; border-color:#FFFFFF;} to {-webkit-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} }
 @-moz-keyframes anim2-kf-f1-red { from {-moz-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} 10% {-moz-transform:rotateZ(30deg); opacity:1.0; border-color:#FF0000;} 50% {-moz-transform:rotateZ(-40deg); opacity:1.0; border-color:#FFFFFF;} to {-moz-transform:rotateZ(0deg); opacity:1.0; border-color:#AA0000;} }
@@ -148,13 +146,13 @@
 @-webkit-keyframes anim2-kf-f1div-red { from {background:#AA0000;} 10% {background:#FF0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
 @-moz-keyframes anim2-kf-f1div-red { from {background:#AA0000;} 10% {background:#FF0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
 
-/* Elementos F2 */
+
 #anim2-f2 { height:100%; width:100%; -webkit-animation:anim2-kf-f2 20s linear infinite; -moz-animation:anim2-kf-f2 20s linear infinite; }
 @-webkit-keyframes anim2-kf-f2 { from {-webkit-transform:translateZ(-5px) rotateZ(0deg);} to {-webkit-transform:translateZ(-5px) rotateZ(360deg);} }
 @-moz-keyframes anim2-kf-f2 { from {-moz-transform:translateZ(-5px) rotateZ(0deg);} to {-moz-transform:translateZ(-5px) rotateZ(360deg);} }
 #anim2-f2 span { display:block; position:absolute; top:50%; left:50%; margin-top:-3px; height:6px; width:2px; background:#999999; }
 
-/* Elementos F3 */
+
 #anim2-f3 { top:10px; left:10px; height:calc(100% - 20px); width:calc(100% - 20px); border-radius:50%; border-width:5px; border-style:solid; border-color:#FF0000; box-shadow:0 0 5px #FF0000; -webkit-transform:translateZ(10px); -moz-transform:translateZ(10px); -webkit-animation:anim2-kf-f3-red 6s ease-in-out infinite; -moz-animation:anim2-kf-f3-red 6s ease-in-out infinite;}
 @-webkit-keyframes anim2-kf-f3-red { from {-webkit-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} 50% {-webkit-transform:translateZ(10px) rotateZ(-120deg); border-color:#FFFFFF; opacity:1.0;} to {-webkit-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} }
 @-moz-keyframes anim2-kf-f3-red { from {-moz-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} 50% {-moz-transform:translateZ(10px) rotateZ(-120deg); border-color:#FFFFFF; opacity:1.0;} to {-moz-transform:translateZ(10px) rotateZ(0deg); border-color:#FF0000; opacity:1.0;} }
@@ -171,7 +169,7 @@
 #anim2-f33 { width:2px; background:#111; top:-7px; left:calc(50% - 1px); bottom:-7px; -webkit-transform:translateZ(1px) rotateZ(45deg); -moz-transform:translateZ(1px) rotateZ(45deg); }
 #anim2-f34 { width:2px; background:#111; top:-7px; left:calc(50% - 1px); bottom:-7px; -webkit-transform:translateZ(1px) rotateZ(-45deg); -moz-transform:translateZ(1px) rotateZ(-45deg); }
 
-/* Elementos F4 */
+
 #anim2-f4 { top:20%; left:20%; height:60%; width:60%; border:1px solid #FF0000; -webkit-transform:translateZ(15px); -moz-transform:translateZ(15px); -webkit-animation:anim2-kf-f4-red 6s ease-in-out infinite; -moz-animation:anim2-kf-f4-red 6s ease-in-out infinite;}
  @-webkit-keyframes anim2-kf-f4-red { from {-webkit-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} 25% {-webkit-transform:translateZ(15px) rotateZ(120deg); opacity:1; border-color: #FFFFFF;} 50% {-webkit-transform:translateZ(15px) rotateZ(0); opacity:0; border-color: #FF0000;} 75% {-webkit-transform:translateZ(15px) rotateZ(-120deg); opacity:1; border-color: #FFFFFF;} to {-webkit-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} }
  @-moz-keyframes anim2-kf-f4-red { from {-moz-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} 25% {-moz-transform:translateZ(15px) rotateZ(120deg); opacity:1; border-color: #FFFFFF;} 50% {-moz-transform:translateZ(15px) rotateZ(0); opacity:0; border-color: #FF0000;} 75% {-moz-transform:translateZ(15px) rotateZ(-120deg); opacity:1; border-color: #FFFFFF;} to {-moz-transform:translateZ(15px) rotateZ(0); opacity:1; border-color: #FF0000;} }
@@ -184,32 +182,32 @@
 #anim2-f43.anim2-f434 {-webkit-transform:rotateZ(225deg) translateY(25px); -moz-transform:rotateZ(225deg) translateY(25px);}
 
 
-/* Elementos F5 */
+
 #anim2-f5 { left:25%; top:25%; height:50%; width:50%; -webkit-animation:anim2-kf-f5 20s linear infinite; -moz-animation:anim2-kf-f5 20s linear infinite; }
 @-webkit-keyframes anim2-kf-f5 { from {-webkit-transform:translateZ(20px) rotateZ(0deg);} to {-webkit-transform:translateZ(20px) rotateZ(-360deg);} }
 @-moz-keyframes anim2-kf-f5 { from {-moz-transform:translateZ(20px) rotateZ(0deg);} to {-moz-transform:translateZ(20px) rotateZ(-360deg);} }
 #anim2-f5 span { top:50%; left:50%; margin-top:-2px; height:4px; width:1px; background:#999999; font-size:8px; color:#fff; }
 #anim2-f5 span b { position:absolute; bottom:150%; width:10px; left:-4px; text-align:center; }
 
-/* Elementos F6 */
+
 #anim2-f6 { top:35%; left:35%; height:30%; width:30%; border:1px solid #FF0000; -webkit-transform:translateZ(25px); -moz-transform:translateZ(25px); }
 
-/* Elementos F7 */
+
 #anim2-f7 { top:38%; left:38%; height:24%; width:24%; border:1px solid #FF0000; background:#111; -webkit-transform:translateZ(28px); -moz-transform:translateZ(28px); -webkit-animation:anim2-kf-f7-red 6s linear infinite; -moz-animation:anim2-kf-f7-red 6s linear infinite;}
  @-webkit-keyframes anim2-kf-f7-red { from {-webkit-transform:translateZ(28px) rotateZ(0deg); opacity:1;} 10% {-webkit-transform:translateZ(28px) rotateZ(36deg); opacity:0;} 20% {opacity:0;} 30% {-webkit-transform:translateZ(28px) rotateZ(108deg); opacity:1;} to {-webkit-transform:translateZ(28px) rotateZ(360deg); opacity:1;} }
  @-moz-keyframes anim2-kf-f7-red { from {-moz-transform:translateZ(28px) rotateZ(0deg); opacity:1;} 10% {-moz-transform:translateZ(28px) rotateZ(36deg); opacity:0;} 20% {opacity:0;} 30% {-moz-transform:translateZ(28px) rotateZ(108deg); opacity:1;} to {-moz-transform:translateZ(28px) rotateZ(360deg); opacity:1;} }
 #anim2-f71 { top:-20%; left:calc(50% - 1px); height:140%; width:2px; background:#FF0000; }
-#anim2-f72 { top:calc(50% - 1px); left:-20%; width:140%; height:2px; background:#FF0000; } /* Cambiado para ser horizontal */
+#anim2-f72 { top:calc(50% - 1px); left:-20%; width:140%; height:2px; background:#FF0000; } 
 
-/* Elementos F8 */
+
 #anim2-f8 { top:40%; left:40%; height:20%; width:20%; border:1px solid #AA0000; background:#111; -webkit-transform:translateZ(32px); -moz-transform:translateZ(32px); -webkit-animation:anim2-kf-f8-red 8s linear infinite; -moz-animation:anim2-kf-f8-red 8s linear infinite;}
 @-webkit-keyframes anim2-kf-f8-red { from {-webkit-transform:translateZ(32px) rotateZ(360deg); border-color:#AA0000; opacity:1;} 50%  {-webkit-transform:translateZ(32px) rotateZ(180deg); border-color:#FFFFFF; opacity:1;} to   {-webkit-transform:translateZ(32px) rotateZ(0deg); border-color:#AA0000; opacity:1;} }
 @-moz-keyframes anim2-kf-f8-red { from {-moz-transform:translateZ(32px) rotateZ(360deg); border-color:#AA0000; opacity:1;} 50%  {-moz-transform:translateZ(32px) rotateZ(180deg); border-color:#FFFFFF; opacity:1;} to   {-moz-transform:translateZ(32px) rotateZ(0deg); border-color:#AA0000; opacity:1;} }
 #anim2-f81 { top:-25%; left:calc(50% - 20%); height:150%; width:40%; border-radius:3px; -webkit-animation:anim2-kf-f8div-red 8s linear infinite; -moz-animation:anim2-kf-f8div-red 8s linear infinite;}
-#anim2-f82 { top:calc(50% - 20%); left:-25%; width:150%; height:40%; border-radius:3px; -webkit-animation:anim2-kf-f8div-red 8s linear infinite; -moz-animation:anim2-kf-f8div-red 8s linear infinite;} /* Cambiado para ser horizontal */
+#anim2-f82 { top:calc(50% - 20%); left:-25%; width:150%; height:40%; border-radius:3px; -webkit-animation:anim2-kf-f8div-red 8s linear infinite; -moz-animation:anim2-kf-f8div-red 8s linear infinite;} 
 @-webkit-keyframes anim2-kf-f8div-red { from {background:#AA0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
 @-moz-keyframes anim2-kf-f8div-red { from {background:#AA0000;} 50% {background:#FFFFFF;} to {background:#AA0000;} }
 
-/* Elementos F9 */
+
 #anim2-f9 { top:45%; left:45%; height:10%; width:10%; border:1px solid #FF0000; -webkit-transform:translateZ(40px); -moz-transform:translateZ(40px); }
 #anim2-f9 span { top:30%; left:30%; height:40%; width:40%; background:#FF0000; }

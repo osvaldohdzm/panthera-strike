@@ -1,11 +1,11 @@
-/* /home/arya/dev/panthera-strike/static/css/scanner_styles.css */
 
-/* --- Importación de Fuentes --- */
+
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono:wght@400;700&family=Source+Code+Pro:wght@400;500&display=swap');
 
-/* --- Tema Base: Variables Globales y Red Team Moderno por defecto --- */
+
 :root {
-    /* Paleta Red Team Moderna */
+    
     --primary-color-redteam: #E53935;
     --secondary-color-redteam: #6F6F6F;
     --accent-color-redteam: #FF4136;
@@ -24,17 +24,17 @@
     --border-color-redteam: #3A3C40;
     --link-color-redteam: var(--accent-color-redteam);
 
-    /* Fuentes (predeterminadas a Red Team) */
+    
     --font-family-sans-serif-redteam: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-family-monospace-redteam: "Fira Code", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --font-family-terminal-redteam: "Fira Code", "Source Code Pro", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    /* Priorizar Fira Code/Source Code Pro */
+    
 
     --border-radius-global: 0.4rem;
     --shadow-sm-global: 0 2px 4px rgba(0, 0, 0, 0.2);
     --shadow-md-global: 0 4px 8px rgba(0, 0, 0, 0.3);
 
-    /* --- Aplicar Red Team como tema por defecto --- */
+    
     --primary-color: var(--primary-color-redteam);
     --secondary-color: var(--secondary-color-redteam);
     --success-color: var(--success-color-redteam);
@@ -59,7 +59,7 @@
     --shadow-sm: var(--shadow-sm-global);
     --shadow-md: var(--shadow-md-global);
 
-    /* Terminal por defecto (Red Team) */
+    
     --terminal-bg: var(--terminal-bg-redteam);
     --terminal-text-color: var(--text-color-redteam);
     --terminal-timestamp-color: var(--text-muted-redteam);
@@ -70,10 +70,10 @@
     --terminal-log-command: var(--accent-color-redteam);
 
     --rgb-primary-color: 229, 57, 53;
-    /* Rojo RedTeam para box-shadow focus */
+    
 }
 
-/* --- Tema Actual (Azulito) --- */
+
 [data-theme="actual"] {
     --primary-color: #007bff;
     --secondary-color: #6c757d;
@@ -92,7 +92,7 @@
     --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --font-family-terminal: "Consolas", "Courier New", monospace;
-    /* Fuente específica para terminal en tema actual */
+    
     --border-radius: 0.3rem;
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -108,7 +108,7 @@
     --rgb-primary-color: 0, 123, 255;
 }
 
-/* --- Tema Ubuntu --- */
+
 [data-theme="ubuntu"] {
     --primary-color: #5E2750;
     --secondary-color: #AEA79F;
@@ -143,7 +143,7 @@
     --rgb-primary-color: 94, 39, 80;
 }
 
-/* --- Tema macOS --- */
+
 [data-theme="macos"] {
     --primary-color: #007AFF;
     --secondary-color: #8E8E93;
@@ -178,7 +178,7 @@
     --rgb-primary-color: 0, 122, 255;
 }
 
-/* --- Estilos Base Adaptados --- */
+
 body {
     font-family: var(--font-family-sans-serif);
     margin: 0;
@@ -215,7 +215,7 @@ header {
 [data-theme="redteam"] #pantheraLogo,
 [data-theme="ubuntu"][data-system-appearance="dark"] #pantheraLogo,
 [data-theme="macos"][data-system-appearance="dark"] #pantheraLogo {
-    /* filter: brightness(0) invert(1); */
+    
 }
 
 header h1 {
@@ -255,7 +255,7 @@ footer {
     border-top: 1px solid var(--card-border-color);
 }
 
-/* Tarjetas */
+
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border-color);
@@ -282,7 +282,7 @@ footer {
     color: var(--primary-color);
 }
 
-/* Pestañas */
+
 .tab-link {
     background-color: transparent;
     color: var(--light-color);
@@ -361,7 +361,7 @@ footer {
     }
 }
 
-/* Formularios y Botones */
+
 textarea,
 select,
 input[type="text"],
@@ -380,26 +380,26 @@ input[type="email"] {
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
-/* Para el tema Red Team, los inputs normales pueden ser más oscuros */
+
 [data-theme="redteam"] select,
 [data-theme="redteam"] input[type="text"],
 [data-theme="redteam"] input[type="number"],
 [data-theme="redteam"] input[type="password"],
 [data-theme="redteam"] input[type="email"] {
     background-color: var(--terminal-bg-redteam);
-    /* Usar un fondo muy oscuro */
+    
     border-color: var(--border-color-redteam);
 }
 
-/* Textarea no relacionada con la terminal principal */
+
 textarea {
     min-height: 120px;
     font-family: var(--font-family-monospace);
-    /* Usa la monoespaciada general del tema */
+    
 }
 
 [data-theme="redteam"] textarea {
-    /* Textarea en RedTeam también oscura */
+    
     background-color: var(--terminal-bg-redteam);
     border-color: var(--border-color-redteam);
 }
@@ -414,7 +414,7 @@ input[type="email"]:focus {
     outline: none;
     border-color: var(--primary-color);
     background-color: var(--card-bg);
-    /* Puede cambiar al enfocar para mejor visibilidad */
+    
     box-shadow: 0 0 0 3px rgba(var(--rgb-primary-color), 0.3);
 }
 
@@ -574,7 +574,7 @@ button:disabled,
     gap: 0.4rem;
 }
 
-/* Iconos */
+
 .icon-spin {
     animation: spin 1s linear infinite;
 }
@@ -610,12 +610,12 @@ button:disabled,
 }
 
 
-/* Sección de Objetivos */
+
 .targets-section textarea {
     min-height: 120px;
 }
 
-/* Ya estilizada arriba para tema RedTeam */
+
 .targets-actions {
     display: flex;
     align-items: center;
@@ -629,7 +629,7 @@ button:disabled,
     color: var(--text-muted);
 }
 
-/* Perfiles de Escaneo */
+
 .scan-profiles-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -659,7 +659,7 @@ button:disabled,
     color: var(--text-color-redteam);
 }
 
-/* Selección de Herramientas */
+
 .pentest-phase {
     margin-bottom: 1.5rem;
 }
@@ -793,7 +793,7 @@ button:disabled,
 }
 
 
-/* Toggle Switch */
+
 .toggle-switch {
     position: relative;
     display: inline-block;
@@ -864,7 +864,7 @@ input:indeterminate+.slider:before {
     line-height: 20px;
 }
 
-/* Panel de Información del Trabajo */
+
 #job-info-panel {
     margin-bottom: 1rem;
 }
@@ -920,7 +920,7 @@ input:indeterminate+.slider:before {
     flex-wrap: wrap;
 }
 
-/* Badges de Estado */
+
 .status-badge {
     padding: 0.3em 0.7em;
     font-size: 0.8em;
@@ -971,7 +971,7 @@ input:indeterminate+.slider:before {
 }
 
 
-/* Terminal de Salida */
+
 #terminal-panel {
     display: flex;
     flex-direction: column;
@@ -987,9 +987,9 @@ input:indeterminate+.slider:before {
     padding: 0.5rem 1rem;
     border-bottom: 1px solid var(--card-border-color);
     color: var(--text-color);
-    /* Color del texto del título de la terminal */
+    
     font-family: var(--font-family-sans-serif);
-    /* Fuente no monoespaciada para el header */
+    
     margin-bottom: 0;
 }
 
@@ -1011,9 +1011,9 @@ input:indeterminate+.slider:before {
     font-weight: 500;
     border-bottom: none;
     color: inherit;
-    /* Hereda color de .terminal-header */
+    
     font-family: inherit;
-    /* Hereda fuente de .terminal-header */
+    
 }
 
 .terminal-header h3 i {
@@ -1039,7 +1039,7 @@ input:indeterminate+.slider:before {
     border-color: var(--card-border-color);
 }
 
-/* Estilos específicos de cabecera de terminal por tema */
+
 [data-theme="redteam"] .terminal-header {
     border-bottom-color: var(--border-color-redteam);
 }
@@ -1121,11 +1121,7 @@ input:indeterminate+.slider:before {
     color: var(--primary-color);
 }
 
-/*
-[data-theme="macos"][data-system-appearance="dark"] .terminal-header {
-    background: linear-gradient(to bottom, #3D3D3D, #2A2A2A); border-bottom: 1px solid #1E1E1E; }
-[data-theme="macos"][data-system-appearance="dark"] .terminal-header h3 { color: var(--text-color-redteam); }
-*/
+
 [data-theme="macos"] .terminal-control-button {
     width: 12px;
     height: 12px;
@@ -1160,7 +1156,7 @@ input:indeterminate+.slider:before {
     max-height: 70vh;
     overflow-y: auto;
     font-family: var(--font-family-terminal);
-    /* Aplicando la fuente específica de la terminal */
+    
     font-size: 0.95em;
     flex-grow: 1;
     scrollbar-width: thin;
@@ -1190,7 +1186,7 @@ input:indeterminate+.slider:before {
     white-space: pre-wrap;
     word-break: break-all;
     font-family: inherit;
-    /* Hereda de #scanOutput */
+    
 }
 
 .log-icon {
@@ -1233,7 +1229,7 @@ input:indeterminate+.slider:before {
     font-weight: bold;
 }
 
-/* Historial de Trabajos */
+
 #jobsListArea {
     list-style-type: none;
     padding: 0;
@@ -1336,7 +1332,7 @@ input:indeterminate+.slider:before {
     flex-wrap: wrap;
 }
 
-/* Placeholders, Errores */
+
 .loading-placeholder,
 .empty-placeholder,
 .error-message {
@@ -1351,7 +1347,7 @@ input:indeterminate+.slider:before {
     font-weight: bold;
 }
 
-/* Opciones Avanzadas */
+
 .options-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1380,7 +1376,7 @@ input:indeterminate+.slider:before {
 }
 
 
-/* Select para Temas */
+
 .theme-selector-container label {
     margin-right: 8px;
     font-size: 0.9em;
@@ -1408,7 +1404,7 @@ input:indeterminate+.slider:before {
     box-shadow: 0 0 0 2px rgba(var(--rgb-primary-color), 0.3);
 }
 
-/* Responsividad básica */
+
 @media (max-width: 992px) {
     header {
         flex-direction: column;
