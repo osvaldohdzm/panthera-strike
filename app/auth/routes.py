@@ -8,9 +8,6 @@ from app.database import get_db # Para interactuar con la base de datos directam
 
 @login_manager.user_loader
 def load_user(user_id):
-    # Esta función se usa para recargar el objeto usuario desde el ID de usuario almacenado en la sesión.
-    # Debería consultar la base de datos o el almacén de usuarios y devolver el objeto User.
-    # Ejemplo básico si los usuarios se almacenan en una tabla 'user' en SQLite:
     db = get_db()
     user_data = db.execute('SELECT * FROM user WHERE id = ?', (user_id,)).fetchone()
     if user_data:
@@ -25,8 +22,6 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        # Lógica de autenticación (ejemplo básico)
-        # En una aplicación real, esto consultaría la base de datos de forma segura.
         db = get_db()
         user_data = db.execute('SELECT * FROM user WHERE username = ?', (username,)).fetchone()
         
@@ -34,7 +29,6 @@ def login():
             user_obj = User(id=user_data['id'], username=user_data['username'])
             login_user(user_obj)
             flash('Inicio de sesión exitoso.', 'success')
-            # Redirigir a la página de escaneos o a la que el usuario intentaba acceder
             next_page = request.args.get('next')
             return redirect(next_page or url_for('main.index')) # Cambiar a la ruta principal deseada
         else:
@@ -49,14 +43,3 @@ def logout():
     flash('Sesión cerrada exitosamente.', 'info')
     return redirect(url_for('auth.login'))
 
-# Si se necesita una ruta para registrar usuarios (ejemplo):
-# @auth_bp.route('/register', methods=['GET', 'POST'])
-# def register():
-#     if request.method == 'POST':
-#         username = request.form['username']
-#         password = request.form['password']
-#         # Verificar si el usuario ya existe, hashear contraseña, guardar en DB
-#         # ... (lógica de registro)
-#         flash('Usuario registrado exitosamente. Por favor, inicie sesión.', 'success')
-#         return redirect(url_for('auth.login'))
-#     return render_template('register.html') # Crear register.html si se usa

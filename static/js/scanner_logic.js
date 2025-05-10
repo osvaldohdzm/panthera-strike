@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof SCRIPT_ROOT === 'undefined') {
         console.warn("SCRIPT_ROOT no fue definido globalmente por el HTML. Usando '' por defecto, esto podría no funcionar si la app no está en la raíz.");
-        window.SCRIPT_ROOT = ""; // Asegurar que SCRIPT_ROOT exista
+        window.SCRIPT_ROOT = "";
     }
 
     let appConfig = { tools: {}, profiles: {}, phases: {} };
@@ -59,11 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const entry = document.createElement('div');
         entry.classList.add('log-entry', `log-type-${type.toLowerCase()}`);
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        let iconClass = 'icon-info-circle';
-        if (type === 'error') iconClass = 'icon-times-circle';
-        else if (type === 'warn') iconClass = 'icon-exclamation-triangle';
-        else if (type === 'success') iconClass = 'icon-check-circle';
-        else if (type === 'command') iconClass = 'icon-terminal';
+        let iconClass = 'fas fa-info-circle'; // Default FontAwesome
+        if (type === 'error') iconClass = 'fas fa-times-circle';
+        else if (type === 'warn') iconClass = 'fas fa-exclamation-triangle';
+        else if (type === 'success') iconClass = 'fas fa-check-circle';
+        else if (type === 'command') iconClass = 'fas fa-terminal'; // o 'fas fa-dollar-sign'
         const iconSpan = `<span class="log-icon"><i class="${iconClass}"></i></span>`;
         const timestampSpan = `<span class="log-timestamp">[${timestamp}]</span>`;
         const messageSpan = `<span class="log-message-content"></span>`;
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const profile = appConfig.profiles[profileName];
             const button = document.createElement('button');
             button.className = 'button-profile';
-            button.innerHTML = `<i class="${profile.icon_class || 'icon-profile'}"></i> <span>${profileName}</span>`;
+            button.innerHTML = `<i class="${profile.icon_class || 'fas fa-id-badge'}"></i> <span>${profileName}</span>`;
             button.title = profile.description || profileName;
             button.dataset.profileName = profileName;
             button.onclick = () => applyScanProfile(profileName);
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const deselectAllButton = document.createElement('button');
         deselectAllButton.className = 'button-profile-deselect';
-        deselectAllButton.innerHTML = '<i class="icon-square-o"></i> <span>Desmarcar Todas</span>';
+        deselectAllButton.innerHTML = '<i class="far fa-square"></i> <span>Desmarcar Todas</span>'; // Usar far para un cuadrado vacío
         deselectAllButton.onclick = () => deselectAllTools();
         profilesContainer.appendChild(deselectAllButton);
     }
@@ -119,12 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!paramsToggleButton) return;
 
         let modified = false;
-        // Verificar si la herramienta está seleccionada
         const toolCheckboxInput = document.querySelector(`input.tool-item-checkbox[value="${toolId}"]`);
         if (!toolCheckboxInput || !toolCheckboxInput.checked) {
             paramsToggleButton.classList.remove('params-modified');
             const restoreButton = document.getElementById(`restore-${toolId}`);
-            if (restoreButton) restoreButton.disabled = true; // Deshabilitar si la herramienta no está seleccionada
+            if (restoreButton) restoreButton.disabled = true;
             return;
         }
 
@@ -138,8 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         currentValue = inputField.value;
                     }
-                    // Usar paramConf.default como el valor original por defecto.
-                    const defaultValue = paramConf.default !== undefined ? paramConf.default : (paramConf.type === 'checkbox' ? false : '');
+                    const defaultValue = paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.type === 'checkbox' ? false : '');
                     if (currentValue !== defaultValue) {
                         modified = true;
                         break;
@@ -178,20 +176,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const categoryKey = tool.category;
             if (!toolsByPhaseAndCategory[phaseKey]) {
                 toolsByPhaseAndCategory[phaseKey] = {
-                    meta: appConfig.phases[phaseKey] || { name: phaseKey, order: 99, icon_class: 'icon-question-circle' },
+                    meta: appConfig.phases[phaseKey] || { name: phaseKey, order: 99, icon_class: 'fas fa-question-circle' },
                     categories: {}
                 };
             }
             if (!toolsByPhaseAndCategory[phaseKey].categories[categoryKey]) {
                 toolsByPhaseAndCategory[phaseKey].categories[categoryKey] = {
                     display_name: tool.category_display_name || categoryKey,
-                    icon_class: tool.category_icon_class || 'icon-folder',
+                    icon_class: tool.category_icon_class || 'fas fa-folder',
                     tools: []
                 };
             }
-            // Guardar una copia del default para la lógica de "restaurar" y "modificado"
-            // 'original_default' se usará explícitamente para restaurar.
-            // 'paramConf.default' se usará para la comparación en 'updateParamsModifiedIndicator'.
             if (tool.cli_params_config) {
                 tool.cli_params_config.forEach(p => p.original_default = p.default);
             }
@@ -210,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const phaseDiv = document.createElement('div');
             phaseDiv.className = 'pentest-phase';
             const phaseDisplayName = phaseData.meta.name || phaseKey;
-            const phaseIconClass = phaseData.meta.icon_class || 'icon-layer-group';
+            const phaseIconClass = phaseData.meta.icon_class || 'fas fa-layer-group';
             const phaseHeader = document.createElement('div');
             phaseHeader.className = 'pentest-phase-header';
             phaseHeader.innerHTML = `
@@ -227,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const categoryDiv = document.createElement('div');
                 categoryDiv.className = 'tool-category';
                 const categoryDisplayName = categoryData.display_name;
-                const categoryIconClass = categoryData.icon_class;
+                const categoryIconClass = categoryData.icon_class || 'fas fa-folder';
                 const categoryHeader = document.createElement('div');
                 categoryHeader.className = 'tool-category-header';
                 categoryHeader.innerHTML = `
@@ -236,24 +231,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="slider"></span>
                     </label>
                     <h5><i class="${categoryIconClass}"></i> ${categoryDisplayName}</h5>
-                    <span class="accordion-arrow"><i class="icon-chevron-down"></i></span>`;
+                    <span class="accordion-arrow"><i class="fas fa-chevron-down"></i></span>`;
                 const toolItemsContainer = document.createElement('div');
                 toolItemsContainer.className = 'tool-items-container';
                 categoryHeader.onclick = (e) => {
                     if (e.target.type === 'checkbox' || e.target.classList.contains('slider') || e.target.closest('.toggle-switch')) return;
                     toolItemsContainer.classList.toggle('expanded');
+                    categoryHeader.classList.toggle('expanded'); // Para la flecha
                     const arrowIcon = categoryHeader.querySelector('.accordion-arrow i');
                     if (arrowIcon) {
-                        arrowIcon.className = toolItemsContainer.classList.contains('expanded') ? 'icon-chevron-up' : 'icon-chevron-down';
+                        arrowIcon.className = toolItemsContainer.classList.contains('expanded') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
                     }
                 };
                 categoryDiv.appendChild(categoryHeader);
 
                 categoryData.tools.forEach(tool => {
-                    const toolItemId = `tool-toggle-${tool.id}-${uniqueIdCounter++}`; // ID único para el checkbox de la herramienta
+                    const toolItemId = `tool-toggle-${tool.id}-${uniqueIdCounter++}`;
                     const toolItemDiv = document.createElement('div');
                     toolItemDiv.className = 'tool-item';
-
                     let paramsToggleButtonHtml = '';
                     const hasPredefinedParams = tool.cli_params_config && tool.cli_params_config.length > 0;
                     const allowsAdditionalArgs = tool.allow_additional_args;
@@ -261,18 +256,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (hasPredefinedParams || allowsAdditionalArgs) {
                         paramsToggleButtonHtml = `
                             <button class="tool-params-toggle-btn" id="params-toggle-${tool.id}" title="Configurar parámetros de ${tool.name}">
-                                <i class="icon-sliders-h"></i>
+                                <i class="fas fa-sliders-h"></i>
                             </button>`;
                     }
 
                     let toolDetailsContentHtml = '';
                     if (hasPredefinedParams || allowsAdditionalArgs) {
                         toolDetailsContentHtml += `<div class="tool-details-header">
-                                                      <h6><i class="icon-cogs"></i> Configuración de ${tool.name}</h6>
-                                                      <button class="restore-defaults-btn" id="restore-${tool.id}" title="Restaurar parámetros a sus valores por defecto" disabled>
-                                                          <i class="icon-undo"></i> Restaurar
-                                                      </button>
-                                                    </div>`;
+                                                     <h6><i class="fas fa-cogs"></i> Configuración de ${tool.name}</h6>
+                                                     <button class="restore-defaults-btn" id="restore-${tool.id}" title="Restaurar parámetros a sus valores por defecto" disabled>
+                                                         <i class="fas fa-undo"></i> Restaurar
+                                                     </button>
+                                                   </div>`;
                     }
 
                     if (hasPredefinedParams) {
@@ -283,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 toolDetailsContentHtml += `
                                     <input type="checkbox" id="cli-${tool.id}-${paramConf.name}" 
                                            name="cli_param_${tool.id}_${paramConf.name}" 
-                                           ${(paramConf.default !== undefined ? paramConf.default : false) ? 'checked' : ''} 
+                                           ${(paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.default || false)) ? 'checked' : ''} 
                                            title="${paramConf.description || ''}"
                                            data-tool-id="${tool.id}" data-param-name="${paramConf.name}">
                                     <label for="cli-${tool.id}-${paramConf.name}" title="${paramConf.description || ''}">${paramConf.label}</label>`;
@@ -294,23 +289,23 @@ document.addEventListener('DOMContentLoaded', () => {
                                     (paramConf.options || []).forEach(opt => {
                                         const value = typeof opt === 'string' ? opt : opt.value;
                                         const label = typeof opt === 'string' ? opt : opt.label;
-                                        toolDetailsContentHtml += `<option value="${value}" ${value === paramConf.default ? 'selected' : ''}>${label}</option>`;
+                                        toolDetailsContentHtml += `<option value="${value}" ${value === (paramConf.original_default !== undefined ? paramConf.original_default : paramConf.default) ? 'selected' : ''}>${label}</option>`;
                                     });
                                     toolDetailsContentHtml += `</select>`;
                                 } else if (paramConf.type === 'textarea') {
                                     toolDetailsContentHtml += `<textarea id="cli-${tool.id}-${paramConf.name}" 
-                                                                         name="cli_param_${tool.id}_${paramConf.name}" 
-                                                                         placeholder="${paramConf.placeholder || ''}" 
-                                                                         title="${paramConf.description || ''}"
-                                                                         data-tool-id="${tool.id}" data-param-name="${paramConf.name}">${paramConf.default || ''}</textarea>`;
-                                } else { // text, password, number, etc.
+                                                                      name="cli_param_${tool.id}_${paramConf.name}" 
+                                                                      placeholder="${paramConf.placeholder || ''}" 
+                                                                      title="${paramConf.description || ''}"
+                                                                      data-tool-id="${tool.id}" data-param-name="${paramConf.name}">${paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.default || '')}</textarea>`;
+                                } else {
                                     toolDetailsContentHtml += `<input type="${paramConf.type || 'text'}" 
-                                                                       id="cli-${tool.id}-${paramConf.name}" 
-                                                                       name="cli_param_${tool.id}_${paramConf.name}" 
-                                                                       placeholder="${paramConf.placeholder || ''}" 
-                                                                       value="${paramConf.default || ''}" 
-                                                                       title="${paramConf.description || ''}"
-                                                                       data-tool-id="${tool.id}" data-param-name="${paramConf.name}">`;
+                                                                      id="cli-${tool.id}-${paramConf.name}" 
+                                                                      name="cli_param_${tool.id}_${paramConf.name}" 
+                                                                      placeholder="${paramConf.placeholder || ''}" 
+                                                                      value="${paramConf.original_default !== undefined ? paramConf.original_default : (paramConf.default || '')}" 
+                                                                      title="${paramConf.description || ''}"
+                                                                      data-tool-id="${tool.id}" data-param-name="${paramConf.name}">`;
                                 }
                             }
                             toolDetailsContentHtml += `</div>`;
@@ -320,17 +315,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (allowsAdditionalArgs) {
                         toolDetailsContentHtml += `<div class="cli-param-row additional-args-row">
-                                                      <label for="cli-additional-${tool.id}" title="Argumentos CLI adicionales, separados por espacio. No incluyas el objetivo aquí.">Argumentos Adicionales:</label>
-                                                      <input type="text" id="cli-additional-${tool.id}" 
-                                                             name="cli_additional_args_${tool.id}" 
-                                                             class="additional-args-input" 
-                                                             placeholder="${tool.additional_args_placeholder || 'ej: --opcion valor -flag'}"
-                                                             data-tool-id="${tool.id}">
-                                                    </div>`;
+                                                    <label for="cli-additional-${tool.id}" title="Argumentos CLI adicionales, separados por espacio. No incluyas el objetivo aquí.">Argumentos Adicionales:</label>
+                                                    <input type="text" id="cli-additional-${tool.id}" 
+                                                           name="cli_additional_args_${tool.id}" 
+                                                           class="additional-args-input" 
+                                                           placeholder="${tool.additional_args_placeholder || 'ej: --opcion valor -flag'}"
+                                                           data-tool-id="${tool.id}">
+                                                  </div>`;
                     }
 
-                    const toolIconClass = tool.icon_class || 'icon-cog';
-                    const dangerousIndicator = tool.dangerous ? `<span class="tool-dangerous-indicator" title="Esta herramienta puede ser intrusiva o disruptiva"><i class="icon-exclamation-triangle"></i></span>` : '';
+                    const toolIconClass = tool.icon_class || 'fas fa-cog';
+                    const dangerousIndicator = tool.dangerous ? `<span class="tool-dangerous-indicator" title="Esta herramienta puede ser intrusiva o disruptiva"><i class="fas fa-exclamation-triangle"></i></span>` : '';
 
                     toolItemDiv.innerHTML = `
                         <div class="tool-item-main">
@@ -364,16 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 toolDetailsDiv.classList.remove('expanded');
                                 if (paramsToggleButton) paramsToggleButton.classList.remove('active');
                             }
-                            // La visibilidad del panel de detalles ahora se controla por la clase 'expanded',
-                            // no directamente por 'display: block/none' aquí.
-                            // El toggle button lo maneja.
                             updateParamsModifiedIndicator(tool.id);
                         });
-                        // Estado inicial del panel de detalles si la herramienta está marcada por defecto
-                        if (toolCheckboxInput.checked && (hasPredefinedParams || allowsAdditionalArgs)) {
-                            // No auto-expandir al cargar, el usuario debe hacer click en el toggle.
-                            // updateParamsModifiedIndicator se llamará más adelante para todos.
-                        }
                     }
 
                     const restoreButton = toolItemDiv.querySelector(`#restore-${tool.id}`);
@@ -402,47 +389,34 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
 
-                    // Event listeners para actualizar el indicador de "params-modified"
                     toolItemDiv.querySelectorAll(`[data-tool-id="${tool.id}"]`).forEach(input => {
-                        input.addEventListener('input', () => updateParamsModifiedIndicator(tool.id)); // Para text, textarea
-                        input.addEventListener('change', () => updateParamsModifiedIndicator(tool.id)); // Para checkbox, select
+                        input.addEventListener('input', () => updateParamsModifiedIndicator(tool.id));
+                        input.addEventListener('change', () => updateParamsModifiedIndicator(tool.id));
                     });
-
-                    // Estado inicial del indicador y botón restaurar
                     if (toolCheckboxInput.checked) {
                         updateParamsModifiedIndicator(tool.id);
                     } else {
                         if (restoreButton) restoreButton.disabled = true;
-                        if (paramsToggleButton) paramsToggleButton.classList.remove('params-modified');
                     }
-
-                }); // Fin categoryData.tools.forEach
+                });
                 categoryDiv.appendChild(toolItemsContainer);
                 phaseDiv.appendChild(categoryDiv);
-            } // Fin for categoryKey
+            }
             toolListDiv.appendChild(phaseDiv);
-        } // Fin for phaseKey
+        }
 
         addCheckboxEventListeners();
         updateAllParentCheckboxes();
         document.querySelectorAll('.tool-items-container').forEach(container => {
-            // Por defecto, los contenedores de herramientas y sus detalles están colapsados
             container.classList.remove('expanded');
-            const catHeader = container.previousElementSibling;
-            if (catHeader && catHeader.classList.contains('tool-category-header')) {
-                const arrowIcon = catHeader.querySelector('.accordion-arrow i');
-                if (arrowIcon) arrowIcon.className = 'icon-chevron-down';
+            const header = container.previousElementSibling;
+            if (header && header.classList.contains('tool-category-header')) {
+                header.classList.remove('expanded');
+                const arrowIcon = header.querySelector('.accordion-arrow i');
+                if (arrowIcon) arrowIcon.className = 'fas fa-chevron-down';
             }
-            container.querySelectorAll('.tool-details').forEach(detailDiv => {
-                detailDiv.classList.remove('expanded');
-                const toolItemMain = detailDiv.previousElementSibling;
-                if (toolItemMain) {
-                    const paramsToggle = toolItemMain.querySelector('.tool-params-toggle-btn');
-                    if (paramsToggle) paramsToggle.classList.remove('active');
-                }
-            });
         });
-    } // Fin populateToolSelection
+    }
 
     function addCheckboxEventListeners() {
         if (!toolListDiv) return;
@@ -469,8 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateParentCheckboxState(checkbox.dataset.phaseParentId);
         } else if (type === 'tool') {
             updateParentCheckboxState(checkbox.dataset.categoryParentId);
-            // updateParamsModifiedIndicator se llama desde el listener individual del toolCheckbox
-            // y también en toggleChildren, y en updateAllParentCheckboxes.
         }
     }
 
@@ -493,13 +465,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const toolDetailsDiv = toolItem.querySelector('.tool-details');
                     const paramsToggleBtn = toolItem.querySelector(`.tool-params-toggle-btn[id="params-toggle-${childCb.value}"]`);
                     if (toolDetailsDiv) {
-                        if (!isChecked) { // Si se desmarca masivamente
+                        if (!isChecked) {
                             toolDetailsDiv.classList.remove('expanded');
                             if (paramsToggleBtn) paramsToggleBtn.classList.remove('active');
                         }
-                        // No auto-expandir al marcar masivamente. El usuario lo hará si quiere.
                     }
-                    updateParamsModifiedIndicator(childCb.value); // Actualizar indicador
+                    updateParamsModifiedIndicator(childCb.value);
                 }
             });
         }
@@ -523,7 +494,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const childrenArray = Array.from(childrenCheckboxesNodeList);
         if (childrenArray.length === 0) {
             parentCheckbox.indeterminate = false;
-            // parentCheckbox.checked se mantiene si no hay hijos (o se actualiza si es parte de una cadena más grande)
             return;
         }
         const allChecked = childrenArray.every(child => child.checked && !child.indeterminate);
@@ -537,16 +507,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateAllParentCheckboxes() {
         if (!toolListDiv) return;
-        // Actualizar indicadores de parámetros para todas las herramientas al inicio o tras cambios masivos
         toolListDiv.querySelectorAll('.tool-item-checkbox').forEach(toolCb => {
             updateParamsModifiedIndicator(toolCb.value);
-            // La lógica de expansión/colapso de detalles ahora se maneja por su propio toggle o
-            // por la selección/deselección de la herramienta.
         });
         toolListDiv.querySelectorAll('.tool-category-checkbox').forEach(catCb => {
             updateParentCheckboxState(catCb.id);
         });
-        // Es posible que las fases también necesiten una actualización si se cargan con herramientas pre-seleccionadas
         toolListDiv.querySelectorAll('.pentest-phase-header input[type="checkbox"]').forEach(phaseCb => {
             updateParentCheckboxState(phaseCb.id);
         });
@@ -560,7 +526,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const toolCheckbox = toolListDiv.querySelector(`input[name="selected_tools"][value="${toolId}"]`);
                 if (toolCheckbox) {
                     toolCheckbox.checked = true;
-                    // Disparar evento change para que se actualice el indicador de modificado y otros estados
                     toolCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             });
@@ -568,31 +533,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const toolId in profile.params_override) {
                     const toolParams = profile.params_override[toolId];
                     for (const paramName in toolParams) {
-                        const inputField = document.getElementById(`cli-${toolId}-${paramName}`);
-                        if (inputField) {
-                            if (inputField.type === 'checkbox') {
-                                inputField.checked = toolParams[paramName];
-                            } else {
-                                inputField.value = toolParams[paramName];
+                        if (paramName === 'additional_args') {
+                            const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
+                            if (additionalArgsInput) {
+                                additionalArgsInput.value = toolParams.additional_args;
+                                additionalArgsInput.dispatchEvent(new Event('input', { bubbles: true }));
                             }
-                            // Disparar evento input/change para actualizar el indicador de modificado
-                            inputField.dispatchEvent(new Event('input', { bubbles: true }));
-                            inputField.dispatchEvent(new Event('change', { bubbles: true }));
-                        }
-                    }
-                    // Si hay un override de argumentos adicionales
-                    if (toolParams.additional_args !== undefined) {
-                        const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
-                        if (additionalArgsInput) {
-                            additionalArgsInput.value = toolParams.additional_args;
-                            additionalArgsInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        } else {
+                            const inputField = document.getElementById(`cli-${toolId}-${paramName}`);
+                            if (inputField) {
+                                if (inputField.type === 'checkbox') {
+                                    inputField.checked = toolParams[paramName];
+                                } else {
+                                    inputField.value = toolParams[paramName];
+                                }
+                                inputField.dispatchEvent(new Event('input', { bubbles: true }));
+                                inputField.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
                         }
                     }
                 }
             }
             logToTerminal(`Perfil '${profileName}' aplicado.`, 'success');
         }
-        updateAllParentCheckboxes(); // Esto actualizará los padres y los indicadores de parámetros
+        updateAllParentCheckboxes();
         document.querySelectorAll('.button-profile').forEach(btn => {
             btn.classList.remove('active');
             if (btn.dataset.profileName === profileName) {
@@ -615,8 +579,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (paramsToggleBtn) {
                             paramsToggleBtn.classList.remove('active');
                         }
-
-                        // Resetear los campos de este toolId a default
                         const toolId = checkbox.value;
                         const tool = appConfig.tools[toolId];
                         if (tool && tool.cli_params_config) {
@@ -632,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const additionalArgsInput = document.getElementById(`cli-additional-${toolId}`);
                             if (additionalArgsInput) additionalArgsInput.value = '';
                         }
-                        updateParamsModifiedIndicator(toolId); // Actualizar indicador y botón restaurar
+                        updateParamsModifiedIndicator(toolId);
                     }
                 }
             });
@@ -662,14 +624,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (pConf.type === 'checkbox') {
                             params[pConf.name] = inputField.checked;
                         } else {
-                            // Solo incluir el parámetro si tiene un valor o si el default no es vacío
-                            // y el campo es vacío (para permitir enviar valores vacíos explícitamente si es necesario)
-                            // Para simplificar, tomamos el valor del campo. Si está vacío y el backend
-                            // espera un default, el backend debe manejarlo.
                             params[pConf.name] = inputField.value;
                         }
-                    } else { // Si el campo no existe por alguna razón, usar el default de config
-                        params[pConf.name] = pConf.default;
+                    } else {
+                        params[pConf.name] = pConf.original_default !== undefined ? pConf.original_default : pConf.default;
                     }
                 });
             }
@@ -720,10 +678,14 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadJobZipLink.href = '#';
         }
         if (scanButton) {
-            scanButton.innerHTML = '<i class="icon-spinner icon-spin"></i> Escaneando...';
+            scanButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Escaneando...';
             scanButton.disabled = true;
         }
         if (scanOutput) scanOutput.innerHTML = '';
+        const toolProgressDetailsDiv = document.getElementById('toolProgressDetails');
+        if (toolProgressDetailsDiv) {
+            toolProgressDetailsDiv.innerHTML = '<p class="empty-placeholder">Esperando inicio de escaneo...</p>';
+        }
         displayedLogCount = 0;
         currentJobIdForLogs = null;
 
@@ -748,7 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (jobInfoPanel) jobInfoPanel.style.display = 'none';
                 if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'none';
                 if (scanButton) {
-                    scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo';
+                    scanButton.innerHTML = '<i class="fas fa-bolt"></i> Iniciar Escaneo';
                     scanButton.disabled = false;
                 }
             }
@@ -757,11 +719,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (jobInfoPanel) jobInfoPanel.style.display = 'none';
             if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'none';
             if (scanButton) {
-                scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo';
+                scanButton.innerHTML = '<i class="fas fa-bolt"></i> Iniciar Escaneo';
                 scanButton.disabled = false;
             }
         }
-    } // Fin startScan
+    }
 
     async function refreshStatus(jobIdToRefresh = null, initialCall = false) {
         const effectiveJobId = jobIdToRefresh || currentJobId;
@@ -793,9 +755,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (jobInfoPanel) jobInfoPanel.style.display = 'none';
                         if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'none';
                         clearTimeout(statusPollInterval);
-                        if (scanButton) { scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo'; scanButton.disabled = false; }
+                        if (scanButton) { scanButton.innerHTML = '<i class="fas fa-bolt"></i> Iniciar Escaneo'; scanButton.disabled = false; }
                         if (jobStatusBadge) { jobStatusBadge.textContent = 'N/A'; jobStatusBadge.className = 'status-badge status-unknown'; }
                         if (overallProgressBar) { overallProgressBar.style.width = `0%`; overallProgressBar.setAttribute('aria-valuenow', 0); overallProgressBar.textContent = `0%`; }
+                        const toolProgressDetailsDiv = document.getElementById('toolProgressDetails');
+                        if (toolProgressDetailsDiv) toolProgressDetailsDiv.innerHTML = '<p class="empty-placeholder">Seleccione un trabajo del historial o inicie uno nuevo.</p>';
                     }
                 } else {
                     const errorData = await response.json().catch(() => ({ error: "Error desconocido al obtener estado." }));
@@ -848,6 +812,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayedLogCount = data.logs.length;
             }
 
+            const toolProgressDetailsDiv = document.getElementById('toolProgressDetails');
+            if (toolProgressDetailsDiv) {
+                if (data.tool_progress && Object.keys(data.tool_progress).length > 0) {
+                    toolProgressDetailsDiv.innerHTML = '';
+                    const sortedToolKeys = Object.keys(data.tool_progress).sort((a, b) => {
+                        const statusA = data.tool_progress[a].status.toLowerCase();
+                        const statusB = data.tool_progress[b].status.toLowerCase();
+                        const order = { running: 0, pending: 1 };
+                        const orderValA = order[statusA] !== undefined ? order[statusA] : 2;
+                        const orderValB = order[statusB] !== undefined ? order[statusB] : 2;
+                        if (orderValA !== orderValB) return orderValA - orderValB;
+                        return (data.tool_progress[a].name || "").localeCompare(data.tool_progress[b].name || "");
+                    });
+
+                    sortedToolKeys.forEach(toolKey => {
+                        const toolProg = data.tool_progress[toolKey];
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'tool-progress-item';
+                        let statusIcon = 'fas fa-hourglass-half';
+                        let statusText = toolProg.status ? toolProg.status.charAt(0).toUpperCase() + toolProg.status.slice(1) : 'Desconocido';
+                        let statusClass = `tool-status-${toolProg.status ? toolProg.status.toLowerCase().replace(/_/g, '-') : 'unknown'}`;
+
+                        if (toolProg.status) {
+                            const lowerStatus = toolProg.status.toLowerCase();
+                            if (lowerStatus === 'running') statusIcon = 'fas fa-spinner fa-spin';
+                            else if (lowerStatus === 'completed') statusIcon = 'fas fa-check-circle';
+                            else if (lowerStatus === 'error' || lowerStatus === 'timeout') statusIcon = 'fas fa-times-circle';
+                            else if (lowerStatus === 'skipped') statusIcon = 'fas fa-forward';
+                            else if (lowerStatus === 'cancelled') statusIcon = 'fas fa-ban';
+                        }
+
+                        const toolDefinitionFromConfig = appConfig.tools[toolProg.id]; // Usar toolProg.id (que debe ser el tool_id)
+                        const iconClass = toolDefinitionFromConfig ? toolDefinitionFromConfig.icon_class : 'fas fa-cog';
+
+                        itemDiv.innerHTML = `
+                            <span class="tool-progress-name"><i class="${iconClass}"></i> ${toolProg.name || 'Herramienta Desconocida'}</span>
+                            <span class="tool-progress-status ${statusClass}">
+                                <i class="${statusIcon}"></i> ${statusText}
+                            </span>
+                        `;
+                        let titleText = `Comando: ${toolProg.command || 'N/A'}`;
+                        if (toolProg.error_message) titleText += `\nError: ${toolProg.error_message}`;
+                        if (toolProg.output_file) titleText += `\nSalida: ${toolProg.output_file}`;
+                        itemDiv.title = titleText;
+                        toolProgressDetailsDiv.appendChild(itemDiv);
+                    });
+                } else if (initialCall || !toolProgressDetailsDiv.innerHTML.includes('tool-progress-item')) {
+                    toolProgressDetailsDiv.innerHTML = '<p class="empty-placeholder">No hay detalles de herramientas para este trabajo aún.</p>';
+                }
+            }
+
             const terminalStates = ['COMPLETED', 'CANCELLED', 'ERROR', 'COMPLETED_WITH_ERRORS'];
             if (terminalStates.includes(data.status?.toUpperCase())) {
                 if (cancelJobButton) cancelJobButton.style.display = 'none';
@@ -860,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     downloadJobZipLink.classList.add('disabled');
                 }
                 if (effectiveJobId === currentJobId) {
-                    if (scanButton) { scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo'; scanButton.disabled = false; }
+                    if (scanButton) { scanButton.innerHTML = '<i class="fas fa-bolt"></i> Iniciar Escaneo'; scanButton.disabled = false; }
                 }
                 clearTimeout(statusPollInterval);
                 if (jobsListArea) loadJobs();
@@ -913,7 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadJobs() {
         if (!jobsListArea) return;
-        jobsListArea.innerHTML = '<li class="loading-placeholder"><i class="icon-spinner icon-spin"></i> Cargando historial...</li>';
+        jobsListArea.innerHTML = '<li class="loading-placeholder"><i class="fas fa-spinner fa-spin"></i> Cargando historial...</li>';
         try {
             const response = await fetch(`${SCRIPT_ROOT}/api/jobs`);
             if (!response.ok) throw new Error(`HTTP error ${response.status}`);
@@ -933,14 +948,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 let targetsDisplay = Array.isArray(job.targets) ? job.targets.join(', ') : (job.targets || 'N/A');
                 if (targetsDisplay.length > 35) targetsDisplay = targetsDisplay.substring(0, 32) + '...';
 
-                let statusIconClass = 'icon-question-circle';
+                let statusIconClass = 'fas fa-question-circle';
                 const upperStatus = (job.status || '').toUpperCase();
-                if (upperStatus === 'COMPLETED') statusIconClass = 'icon-check-circle-green';
-                else if (upperStatus === 'COMPLETED_WITH_ERRORS') statusIconClass = 'icon-check-circle-orange';
-                else if (upperStatus === 'RUNNING') statusIconClass = 'icon-spinner icon-spin blue';
-                else if (upperStatus === 'ERROR') statusIconClass = 'icon-times-circle-red';
-                else if (upperStatus === 'CANCELLED') statusIconClass = 'icon-ban grey';
-                else if (upperStatus === 'PENDING' || upperStatus === 'INITIALIZING' || upperStatus === 'REQUEST_CANCEL' || upperStatus === 'CANCELLING') statusIconClass = 'icon-clock orange';
+                if (upperStatus === 'COMPLETED') statusIconClass = 'fas fa-check-circle icon-check-circle-green';
+                else if (upperStatus === 'COMPLETED_WITH_ERRORS') statusIconClass = 'fas fa-exclamation-circle icon-check-circle-orange';
+                else if (upperStatus === 'RUNNING') statusIconClass = 'fas fa-spinner fa-spin icon-spinner blue';
+                else if (upperStatus === 'ERROR') statusIconClass = 'fas fa-times-circle icon-times-circle-red';
+                else if (upperStatus === 'CANCELLED') statusIconClass = 'fas fa-ban icon-ban grey';
+                else if (upperStatus === 'PENDING' || upperStatus === 'INITIALIZING' || upperStatus === 'REQUEST_CANCEL' || upperStatus === 'CANCELLING') statusIconClass = 'fas fa-clock icon-clock orange';
 
                 li.innerHTML = `
                     <div class="job-card-header">
@@ -951,21 +966,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="job-card-body">
                         <p class="job-targets" title="${Array.isArray(job.targets) ? job.targets.join(', ') : (job.targets || 'N/A')}">
-                            <strong><i class="icon-target"></i> Objetivos:</strong> ${targetsDisplay}
+                            <strong><i class="fas fa-bullseye"></i> Objetivos:</strong> ${targetsDisplay}
                         </p>
                         <p class="job-timestamp">
-                            <strong><i class="icon-calendar"></i> Fecha:</strong> ${job.timestamp ? new Date(job.timestamp).toLocaleString() : 'N/A'}
+                            <strong><i class="fas fa-calendar-alt"></i> Fecha:</strong> ${job.timestamp ? new Date(job.timestamp).toLocaleString() : 'N/A'}
                         </p>
                     </div>
                     <div class="job-card-actions">
                         <button class="button-secondary view-details-btn" data-job-id="${job.id}">
-                            <i class="icon-eye"></i> Ver Detalles
+                            <i class="fas fa-eye"></i> Ver Detalles
                         </button>
                         ${job.zip_path ? `<a href="${SCRIPT_ROOT}${job.zip_path}" class="button-success download-zip-btn" target="_blank" rel="noopener noreferrer">
-                                            <i class="icon-download"></i> Descargar ZIP
+                                            <i class="fas fa-download"></i> Descargar ZIP
                                          </a>` :
                         `<button class="button-disabled download-zip-btn" disabled title="Resultados no disponibles para descarga">
-                                            <i class="icon-download"></i> Descargar ZIP
+                                            <i class="fas fa-download"></i> Descargar ZIP
                                         </button>`}
                     </div>`;
                 const viewDetailsBtn = li.querySelector('.view-details-btn');
@@ -1116,6 +1131,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentJobInfoDiv) currentJobInfoDiv.style.display = 'none';
             if (cancelJobButton) cancelJobButton.style.display = 'none';
             if (downloadJobZipLink) downloadJobZipLink.style.display = 'none';
+            const toolProgressDetailsDiv = document.getElementById('toolProgressDetails');
+            if (toolProgressDetailsDiv) toolProgressDetailsDiv.innerHTML = '<p class="empty-placeholder">Seleccione un trabajo del historial o inicie uno nuevo.</p>';
         }
     });
 });

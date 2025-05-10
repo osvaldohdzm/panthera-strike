@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -rf results/*
+rm -rf scan_results/*
