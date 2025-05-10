@@ -32,8 +32,9 @@ pip-wheel-metadata/
 MANIFEST
 
 # PyInstaller
-# *.manifest
-# *.spec
+*.manifest
+*.spec
+*.txt
 
 # Installer logs
 pip-log.txt
