@@ -8,21 +8,22 @@ jobs_lock = threading.Lock()
 
 
 PENTEST_PHASES = {
-    "reconnaissance_infra_web": {"name": "Reconocimiento (Infraestructura y Web)", "icon_class": "icon-eye", "order": 1},
-    "identification_infra": {"name": "Identificación (Infraestructura)", "icon_class": "icon-server", "order": 2},
-    "identification_web": {"name": "Identificación (Aplicaciones Web)", "icon_class": "icon-globe-search", "order": 3},
+    "reconnaissance_infra_web": {"name": "Reconocimiento (Infraestructura y Web)", "icon_class": "fas fa-eye", "order": 1},
+    "identification_infra": {"name": "Identificación (Infraestructura)", "icon_class": "fas fa-server", "order": 2},
+    "identification_web": {"name": "Identificación (Aplicaciones Web)", "icon_class": "fas fa-globe-americas", "order": 3},
 }
 
 TOOLS_CONFIG = {
     "amass_enum": {
+        "id": "amass_enum",
         "name": "Amass Enum",
         "command_template": "amass enum -d {target_domain} -active -ip -brute -min-for-recursive 3 -oA {output_file_base}_amass",
         "target_type": "domain",
         "phase": "reconnaissance_infra_web",
         "category": "Asset Discovery",
         "category_display_name": "Descubrimiento de Activos y Subdominios",
-        "category_icon_class": "icon-sitemap",
-        "icon_class": "icon-binoculars",
+        "category_icon_class": "fas fa-sitemap",
+        "icon_class": "fas fa-binoculars",
         "timeout": 1800,
         "default_enabled": True,
         "description": "Descubrimiento profundo de activos y subdominios usando Amass.",
@@ -33,14 +34,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "subfinder": {
+        "id": "subfinder",
         "name": "Subfinder",
         "command_template": "subfinder -d {target_domain} -all -o {output_file}",
         "target_type": "domain",
         "phase": "reconnaissance_infra_web",
         "category": "Asset Discovery",
         "category_display_name": "Descubrimiento de Activos y Subdominios",
-        "category_icon_class": "icon-sitemap",
-        "icon_class": "icon-search",
+        "category_icon_class": "fas fa-sitemap",
+        "icon_class": "fas fa-search",
         "timeout": 600,
         "default_enabled": True,
         "description": "Descubrimiento pasivo rápido de subdominios.",
@@ -51,17 +53,18 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "httpx_recon": {
+        "id": "httpx_recon",
         "name": "HTTPX (Recon)",
         "command_template": "httpx -l {target_file_subdomains} -silent -title -tech-detect -status-code -o {output_file}",
         "target_type": "domain_list_file",
         "phase": "reconnaissance_infra_web",
         "category": "Asset Discovery",
         "category_display_name": "Descubrimiento de Activos y Subdominios",
-        "category_icon_class": "icon-sitemap",
-        "icon_class": "icon-http",
+        "category_icon_class": "fas fa-sitemap",
+        "icon_class": "fas fa-project-diagram",
         "timeout": 900,
         "default_enabled": True,
-        "description": "Determina hosts web activos y extrae información tecnológica.",
+        "description": "Determina hosts web activos y extrae información tecnológica de una lista de subdominios.",
         "cli_params_config": [],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: -threads 100 -p 80,443,8080",
@@ -69,14 +72,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "findomain": {
+        "id": "findomain",
         "name": "Findomain",
         "command_template": "findomain -t {target_domain} -u {output_file}",
         "target_type": "domain",
         "phase": "reconnaissance_infra_web",
         "category": "Asset Discovery",
         "category_display_name": "Descubrimiento de Activos y Subdominios",
-        "category_icon_class": "icon-sitemap",
-        "icon_class": "icon-search-dollar",
+        "category_icon_class": "fas fa-sitemap",
+        "icon_class": "fas fa-search-dollar",
         "timeout": 600,
         "default_enabled": False,
         "description": "Descubrimiento pasivo de subdominios usando APIs y certificados.",
@@ -87,14 +91,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "theharvester": {
+        "id": "theharvester",
         "name": "theHarvester",
         "command_template": "theHarvester -d {target_domain} -b all -f {output_file_base}_harvester.html",
         "target_type": "domain",
         "phase": "reconnaissance_infra_web",
         "category": "Asset Discovery",
         "category_display_name": "Descubrimiento de Activos y Subdominios",
-        "category_icon_class": "icon-sitemap",
-        "icon_class": "icon-user-secret",
+        "category_icon_class": "fas fa-sitemap",
+        "icon_class": "fas fa-user-secret",
         "timeout": 1200,
         "default_enabled": False,
         "description": "OSINT para descubrir subdominios, emails, empleados, IPs.",
@@ -105,14 +110,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "dnsx": {
+        "id": "dnsx",
         "name": "DNSX",
         "command_template": "dnsx -l {target_file_subdomains} -silent -a -aaaa -cname -ns -mx -soa -resp -o {output_file}",
         "target_type": "domain_list_file",
         "phase": "reconnaissance_infra_web",
         "category": "DNS Enumeration",
         "category_display_name": "Enumeración DNS Avanzada",
-        "category_icon_class": "icon-network-wired",
-        "icon_class": "icon-dns",
+        "category_icon_class": "fas fa-network-wired",
+        "icon_class": "fas fa-dns",
         "timeout": 600,
         "default_enabled": True,
         "description": "Resolución masiva de DNS y filtrado de registros.",
@@ -123,14 +129,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "dnsrecon": {
+        "id": "dnsrecon",
         "name": "DNSRecon",
         "command_template": "dnsrecon -d {target_domain} -a -s -y -k -w -z -t axfr,std,srv,brt,spf --xml {output_file_xml}",
         "target_type": "domain",
         "phase": "reconnaissance_infra_web",
         "category": "DNS Enumeration",
         "category_display_name": "Enumeración DNS Avanzada",
-        "category_icon_class": "icon-network-wired",
-        "icon_class": "icon-search-location",
+        "category_icon_class": "fas fa-network-wired",
+        "icon_class": "fas fa-search-location",
         "timeout": 900,
         "default_enabled": False,
         "description": "Enumeración DNS profunda (AXFR, SRV, etc.).",
@@ -141,14 +148,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "nmap_dns_scripts": {
+        "id": "nmap_dns_scripts",
         "name": "Nmap (DNS Scripts)",
         "command_template": "nmap --script dns-brute,dns-zone-transfer,dns-srv-enum -p 53 {target_domain_or_ip} -oA {output_file_base}_nmap_dns",
         "target_type": "domain_or_ip",
         "phase": "reconnaissance_infra_web",
         "category": "DNS Enumeration",
         "category_display_name": "Enumeración DNS Avanzada",
-        "category_icon_class": "icon-network-wired",
-        "icon_class": "icon-map-signs",
+        "category_icon_class": "fas fa-network-wired",
+        "icon_class": "fas fa-map-signs",
         "timeout": 1200,
         "default_enabled": False,
         "description": "Scripts NSE de Nmap para interrogación DNS.",
@@ -159,20 +167,21 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "massdns": {
+        "id": "massdns",
         "name": "MassDNS",
-        "command_template": "massdns -r {resolvers_file} -t A -o S -w {output_file} {target_wordlist_file}",
+        "command_template": "massdns -r {resolvers_file} -t A -o S -w {output_file} {target_wordlist_file_massdns}",
         "target_type": "domain_wordlist_file",
         "phase": "reconnaissance_infra_web",
         "category": "DNS Enumeration",
         "category_display_name": "Enumeración DNS Avanzada",
-        "category_icon_class": "icon-network-wired",
-        "icon_class": "icon-fighter-jet",
+        "category_icon_class": "fas fa-network-wired",
+        "icon_class": "fas fa-fighter-jet",
         "timeout": 1800,
         "default_enabled": False,
         "description": "Fuerza bruta de subdominios a alta velocidad.",
         "cli_params_config": [
-            {"name": "resolvers_file", "label": "Archivo de Resolvers", "type": "text", "default": "lists/resolvers.txt", "placeholder": "ruta/a/resolvers.txt"},
-            {"name": "wordlist_file", "label": "Archivo Wordlist (para {target})", "type": "text", "default": "lists/default_sub_wordlist.txt", "placeholder": "ruta/a/wordlist.txt"}
+            {"name": "resolvers_file", "label": "Archivo de Resolvers", "type": "text", "default": "config/resolvers.txt", "placeholder": "ruta/a/resolvers.txt"},
+            {"name": "target_wordlist_file_massdns", "label": "Archivo Wordlist (para MassDNS)", "type": "text", "default": "lists/subdomains-top1million-110000.txt", "placeholder": "ruta/a/wordlist.txt"}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: -s 10000 --retry 3",
@@ -180,20 +189,21 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "nmap_top_ports": {
+        "id": "nmap_top_ports",
         "name": "Nmap (Top Ports + Servicios)",
-        "command_template": "nmap -sV {nmap_timing_option} {nmap_show_open_flag} --top-ports 1000 {target_host_or_ip} -oA {output_file_base}_nmap_top1000",
+        "command_template": "nmap -sV {nmap_timing_option_value} {nmap_show_open_flag_cmd} --top-ports 1000 {target_host_or_ip} -oA {output_file_base}_nmap_top1000",
         "target_type": "host_or_ip",
         "phase": "identification_infra",
         "category": "Port Scanning",
         "category_display_name": "Escaneo de Puertos",
-        "category_icon_class": "icon-network-wired",
-        "icon_class": "icon-search",
+        "category_icon_class": "fas fa-network-wired",
+        "icon_class": "fas fa-search",
         "timeout": 1200,
         "default_enabled": True,
         "description": "Escaneo Nmap de los 1000 puertos TCP más comunes con detección de servicios.",
         "cli_params_config": [
-            {"name": "nmap_timing_option", "label": "Timing (-T)", "type": "select", "default": "-T4", "options": ["-T0", "-T1", "-T2", "-T3", "-T4", "-T5"], "description": "Controla la agresividad del escaneo Nmap."},
-            {"name": "nmap_show_open_flag", "label": "Mostrar solo puertos abiertos", "type": "checkbox", "cli_true": "--open", "cli_false": "", "default": False, "description": "Muestra solo los puertos que Nmap determina como abiertos."}
+            {"name": "nmap_timing_option_value", "label": "Timing (-T)", "type": "select", "default": "-T4", "options": ["-T0", "-T1", "-T2", "-T3", "-T4", "-T5"], "description": "Controla la agresividad del escaneo Nmap."},
+            {"name": "nmap_show_open_flag_cmd", "label": "Mostrar solo puertos abiertos", "type": "checkbox", "default": False, "cli_true": "--open", "cli_false": "", "description": "Muestra solo los puertos que Nmap determina como abiertos."}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: --reason -n -Pn",
@@ -201,14 +211,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "nmap_full_tcp": {
+        "id": "nmap_full_tcp",
         "name": "Nmap (Full TCP + Scripts)",
         "command_template": "nmap -sV -sC -p- {target_host_or_ip} -oA {output_file_base}_nmap_full_tcp",
         "target_type": "host_or_ip",
         "phase": "identification_infra",
         "category": "Port Scanning",
         "category_display_name": "Escaneo de Puertos",
-        "category_icon_class": "icon-network-wired",
-        "icon_class": "icon-search-plus",
+        "category_icon_class": "fas fa-network-wired",
+        "icon_class": "fas fa-search-plus",
         "timeout": 7200,
         "default_enabled": False,
         "description": "Escaneo Nmap completo de todos los puertos TCP, con detección de servicios y scripts por defecto.",
@@ -219,39 +230,41 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "naabu": {
+        "id": "naabu",
         "name": "Naabu",
-        "command_template": "naabu -host {target_host_or_ip_list} -pf {ports_to_scan_file} -silent -o {output_file}",
+        "command_template": "naabu -host {target_host_or_ip} -pf {ports_to_scan_file} -silent -o {output_file}",
         "target_type": "host_or_ip",
         "phase": "identification_infra",
         "category": "Port Scanning",
         "category_display_name": "Escaneo de Puertos",
-        "category_icon_class": "icon-network-wired",
-        "icon_class": "icon-bolt",
+        "category_icon_class": "fas fa-network-wired",
+        "icon_class": "fas fa-bolt",
         "timeout": 900,
         "default_enabled": False,
         "description": "Escáner SYN rápido para identificar puertos abiertos.",
         "cli_params_config": [
-             {"name": "ports_to_scan_file", "label": "Archivo de Puertos", "type": "text", "default": "config/naabu_ports.txt", "placeholder": "ruta/a/ports.txt", "description": "Archivo con puertos a escanear, ej: 80,443,1-1000."}
+             {"name": "ports_to_scan_file", "label": "Archivo de Puertos (-pf)", "type": "text", "default": "config/naabu_ports.txt", "placeholder": "ruta/a/ports.txt", "description": "Archivo con puertos a escanear, ej: 80,443,1-1000."}
         ],
         "allow_additional_args": True,
-        "additional_args_placeholder": "ej: -rate 1000 -retries 2",
+        "additional_args_placeholder": "ej: -rate 1000 -retries 2 -top-ports 100",
         "dangerous": False,
         "needs_shell": False,
     },
     "masscan": {
+        "id": "masscan",
         "name": "Masscan",
         "command_template": "masscan -p1-65535 {target_ip_range} --rate={rate} -oL {output_file}",
         "target_type": "ip_range",
         "phase": "identification_infra",
         "category": "Port Scanning",
         "category_display_name": "Escaneo de Puertos",
-        "category_icon_class": "icon-network-wired",
-        "icon_class": "icon-tachometer-alt",
+        "category_icon_class": "fas fa-network-wired",
+        "icon_class": "fas fa-tachometer-alt",
         "timeout": 3600,
         "default_enabled": False,
         "description": "Escáner de puertos extremadamente rápido para grandes rangos IP.",
         "cli_params_config": [
-            {"name": "rate", "label": "Tasa de Paquetes", "type": "number", "default": "100000", "placeholder": "100000"}
+            {"name": "rate", "label": "Tasa de Paquetes (--rate)", "type": "number", "default": 100000, "placeholder": "100000"}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: --banners --source-port 61000",
@@ -259,19 +272,20 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "httpx_tech": {
+        "id": "httpx_tech",
         "name": "HTTPX (Tech Detect)",
         "command_template": "httpx -l {target_file_live_hosts} -silent -threads {threads} -tech-detect -server -cdn -waf -o {output_file}",
         "target_type": "url_list_file",
         "phase": "identification_web",
         "category": "Web Tech Identification",
         "category_display_name": "Identificación de Tecnologías Web",
-        "category_icon_class": "icon-cogs",
-        "icon_class": "icon-fingerprint",
+        "category_icon_class": "fas fa-cogs",
+        "icon_class": "fas fa-fingerprint",
         "timeout": 900,
         "default_enabled": True,
-        "description": "Sondeo de servidores web, detección de tecnología, WAF, CDN.",
+        "description": "Sondeo de servidores web, detección de tecnología, WAF, CDN desde una lista de hosts.",
         "cli_params_config": [
-            {"name": "threads", "label": "Hilos (-threads)", "type": "number", "default": "50", "placeholder": "50"}
+            {"name": "threads", "label": "Hilos (-threads)", "type": "number", "default": 50, "placeholder": "50"}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: -x GET,POST -mc 200,302",
@@ -279,14 +293,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "whatweb": {
+        "id": "whatweb",
         "name": "WhatWeb",
         "command_template": "whatweb -a {aggression} {target_url} --log-brief {output_file_json}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Web Tech Identification",
         "category_display_name": "Identificación de Tecnologías Web",
-        "category_icon_class": "icon-cogs",
-        "icon_class": "icon-microscope",
+        "category_icon_class": "fas fa-cogs",
+        "icon_class": "fas fa-microscope",
         "timeout": 300,
         "default_enabled": True,
         "description": "Identificación detallada de tecnologías web, CMS, JavaScript libs.",
@@ -299,14 +314,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "nuclei_tech_info": {
+        "id": "nuclei_tech_info",
         "name": "Nuclei (Info/Tech)",
         "command_template": "nuclei -u {target_url} -tags info,tech -o {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Web Tech Identification",
         "category_display_name": "Identificación de Tecnologías Web",
-        "category_icon_class": "icon-cogs",
-        "icon_class": "icon-info-circle",
+        "category_icon_class": "fas fa-cogs",
+        "icon_class": "fas fa-info-circle",
         "timeout": 600,
         "default_enabled": True,
         "description": "Usa plantillas de Nuclei para identificar tecnologías y errores de configuración.",
@@ -317,14 +333,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "nmap_http_scripts": {
+        "id": "nmap_http_scripts",
         "name": "Nmap (HTTP Scripts)",
         "command_template": "nmap -sV --script http-enum,http-headers,http-waf-fingerprint,http-sitemap-generator -p {ports} {target_ip_or_domain} -oA {output_file_base}_nmap_http",
         "target_type": "ip_or_domain",
         "phase": "identification_web",
         "category": "Web Tech Identification",
         "category_display_name": "Identificación de Tecnologías Web",
-        "category_icon_class": "icon-cogs",
-        "icon_class": "icon-file-code",
+        "category_icon_class": "fas fa-cogs",
+        "icon_class": "fas fa-file-code",
         "timeout": 1200,
         "default_enabled": False,
         "description": "Scripts HTTP de Nmap para enumerar directorios, WAFs, etc.",
@@ -337,20 +354,21 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "ffuf_common": {
+        "id": "ffuf_common",
         "name": "FFUF (Common Dirs/Files)",
-        "command_template": "ffuf -w {wordlist_path} -u {target_url}/FUZZ {custom_ffuf_headers} -mc 200,204,301,302,307,401,403 -o {output_file_json} -of json",
+        "command_template": "ffuf -w {wordlist_path} -u {target_url}/FUZZ {custom_ffuf_headers_cmd} -mc 200,204,301,302,307,401,403 -o {output_file_json} -of json",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
         "category_display_name": "Descubrimiento de Contenido",
-        "category_icon_class": "icon-folder-open",
-        "icon_class": "icon-search-location",
+        "category_icon_class": "fas fa-folder-open",
+        "icon_class": "fas fa-search-location",
         "timeout": 1800,
         "default_enabled": True,
         "description": "Fuzzing rápido de directorios y archivos comunes.",
         "cli_params_config": [
-            {"name": "wordlist_path", "label": "Wordlist", "type": "text", "default": "/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt", "placeholder": "ruta/a/wordlist.txt"},
-            {"name": "custom_ffuf_headers", "label": "Cabeceras Adicionales (una por línea)", "type": "textarea", "cli_format": "-H \"{value}\"", "default": "", "placeholder": "User-Agent: MiAgente\nCookie: session=123", "description": "Añade cabeceras HTTP personalizadas a las peticiones de FFUF."}
+            {"name": "wordlist_path", "label": "Wordlist (-w)", "type": "text", "default": "/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt", "placeholder": "ruta/a/wordlist.txt"},
+            {"name": "custom_ffuf_headers_cmd", "label": "Cabeceras Adicionales (-H)", "type": "textarea", "default": "", "placeholder": "User-Agent: MiAgente\nCookie: session=123", "description": "Añade cabeceras HTTP personalizadas (una por línea) a las peticiones de FFUF. Formato: Header: Value", "cli_format": "-H \"{value}\""}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: -timeout 5 -recursion -recursion-depth 2",
@@ -358,19 +376,20 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "dirsearch_common": {
+        "id": "dirsearch_common",
         "name": "Dirsearch (Common)",
         "command_template": "dirsearch -u {target_url} -e {extensions} -w {wordlist_path} --output={output_file} --format=json",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
         "category_display_name": "Descubrimiento de Contenido",
-        "category_icon_class": "icon-folder-open",
-        "icon_class": "icon-folder-tree",
+        "category_icon_class": "fas fa-folder-open",
+        "icon_class": "fas fa-folder-tree",
         "timeout": 1800,
         "default_enabled": False,
         "description": "Descubrimiento de rutas y recursos ocultos.",
          "cli_params_config": [
-            {"name": "wordlist_path", "label": "Wordlist", "type": "text", "default": "/usr/share/wordlists/dirb/common.txt", "placeholder": "ruta/a/wordlist.txt"},
+            {"name": "wordlist_path", "label": "Wordlist (-w)", "type": "text", "default": "/usr/share/wordlists/dirb/common.txt", "placeholder": "ruta/a/wordlist.txt"},
             {"name": "extensions", "label": "Extensiones (-e)", "type": "text", "default": "php,html,js,txt", "placeholder": "php,html,js"}
         ],
         "allow_additional_args": True,
@@ -379,14 +398,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
      "gobuster_dir": {
+        "id": "gobuster_dir",
         "name": "Gobuster (dir)",
         "command_template": "gobuster dir -u {target_url} -w {wordlist_path} -x {extensions} -o {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
         "category_display_name": "Descubrimiento de Contenido",
-        "category_icon_class": "icon-folder-open",
-        "icon_class": "icon-ghost",
+        "category_icon_class": "fas fa-folder-open",
+        "icon_class": "fas fa-ghost",
         "timeout": 1800,
         "default_enabled": False,
         "description": "Fuerza bruta de directorios/archivos.",
@@ -400,14 +420,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "feroxbuster": {
+        "id": "feroxbuster",
         "name": "Feroxbuster",
-        "command_template": "feroxbuster -u {target_url} -w {wordlist_path} --depth {depth} -x {extensions} -o {output_file}",
+        "command_template": "feroxbuster --url {target_url} -w {wordlist_path} --depth {depth} -x {extensions} -o {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
         "category_display_name": "Descubrimiento de Contenido",
-        "category_icon_class": "icon-folder-open",
-        "icon_class": "icon-rocket",
+        "category_icon_class": "fas fa-folder-open",
+        "icon_class": "fas fa-rocket",
         "timeout": 2400,
         "default_enabled": False,
         "description": "Descubrimiento recursivo de contenido rápido.",
@@ -422,14 +443,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "dirb": {
+        "id": "dirb",
         "name": "Dirb",
         "command_template": "dirb {target_url} {wordlist_path} -o {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Content Discovery",
         "category_display_name": "Descubrimiento de Contenido",
-        "category_icon_class": "icon-folder-open",
-        "icon_class": "icon-history",
+        "category_icon_class": "fas fa-folder-open",
+        "icon_class": "fas fa-history",
         "timeout": 1200,
         "default_enabled": False,
         "description": "Escáner clásico de directorios/archivos.",
@@ -442,14 +464,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "nuclei_vulns": {
+        "id": "nuclei_vulns",
         "name": "Nuclei (Vulns Scan)",
         "command_template": "nuclei -u {target_url} -tags {tags} -severity {severity} -o {output_file_json} -json",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Automated Vuln Analysis",
         "category_display_name": "Análisis Automatizado de Vulnerabilidades",
-        "category_icon_class": "icon-shield-alt",
-        "icon_class": "icon-crosshairs",
+        "category_icon_class": "fas fa-shield-alt",
+        "icon_class": "fas fa-crosshairs",
         "timeout": 1800,
         "default_enabled": True,
         "description": "Escáner basado en plantillas para vulnerabilidades conocidas, CVEs y errores de configuración.",
@@ -463,14 +486,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "zaproxy_quick": {
+        "id": "zaproxy_quick",
         "name": "OWASP ZAP (Quick Scan)",
         "command_template": "zap.sh -cmd -quickurl {target_url} -quickprogress -quickout {output_file_xml}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Automated Vuln Analysis",
         "category_display_name": "Análisis Automatizado de Vulnerabilidades",
-        "category_icon_class": "icon-shield-alt",
-        "icon_class": "icon-spider",
+        "category_icon_class": "fas fa-shield-alt",
+        "icon_class": "fas fa-spider",
         "timeout": 3600,
         "default_enabled": False,
         "description": "Escaneo DAST rápido con OWASP ZAP.",
@@ -481,14 +505,15 @@ TOOLS_CONFIG = {
         "needs_shell": True,
     },
     "nikto": {
+        "id": "nikto",
         "name": "Nikto",
         "command_template": "nikto -h {target_url} -Format txt -output {output_file} -Tuning {tuning}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Automated Vuln Analysis",
         "category_display_name": "Análisis Automatizado de Vulnerabilidades",
-        "category_icon_class": "icon-shield-alt",
-        "icon_class": "icon-bug",
+        "category_icon_class": "fas fa-shield-alt",
+        "icon_class": "fas fa-bug",
         "timeout": 1200,
         "default_enabled": False,
         "description": "Escáner de servidores web para software desactualizado y errores comunes.",
@@ -501,39 +526,41 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "wapiti": {
+        "id": "wapiti",
         "name": "Wapiti",
-        "command_template": "wapiti -u {target_url} -f txt -o {output_file_dir} --scope domain -m {modules}",
+        "command_template": "wapiti -u {target_url} -f txt -o {output_file_dir} --scope domain -m {modules_cmd}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Automated Vuln Analysis",
         "category_display_name": "Análisis Automatizado de Vulnerabilidades",
-        "category_icon_class": "icon-shield-alt",
-        "icon_class": "icon-kiwi-bird",
+        "category_icon_class": "fas fa-shield-alt",
+        "icon_class": "fas fa-kiwi-bird",
         "timeout": 2400,
         "default_enabled": False,
         "description": "Escáner de caja negra para XSS, SQLi (detección), etc.",
         "cli_params_config": [
-            {"name": "modules", "label": "Módulos (-m)", "type": "text", "default": "\"-all,+sql,+xss,+crlf,+xxe\"", "placeholder": "\"-all,+sqli,+xss\""}
+            {"name": "modules_cmd", "label": "Módulos (-m)", "type": "text", "default": "\"-all,+sql,+xss,+crlf,+xxe\"", "placeholder": "\"-all,+sqli,+xss\"", "description": "Módulos a usar, ej: \"-all,+xss\""}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: --level 2 -p http://proxy:port",
         "dangerous": True,
-        "needs_shell": False, # El valor de modules puede tener comillas, shlex.quote lo manejará
+        "needs_shell": False, 
     },
     "wpscan": {
+        "id": "wpscan",
         "name": "WPScan",
-        "command_template": "wpscan --url {target_wordpress_url} --enumerate vp,vt,u --api-token {wpscan_api_token} -o {output_file} -f cli-no-color --disable-tls-checks",
+        "command_template": "wpscan --url {target_wordpress_url} --enumerate vp,vt,u {wpscan_api_token_cmd} -o {output_file} -f cli-no-color --disable-tls-checks",
         "target_type": "url",
         "phase": "identification_web",
         "category": "CMS Specific Analysis",
         "category_display_name": "Análisis Específico de CMS",
-        "category_icon_class": "icon-puzzle-piece",
-        "icon_class": "icon-wordpress",
+        "category_icon_class": "fas fa-puzzle-piece",
+        "icon_class": "fab fa-wordpress",
         "timeout": 1800,
         "default_enabled": False,
         "description": "Escáner de vulnerabilidades para WordPress.",
         "cli_params_config": [
-            {"name": "wpscan_api_token", "label": "API Token WPScan", "type": "password", "default": "", "placeholder": "TU_API_TOKEN_WPSCAN", "description": "Token API de wpscan.com para detección de vulnerabilidades actualizada."}
+            {"name": "wpscan_api_token_cmd", "label": "API Token WPScan", "type": "password", "default": "", "placeholder": "TU_API_TOKEN_WPSCAN", "description": "Token API de wpscan.com para detección de vulnerabilidades actualizada. Si se deja vacío, no se usará el flag --api-token."}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: --random-user-agent --plugins-detection aggressive",
@@ -541,37 +568,39 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "joomscan": {
+        "id": "joomscan",
         "name": "JoomScan",
         "command_template": "joomscan --url {target_joomla_url} -ec -o {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "CMS Specific Analysis",
         "category_display_name": "Análisis Específico de CMS",
-        "category_icon_class": "icon-puzzle-piece",
-        "icon_class": "icon-joomla",
+        "category_icon_class": "fas fa-puzzle-piece",
+        "icon_class": "fab fa-joomla",
         "timeout": 1200,
         "default_enabled": False,
         "description": "Escáner de vulnerabilidades para Joomla CMS.",
         "cli_params_config": [],
         "allow_additional_args": True,
-        "additional_args_placeholder": "ej: --enumerate-components",
+        "additional_args_placeholder": "ej: --enumerate-components --cookie \"test=123\"",
         "dangerous": False,
         "needs_shell": False,
     },
     "droopescan": {
+        "id": "droopescan",
         "name": "Droopescan",
         "command_template": "droopescan scan -u {target_url} -t {threads} -o cli > {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "CMS Specific Analysis",
         "category_display_name": "Análisis Específico de CMS",
-        "category_icon_class": "icon-puzzle-piece",
-        "icon_class": "icon-drupal",
+        "category_icon_class": "fas fa-puzzle-piece",
+        "icon_class": "fab fa-drupal",
         "timeout": 900,
         "default_enabled": False,
         "description": "Identifica múltiples CMS (Drupal, Silverstripe, Joomla, WordPress) y enumera componentes.",
         "cli_params_config": [
-            {"name": "threads", "label": "Hilos (-t)", "type": "number", "default": "32", "placeholder": "32"}
+            {"name": "threads", "label": "Hilos (-t)", "type": "number", "default": 32, "placeholder": "32"}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: -e a",
@@ -579,32 +608,34 @@ TOOLS_CONFIG = {
         "needs_shell": True,
     },
     "cmsmap": {
+        "id": "cmsmap",
         "name": "CMSmap",
         "command_template": "cmsmap {target_url} -o {output_file}",
         "target_type": "url",
         "phase": "identification_web",
         "category": "CMS Specific Analysis",
         "category_display_name": "Análisis Específico de CMS",
-        "category_icon_class": "icon-puzzle-piece",
-        "icon_class": "icon-cogs",
+        "category_icon_class": "fas fa-puzzle-piece",
+        "icon_class": "fas fa-cogs",
         "timeout": 1200,
         "default_enabled": False,
         "description": "Identifica CMS y ejecuta comprobaciones básicas de vulnerabilidades.",
         "cli_params_config": [],
         "allow_additional_args": True,
-        "additional_args_placeholder": "ej: -f D -F",
+        "additional_args_placeholder": "ej: -f D -F --user-agent MyAgent",
         "dangerous": False,
         "needs_shell": False,
     },
     "sqlmap_batch": {
+        "id": "sqlmap_batch",
         "name": "SQLMap (Detection)",
-        "command_template": "sqlmap -u \"{target_url_with_params}\" --batch --level={level} --risk={risk} --technique=BEUSTQ --forms --crawl={crawl_depth} -o --output-dir={output_file_dir}",
+        "command_template": "sqlmap -u \"{target_url_with_params}\" --batch --level={level} --risk={risk} --technique=BEUSTQ --forms --crawl={crawl_depth} --output-dir={output_file_dir_sqlmap}",
         "target_type": "url_with_params",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
         "category_display_name": "Detección Específica de Vulnerabilidades",
-        "category_icon_class": "icon-bomb",
-        "icon_class": "icon-database",
+        "category_icon_class": "fas fa-bomb",
+        "icon_class": "fas fa-database",
         "timeout": 3600,
         "default_enabled": False,
         "description": "Detección de inyección SQL (sin explotación).",
@@ -614,19 +645,20 @@ TOOLS_CONFIG = {
             {"name": "crawl_depth", "label": "Profundidad Crawl (--crawl)", "type": "number", "default": "2", "placeholder": "2"}
         ],
         "allow_additional_args": True,
-        "additional_args_placeholder": "ej: --dbms=mysql --threads=5",
-        "dangerous": True,
+        "additional_args_placeholder": "ej: --dbms=mysql --threads=5 -o",
         "needs_shell": False,
+        "dangerous": True,
     },
     "nuclei_specific_vulns": {
+        "id": "nuclei_specific_vulns",
         "name": "Nuclei (Specific Vulns)",
         "command_template": "nuclei -u {target_url} -t {nuclei_templates} -o {output_file_json} -json",
         "target_type": "url",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
         "category_display_name": "Detección Específica de Vulnerabilidades",
-        "category_icon_class": "icon-bomb",
-        "icon_class": "icon-bullseye",
+        "category_icon_class": "fas fa-bomb",
+        "icon_class": "fas fa-bullseye",
         "timeout": 1800,
         "default_enabled": False,
         "description": "Detección de clases específicas de vulnerabilidades (SSRF, SSTI, LFI, etc.) con plantillas Nuclei.",
@@ -639,14 +671,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "commix": {
+        "id": "commix",
         "name": "Commix (Command Inj. Detection)",
         "command_template": "commix -u \"{target_url_with_params}\" --batch --level={level} -o {output_file}",
         "target_type": "url_with_params",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
         "category_display_name": "Detección Específica de Vulnerabilidades",
-        "category_icon_class": "icon-bomb",
-        "icon_class": "icon-terminal",
+        "category_icon_class": "fas fa-bomb",
+        "icon_class": "fas fa-terminal",
         "timeout": 1800,
         "default_enabled": False,
         "description": "Detección de inyección de comandos.",
@@ -659,18 +692,20 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "xsser": {
+        "id": "xsser",
         "name": "XSSer (XSS Detection)",
-        "command_template": "xsser -u \"{target_url}\" --params \"{url_params_for_xsser}\" -Cw --heuristic --user-agent \"Mozilla/5.0\" -o {output_file_xml}",
+        "command_template": "xsser -u \"{target_url}\" {xsser_params_cmd} -Cw --heuristic --user-agent \"Mozilla/5.0\" -o {output_file_xml}",
         "target_type": "url_and_params",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
         "category_display_name": "Detección Específica de Vulnerabilidades",
-        "category_icon_class": "icon-bomb",
-        "icon_class": "icon-code",
+        "category_icon_class": "fas fa-bomb",
+        "icon_class": "fas fa-code",
         "timeout": 1800,
         "default_enabled": False,
         "description": "Detección de Cross-Site Scripting (XSS).",
         "cli_params_config": [
+            {"name": "xsser_params_cmd", "label": "Parámetros URL (--params)", "type": "text", "default": "", "placeholder": "param1=val1&param2=val2", "description": "Parámetros a probar para XSS, ej: q=FUZZ&category=test. Si está vacío, no se pasará --params."}
         ],
         "allow_additional_args": True,
         "additional_args_placeholder": "ej: --payload \"<script>alert(1)</script>\"",
@@ -678,14 +713,15 @@ TOOLS_CONFIG = {
         "needs_shell": False,
     },
     "lfisuite_scan": {
+        "id": "lfisuite_scan",
         "name": "LFISuite (LFI/RFI Scan)",
         "command_template": "lfisuite -u \"{target_url_with_lfi_fuzz_param}\" --scan -w {lfi_wordlist} -o {output_file_dir}",
         "target_type": "url_with_lfi_fuzz_param",
         "phase": "identification_web",
         "category": "Specific Vulnerability Detection",
         "category_display_name": "Detección Específica de Vulnerabilidades",
-        "category_icon_class": "icon-bomb",
-        "icon_class": "icon-file-import",
+        "category_icon_class": "fas fa-bomb",
+        "icon_class": "fas fa-file-import",
         "timeout": 1800,
         "default_enabled": False,
         "description": "Detección de vulnerabilidades de Inclusión Local y Remota de Archivos (LFI/RFI).",
@@ -703,7 +739,7 @@ TOOLS_CONFIG = {
 PROFILES_CONFIG = {
     "Full Recon (Domain)": {
         "description": "Reconocimiento exhaustivo de un dominio (subdominios, DNS, OSINT).",
-        "icon_class": "icon-search-plus",
+        "icon_class": "fas fa-search-plus",
         "tools": ["amass_enum", "subfinder", "findomain", "theharvester", "dnsrecon", "nmap_dns_scripts"],
         "params_override": {
             "amass_enum": {"min-for-recursive": "2"}, 
@@ -711,7 +747,7 @@ PROFILES_CONFIG = {
     },
     "Quick Web Scan (URL)": {
         "description": "Escaneo web rápido de un URL (tecnologías, directorios comunes, vulnerabilidades básicas).",
-        "icon_class": "icon-zap",
+        "icon_class": "fas fa-bolt",
         "tools": ["httpx_tech", "whatweb", "ffuf_common", "nuclei_tech_info", "nuclei_vulns"],
          "params_override": {
             "ffuf_common": {"wordlist_path": "/usr/share/wordlists/dirbuster/directory-list-2.3-small.txt"}
@@ -719,13 +755,13 @@ PROFILES_CONFIG = {
     },
     "Infrastructure Scan (IP/Host)": {
         "description": "Escaneo de infraestructura en un IP o Host (puertos comunes, servicios).",
-        "icon_class": "icon-network-wired",
+        "icon_class": "fas fa-network-wired",
         "tools": ["nmap_top_ports", "naabu"],
         "params_override": {}
     },
     "CMS Scan (WordPress URL)": {
         "description": "Escaneo específico para un sitio WordPress.",
-        "icon_class": "icon-wordpress",
+        "icon_class": "fab fa-wordpress",
         "tools": ["wpscan", "whatweb", "nuclei_vulns"],
         "params_override": {
             "nuclei_vulns": {"tags": "wordpress,cve,misconfiguration"}
@@ -735,7 +771,9 @@ PROFILES_CONFIG = {
 
 
 def get_tools_definition():
-    """Devuelve la configuración de herramientas."""
+    """Devuelve la configuración de herramientas, asegurando que cada una tenga un ID."""
+    for tool_id, config in TOOLS_CONFIG.items():
+        config['id'] = tool_id
     return TOOLS_CONFIG
 
 def get_scan_profiles():
@@ -752,8 +790,8 @@ def get_tool_config():
     compatible con el scanner/engine.py original si aún se usa.
     """
     return {
-        "raw_commands": TOOLS_CONFIG, 
-        "presets": PROFILES_CONFIG   
+        "raw_commands": get_tools_definition(), 
+        "presets": get_scan_profiles()   
     }
 
 
@@ -801,23 +839,14 @@ def save_job_summary(job_path: str, summary_data_to_save: dict):
             job_id_for_log = Path(job_path).name
             print(f"WARN: No se pudo leer summary.json en {job_path} (Job ID: {job_id_for_log}): {e}. Se intentará sobrescribir.")
 
-    if 'logs' in summary_data_to_save:
-        current_summary_on_disk['logs'] = summary_data_to_save['logs']
-    elif 'logs' not in current_summary_on_disk:
-         current_summary_on_disk['logs'] = []
-
-    if 'tool_progress' in summary_data_to_save:
-        current_summary_on_disk['tool_progress'] = summary_data_to_save['tool_progress']
-    elif 'tool_progress' not in current_summary_on_disk:
-        current_summary_on_disk['tool_progress'] = {}
-
     for key, value in summary_data_to_save.items():
-        if key not in ['logs', 'tool_progress']:
-            current_summary_on_disk[key] = value
+        current_summary_on_disk[key] = value
             
     current_summary_on_disk.setdefault('job_id', Path(job_path).name)
     current_summary_on_disk.setdefault('status', 'UNKNOWN')
     current_summary_on_disk.setdefault('overall_progress', 0)
+    current_summary_on_disk.setdefault('logs', [])
+    current_summary_on_disk.setdefault('tool_progress', {})
 
     try:
         with open(summary_file_path, 'w', encoding='utf-8') as f:
@@ -848,9 +877,9 @@ def get_scan_status_from_file(job_path: str) -> dict:
             summary_data.setdefault('logs', [])
             summary_data.setdefault('tool_progress', {})
             summary_data.setdefault('targets', [])
-            summary_data.setdefault('start_time', None) # Corregido de start_timestamp
+            summary_data.setdefault('start_timestamp', None) 
             summary_data.setdefault('creation_timestamp', None) 
-            summary_data.setdefault('end_timestamp', None) # Corregido de end_time
+            summary_data.setdefault('end_timestamp', None) 
             summary_data.setdefault('zip_path', None)
             summary_data.setdefault('error_message', None)
             return summary_data
@@ -865,7 +894,7 @@ def get_scan_status_from_file(job_path: str) -> dict:
         'logs': [{'timestamp': get_current_timestamp(), 'level': 'error', 'message': 'summary.json no encontrado o corrupto.', 'is_html': False}],
         'tool_progress': {},
         'targets': [],
-        'start_time': None,
+        'start_timestamp': None,
         'creation_timestamp': None,
         'end_timestamp': None,
         'zip_path': None,
@@ -889,8 +918,47 @@ def list_all_jobs(job_path_base: str) -> list:
                 jobs.append({
                     'id': job_summary.get('job_id', job_dir.name),
                     'status': job_summary.get('status', 'UNKNOWN'),
-                    'timestamp': job_summary.get('start_time') or job_summary.get('creation_timestamp'), # Usar start_time o creation_timestamp
+                    'timestamp': job_summary.get('start_timestamp') or job_summary.get('creation_timestamp'),
                     'targets': job_summary.get('targets', []),
                     'zip_path': job_summary.get('zip_path')
                 })
     return sorted(jobs, key=lambda j: j.get('timestamp') or '0', reverse=True)
+
+def load_tools_config(config_path_str=None):
+    """Carga la configuración de herramientas. Prioriza archivo, luego variable global."""
+    if config_path_str:
+        config_path = Path(config_path_str)
+        if config_path.exists():
+            try:
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    loaded_config = json.load(f)
+                    for tool_id, config_data in loaded_config.items():
+                        config_data['id'] = tool_id
+                    return loaded_config
+            except Exception as e:
+                print(f"Error al cargar la configuración de herramientas desde {config_path}: {e}. Usando configuración interna.")
+        else:
+            print(f"Advertencia: Archivo de configuración de herramientas no encontrado en {config_path}. Usando configuración interna.")
+    
+    print(f"Advertencia: Usando configuración de herramientas interna (TOOLS_CONFIG).")
+    return get_tools_definition()
+
+def load_profiles_config(config_path_str=None):
+    """Carga los perfiles de escaneo. Usa PROFILES_CONFIG como fallback."""
+    if config_path_str:
+        config_path = Path(config_path_str)
+        if config_path.exists():
+            try:
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                print(f"Error al cargar la configuración de perfiles desde {config_path}: {e}. Usando configuración interna.")
+
+    print(f"Advertencia: Usando configuración de perfiles interna (PROFILES_CONFIG).")
+    return get_scan_profiles()
+
+SCAN_PHASES = PENTEST_PHASES 
+
+def generate_job_id():
+    """Genera un ID de trabajo único basado en el timestamp."""
+    return f"scan_{get_current_timestamp_str()}"
