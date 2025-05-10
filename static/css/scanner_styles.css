@@ -1,69 +1,1500 @@
-/* En scanner_styles.css */
-.hidden {
-    display: none !important; /* !important para asegurar que sobreescriba estilos inline si los hubiera */
+/* /home/arya/dev/panthera-strike/static/css/scanner_styles.css */
+
+/* --- Importación de Fuentes --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono:wght@400;700&family=Source+Code+Pro:wght@400;500&display=swap');
+
+/* --- Tema Base: Variables Globales y Red Team Moderno por defecto --- */
+:root {
+    /* Paleta Red Team Moderna */
+    --primary-color-redteam: #E53935;
+    --secondary-color-redteam: #6F6F6F;
+    --accent-color-redteam: #FF4136;
+    --success-color-redteam: #4CAF50;
+    --danger-color-redteam: #F44336;
+    --warning-color-redteam: #FF9800;
+    --info-color-redteam: #03A9F4;
+
+    --body-bg-redteam: #1A1A1D;
+    --card-bg-redteam: #232529;
+    --header-bg-redteam: #111317;
+    --terminal-bg-redteam: #0F0F12;
+
+    --text-color-redteam: #EAEAEA;
+    --text-muted-redteam: #A0A0A0;
+    --border-color-redteam: #3A3C40;
+    --link-color-redteam: var(--accent-color-redteam);
+
+    /* Fuentes (predeterminadas a Red Team) */
+    --font-family-sans-serif-redteam: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-family-monospace-redteam: "Fira Code", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-family-terminal-redteam: "Fira Code", "Source Code Pro", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    /* Priorizar Fira Code/Source Code Pro */
+
+    --border-radius-global: 0.4rem;
+    --shadow-sm-global: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --shadow-md-global: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    /* --- Aplicar Red Team como tema por defecto --- */
+    --primary-color: var(--primary-color-redteam);
+    --secondary-color: var(--secondary-color-redteam);
+    --success-color: var(--success-color-redteam);
+    --danger-color: var(--danger-color-redteam);
+    --warning-color: var(--warning-color-redteam);
+    --info-color: var(--info-color-redteam);
+
+    --light-color: var(--text-color-redteam);
+    --dark-color: var(--header-bg-redteam);
+
+    --card-bg: var(--card-bg-redteam);
+    --card-border-color: var(--border-color-redteam);
+    --text-color: var(--text-color-redteam);
+    --text-muted: var(--text-muted-redteam);
+    --body-bg: var(--body-bg-redteam);
+    --link-color: var(--link-color-redteam);
+
+    --font-family-sans-serif: var(--font-family-sans-serif-redteam);
+    --font-family-monospace: var(--font-family-monospace-redteam);
+    --font-family-terminal: var(--font-family-terminal-redteam);
+    --border-radius: var(--border-radius-global);
+    --shadow-sm: var(--shadow-sm-global);
+    --shadow-md: var(--shadow-md-global);
+
+    /* Terminal por defecto (Red Team) */
+    --terminal-bg: var(--terminal-bg-redteam);
+    --terminal-text-color: var(--text-color-redteam);
+    --terminal-timestamp-color: var(--text-muted-redteam);
+    --terminal-log-info: var(--info-color-redteam);
+    --terminal-log-error: var(--danger-color-redteam);
+    --terminal-log-warn: var(--warning-color-redteam);
+    --terminal-log-success: var(--success-color-redteam);
+    --terminal-log-command: var(--accent-color-redteam);
+
+    --rgb-primary-color: 229, 57, 53;
+    /* Rojo RedTeam para box-shadow focus */
 }
-.disabled {
-    pointer-events: none;
+
+/* --- Tema Actual (Azulito) --- */
+[data-theme="actual"] {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --card-bg: #fff;
+    --card-border-color: #e1e4e8;
+    --text-color: #24292e;
+    --text-muted: #586069;
+    --body-bg: #f6f8fa;
+    --link-color: var(--primary-color);
+    --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-family-terminal: "Consolas", "Courier New", monospace;
+    /* Fuente específica para terminal en tema actual */
+    --border-radius: 0.3rem;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    --terminal-bg: #292d3e;
+    --terminal-text-color: #c3c7d7;
+    --terminal-timestamp-color: #676e95;
+    --terminal-log-info: var(--info-color);
+    --terminal-log-error: var(--danger-color);
+    --terminal-log-warn: #ffcc00;
+    --terminal-log-success: var(--success-color);
+    --terminal-log-command: #82aaff;
+    --rgb-primary-color: 0, 123, 255;
+}
+
+/* --- Tema Ubuntu --- */
+[data-theme="ubuntu"] {
+    --primary-color: #5E2750;
+    --secondary-color: #AEA79F;
+    --accent-color: #E95420;
+    --success-color: #87A556;
+    --danger-color: #C01616;
+    --warning-color: #F47750;
+    --info-color: #3B84A5;
+    --light-color: #FDF6E3;
+    --dark-color: #3D3A36;
+    --card-bg: #ECE7DF;
+    --card-border-color: #D1CCC0;
+    --text-color: #2E2C2A;
+    --text-muted: #55514C;
+    --body-bg: #F2F1EF;
+    --link-color: var(--accent-color);
+    --font-family-sans-serif: "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --font-family-monospace: "Ubuntu Mono", monospace;
+    --font-family-terminal: "Ubuntu Mono", monospace;
+    --border-radius: 0.25rem;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    --terminal-bg: #300A24;
+    --terminal-text-color: #FFFFFF;
+    --terminal-timestamp-color: #AEA79F;
+    --terminal-log-info: #DD4814;
+    --terminal-log-error: var(--danger-color);
+    --terminal-log-warn: var(--warning-color);
+    --terminal-log-success: var(--success-color);
+    --terminal-log-command: #FDF6E3;
+    --rgb-primary-color: 94, 39, 80;
+}
+
+/* --- Tema macOS --- */
+[data-theme="macos"] {
+    --primary-color: #007AFF;
+    --secondary-color: #8E8E93;
+    --accent-color: #0A84FF;
+    --success-color: #30D158;
+    --danger-color: #FF453A;
+    --warning-color: #FF9F0A;
+    --info-color: #0A84FF;
+    --light-color: #F5F5F7;
+    --dark-color: #1C1C1E;
+    --card-bg: #FFFFFF;
+    --card-border-color: rgba(60, 60, 67, 0.22);
+    --text-color: #1D1D1F;
+    --text-muted: #636366;
+    --body-bg: #F5F5F7;
+    --link-color: var(--primary-color);
+    --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", "Arial", sans-serif;
+    --font-family-monospace: "SF Mono", "Menlo", "Monaco", monospace;
+    --font-family-terminal: "SF Mono", "Menlo", "Monaco", monospace;
+    --border-radius: 0.5rem;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 3px 8px rgba(0, 0, 0, 0.08);
+
+    --terminal-bg: #282C34;
+    --terminal-text-color: #ABB2BF;
+    --terminal-timestamp-color: #5C6370;
+    --terminal-log-info: #61AFEF;
+    --terminal-log-error: #E06C75;
+    --terminal-log-warn: #E5C07B;
+    --terminal-log-success: #98C379;
+    --terminal-log-command: #C678DD;
+    --rgb-primary-color: 0, 122, 255;
+}
+
+/* --- Estilos Base Adaptados --- */
+body {
+    font-family: var(--font-family-sans-serif);
+    margin: 0;
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+header {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--card-border-color);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+#pantheraLogo {
+    height: 40px;
+    margin-right: 15px;
+}
+
+[data-theme="redteam"] #pantheraLogo,
+[data-theme="ubuntu"][data-system-appearance="dark"] #pantheraLogo,
+[data-theme="macos"][data-system-appearance="dark"] #pantheraLogo {
+    /* filter: brightness(0) invert(1); */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+nav.tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: auto;
+    margin-right: 1.5rem;
+}
+
+.theme-selector-container {
+    display: flex;
+    align-items: center;
+}
+
+main {
+    flex-grow: 1;
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--dark-color);
+    color: var(--text-muted);
+    font-size: 0.9em;
+    border-top: 1px solid var(--card-border-color);
+}
+
+/* Tarjetas */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.card h2,
+.card h3 {
+    margin-top: 0;
+    border-bottom: 1px solid var(--card-border-color);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.card h2 i,
+.card h3 i {
+    margin-right: 0.75rem;
+    color: var(--primary-color);
+}
+
+/* Pestañas */
+.tab-link {
+    background-color: transparent;
+    color: var(--light-color);
+    opacity: 0.8;
+    border: 1px solid transparent;
+    padding: 0.6rem 1.1rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.tab-link:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--primary-color);
+}
+
+[data-theme="actual"] .tab-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="ubuntu"] .tab-link {
+    color: var(--text-muted);
+}
+
+[data-theme="ubuntu"] .tab-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--primary-color);
+}
+
+[data-theme="macos"] .tab-link {
+    color: var(--text-muted);
+}
+
+[data-theme="macos"] .tab-link:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+    color: var(--primary-color);
+}
+
+
+.tab-link.active {
+    background-color: var(--body-bg);
+    color: var(--primary-color);
+    opacity: 1;
+    border-color: var(--card-border-color) var(--card-border-color) transparent var(--card-border-color);
+    border-top: 3px solid var(--primary-color);
+    position: relative;
+    z-index: 1;
+    margin-bottom: -1px;
+}
+
+[data-theme="redteam"] .tab-link.active {
+    border-top-color: var(--accent-color-redteam);
+}
+
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Formularios y Botones */
+textarea,
+select,
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Para el tema Red Team, los inputs normales pueden ser más oscuros */
+[data-theme="redteam"] select,
+[data-theme="redteam"] input[type="text"],
+[data-theme="redteam"] input[type="number"],
+[data-theme="redteam"] input[type="password"],
+[data-theme="redteam"] input[type="email"] {
+    background-color: var(--terminal-bg-redteam);
+    /* Usar un fondo muy oscuro */
+    border-color: var(--border-color-redteam);
+}
+
+/* Textarea no relacionada con la terminal principal */
+textarea {
+    min-height: 120px;
+    font-family: var(--font-family-monospace);
+    /* Usa la monoespaciada general del tema */
+}
+
+[data-theme="redteam"] textarea {
+    /* Textarea en RedTeam también oscura */
+    background-color: var(--terminal-bg-redteam);
+    border-color: var(--border-color-redteam);
+}
+
+
+textarea:focus,
+select:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: var(--card-bg);
+    /* Puede cambiar al enfocar para mejor visibilidad */
+    box-shadow: 0 0 0 3px rgba(var(--rgb-primary-color), 0.3);
+}
+
+button,
+.button-like {
+    padding: 0.7rem 1.4rem;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+button:hover:not(:disabled),
+.button-like:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+button:active:not(:disabled),
+.button-like:active:not(:disabled) {
+    transform: translateY(0px);
+    box-shadow: none;
+}
+
+button:focus,
+.button-like:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--rgb-primary-color), 0.4);
+}
+
+button:disabled,
+.button-disabled {
     opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
+
+.button-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+[data-theme="redteam"] .button-primary {
+    color: var(--text-color-redteam);
+}
+
+[data-theme="redteam"] .button-primary:hover:not(:disabled) {
+    background-color: var(--accent-color-redteam);
+    border-color: var(--accent-color-redteam);
+}
+
+[data-theme="actual"] .button-primary:hover:not(:disabled) {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+[data-theme="ubuntu"] .button-primary {
+    color: white;
+}
+
+[data-theme="ubuntu"] .button-primary:hover:not(:disabled) {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+[data-theme="macos"] .button-primary {
+    color: white;
+}
+
+[data-theme="macos"] .button-primary:hover:not(:disabled) {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+
+.button-secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border-color: var(--secondary-color);
+}
+
+[data-theme="actual"] .button-secondary {
+    color: white;
+}
+
+.button-secondary:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+[data-theme="redteam"] .button-secondary {
+    color: var(--text-color-redteam);
+}
+
+[data-theme="redteam"] .button-secondary:hover:not(:disabled) {
+    background-color: var(--border-color-redteam);
+}
+
+
+.button-success {
+    background-color: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+.button-success:hover:not(:disabled) {
+    filter: brightness(0.9);
+}
+
+[data-theme="redteam"] .button-success:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--success-color) 90%, black);
+}
+
+
+.button-danger {
+    background-color: var(--danger-color);
+    color: white;
+    border-color: var(--danger-color);
+}
+
+.button-danger:hover:not(:disabled) {
+    filter: brightness(0.9);
+}
+
+[data-theme="redteam"] .button-danger:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--danger-color) 90%, black);
+}
+
+
+.button-danger-outline {
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+    background-color: transparent;
+}
+
+.button-danger-outline:hover:not(:disabled) {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.button-large {
+    padding: 0.8rem 1.8rem;
+    font-size: 1.05rem;
+}
+
+.button-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    gap: 0.4rem;
+}
+
+/* Iconos */
+.icon-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.icon-check-circle-green {
+    color: var(--success-color);
+}
+
+.icon-times-circle-red {
+    color: var(--danger-color);
+}
+
+.icon-spinner.blue {
+    color: var(--primary-color);
+}
+
+.icon-ban.grey {
+    color: var(--secondary-color);
+}
+
+.icon-clock.orange {
+    color: var(--warning-color);
+}
+
+
+/* Sección de Objetivos */
+.targets-section textarea {
+    min-height: 120px;
+}
+
+/* Ya estilizada arriba para tema RedTeam */
+.targets-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.targets-count-display {
+    margin-left: auto;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* Perfiles de Escaneo */
+.scan-profiles-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.button-profile,
+.button-profile-deselect {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border-color);
+    color: var(--text-color);
+}
+
+.button-profile:hover,
+.button-profile-deselect:hover {
+    background-color: var(--body-bg);
+    border-color: var(--primary-color);
+}
+
+.button-profile.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+[data-theme="redteam"] .button-profile.active {
+    color: var(--text-color-redteam);
+}
+
+/* Selección de Herramientas */
+.pentest-phase {
+    margin-bottom: 1.5rem;
+}
+
+.pentest-phase-header,
+.tool-category-header {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: color-mix(in srgb, var(--card-bg) 90%, var(--body-bg));
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.pentest-phase-header:hover,
+.tool-category-header:hover {
+    background-color: color-mix(in srgb, var(--card-bg) 80%, var(--body-bg));
+}
+
+.pentest-phase-header h4,
+.tool-category-header h5 {
+    margin: 0 0 0 0.75rem;
+    flex-grow: 1;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.accordion-arrow {
+    margin-left: auto;
+    padding: 0 0.5rem;
+    color: var(--text-muted);
+    transition: transform 0.3s ease-out;
+}
+
+.expanded .accordion-arrow {
+    transform: rotate(90deg);
+}
+
+.tool-items-container {
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--card-border-color);
+    margin-left: 0.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.tool-items-container.expanded {
+    max-height: 2000px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.tool-item {
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed var(--card-border-color);
+}
+
+.tool-item:last-child {
+    border-bottom: none;
+}
+
+.tool-item-main {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tool-icon {
+    color: var(--secondary-color);
+}
+
+.toggle-label {
+    flex-grow: 1;
+    color: var(--text-color);
+}
+
 .tool-dangerous-indicator {
-    color: orange;
+    color: var(--warning-color);
     font-weight: bold;
-    margin-left: 5px;
-    cursor: help;
 }
-.jobs-list-container li {
+
+.tool-details {
+    padding-left: 3rem;
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+.tool-description {
+    margin-bottom: 0.5rem;
+    font-style: italic;
+}
+
+.tool-cli-params-group {
+    background-color: var(--body-bg);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius);
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.tool-cli-params-group h6 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+.cli-param-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.cli-param-row label {
+    flex-basis: 150px;
+    text-align: right;
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+.cli-param-row input,
+.cli-param-row select {
+    flex-grow: 1;
+    margin-bottom: 0;
+    font-size: 0.9em;
+    padding: 0.5rem;
+}
+
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--secondary-color);
+    transition: .4s;
+    border-radius: 26px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--light-color);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+[data-theme="redteam"] .slider:before {
+    background-color: var(--text-color-redteam);
+}
+
+[data-theme="ubuntu"] .slider:before {
+    background-color: var(--dark-color);
+}
+
+
+input:checked+.slider {
+    background-color: var(--success-color);
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked+.slider:before {
+    transform: translateX(24px);
+}
+
+input:indeterminate+.slider {
+    background-color: var(--warning-color);
+}
+
+input:indeterminate+.slider:before {
+    transform: translateX(12px);
+    content: "~";
+    color: white;
+    text-align: center;
+    line-height: 20px;
+}
+
+/* Panel de Información del Trabajo */
+#job-info-panel {
+    margin-bottom: 1rem;
+}
+
+.job-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.job-info-grid p {
+    margin: 0.2rem 0;
+    color: var(--text-color);
+}
+
+.job-info-grid p strong {
+    color: var(--text-color);
+}
+
+.job-info-grid p span:not(.status-badge) {
+    color: var(--text-muted);
+}
+
+
+.progress-section {
+    margin-bottom: 1rem;
+}
+
+.progress-bar-wrapper {
+    width: 100%;
+    background-color: var(--card-border-color);
+    border-radius: var(--border-radius);
+    height: 24px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background-color: var(--success-color);
+    height: 100%;
+    line-height: 24px;
+    color: white;
+    text-align: center;
+    border-radius: var(--border-radius);
+    transition: width 0.4s ease;
+    font-weight: bold;
+}
+
+.job-actions-output {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Badges de Estado */
+.status-badge {
+    padding: 0.3em 0.7em;
+    font-size: 0.8em;
+    font-weight: bold;
+    border-radius: var(--border-radius);
+    color: white;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.status-pending,
+.status-initiating {
+    background-color: var(--secondary-color);
+}
+
+.status-running,
+.status-cancelling {
+    background-color: var(--info-color);
+}
+
+.status-completed {
+    background-color: var(--success-color);
+}
+
+.status-error {
+    background-color: var(--danger-color);
+}
+
+.status-cancelled {
+    background-color: #757575;
+}
+
+.status-unknown {
+    background-color: var(--text-muted);
+}
+
+[data-theme="redteam"] .status-pending,
+[data-theme="redteam"] .status-initiating,
+[data-theme="redteam"] .status-unknown,
+[data-theme="redteam"] .status-cancelled {
+    color: var(--text-color-redteam);
+}
+
+[data-theme="redteam"] .status-running,
+[data-theme="redteam"] .status-cancelling,
+[data-theme="redteam"] .status-completed {
+    color: var(--body-bg-redteam);
+}
+
+
+/* Terminal de Salida */
+#terminal-panel {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--terminal-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--card-border-color);
+    box-shadow: var(--shadow-md);
+}
+
+.terminal-header {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--card-border-color);
+    color: var(--text-color);
+    /* Color del texto del título de la terminal */
+    font-family: var(--font-family-sans-serif);
+    /* Fuente no monoespaciada para el header */
+    margin-bottom: 0;
+}
+
+.terminal-window-controls {
+    order: -1;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.terminal-title-container {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.terminal-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    border-bottom: none;
+    color: inherit;
+    /* Hereda color de .terminal-header */
+    font-family: inherit;
+    /* Hereda fuente de .terminal-header */
+}
+
+.terminal-header h3 i {
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.terminal-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.terminal-actions button {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+}
+
+.terminal-actions button:hover {
+    color: var(--primary-color);
+    background-color: var(--card-bg);
+    border-color: var(--card-border-color);
+}
+
+/* Estilos específicos de cabecera de terminal por tema */
+[data-theme="redteam"] .terminal-header {
+    border-bottom-color: var(--border-color-redteam);
+}
+
+[data-theme="redteam"] .terminal-header h3 {
+    color: var(--text-color-redteam);
+}
+
+[data-theme="redteam"] .terminal-header h3 i {
+    color: var(--accent-color-redteam);
+}
+
+
+[data-theme="ubuntu"] .terminal-header {
+    background-color: #3D3A36;
+    color: #F2F1EF;
+    padding: 0.4rem 0.8rem;
+    border-bottom-color: #2E2C2A;
+    justify-content: flex-start;
+}
+
+[data-theme="ubuntu"] .terminal-header h3 {
+    color: #F2F1EF;
+}
+
+[data-theme="ubuntu"] .terminal-header h3 i {
+    color: var(--accent-color);
+}
+
+[data-theme="ubuntu"] .terminal-window-controls {
+    gap: 6px;
+}
+
+[data-theme="ubuntu"] .terminal-control-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #55514C;
+    border: 1px solid #2E2C2A;
+    color: #F2F1EF;
+    font-size: 8px;
+    line-height: 8px;
+    padding: 0;
+    cursor: pointer;
+}
+
+[data-theme="ubuntu"] .terminal-control-button:hover {
+    background-color: #6A6A70;
+}
+
+[data-theme="ubuntu"] .terminal-control-close {
+    background-color: #C01616;
+}
+
+[data-theme="ubuntu"] .terminal-control-minimize {
+    background-color: #F47750;
+}
+
+[data-theme="ubuntu"] .terminal-control-maximize {
+    background-color: #87A556;
+}
+
+
+[data-theme="macos"] .terminal-header {
+    justify-content: flex-start;
+    background: linear-gradient(to bottom, #E8E8E8, #DCDCDC);
+    border-bottom: 1px solid #BFBFBF;
+    padding: 0.5rem 0.8rem;
+}
+
+[data-theme="macos"] .terminal-header h3 {
+    color: #333;
+}
+
+[data-theme="macos"] .terminal-header h3 i {
+    color: var(--primary-color);
+}
+
+/*
+[data-theme="macos"][data-system-appearance="dark"] .terminal-header {
+    background: linear-gradient(to bottom, #3D3D3D, #2A2A2A); border-bottom: 1px solid #1E1E1E; }
+[data-theme="macos"][data-system-appearance="dark"] .terminal-header h3 { color: var(--text-color-redteam); }
+*/
+[data-theme="macos"] .terminal-control-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    padding: 0;
+}
+
+[data-theme="macos"] .terminal-control-close {
+    background-color: #FF5F57;
+    border-color: #E0443E;
+}
+
+[data-theme="macos"] .terminal-control-minimize {
+    background-color: #FFBD2E;
+    border-color: #DEA123;
+}
+
+[data-theme="macos"] .terminal-control-maximize {
+    background-color: #28C940;
+    border-color: #1DAD2B;
+}
+
+
+#scanOutput {
+    background-color: var(--terminal-bg);
+    color: var(--terminal-text-color);
+    padding: 1rem;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    min-height: 350px;
+    max-height: 70vh;
+    overflow-y: auto;
+    font-family: var(--font-family-terminal);
+    /* Aplicando la fuente específica de la terminal */
+    font-size: 0.95em;
+    flex-grow: 1;
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary-color) var(--terminal-bg);
+}
+
+#scanOutput::-webkit-scrollbar {
+    width: 8px;
+}
+
+#scanOutput::-webkit-scrollbar-track {
+    background: var(--terminal-bg);
+}
+
+#scanOutput::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-color);
+    border-radius: 4px;
+    border: 2px solid var(--terminal-bg);
+}
+
+.log-entry {
+    padding: 0.2em 0;
+    margin-bottom: 0.1em;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: inherit;
+    /* Hereda de #scanOutput */
+}
+
+.log-icon {
+    margin-right: 0.75em;
+    margin-top: 0.1em;
+}
+
+.log-timestamp {
+    margin-right: 0.75em;
+    color: var(--terminal-timestamp-color);
+}
+
+.log-message-content {
+    flex-grow: 1;
+}
+
+.log-type-info .log-icon,
+.log-type-info {
+    color: var(--terminal-log-info);
+}
+
+.log-type-error .log-icon,
+.log-type-error {
+    color: var(--terminal-log-error);
+}
+
+.log-type-warn .log-icon,
+.log-type-warn {
+    color: var(--terminal-log-warn);
+}
+
+.log-type-success .log-icon,
+.log-type-success {
+    color: var(--terminal-log-success);
+}
+
+.log-type-command .log-icon,
+.log-type-command {
+    color: var(--terminal-log-command);
+    font-weight: bold;
+}
+
+/* Historial de Trabajos */
+#jobsListArea {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.job-card {
+    padding: 1rem;
+    border: 1px solid var(--card-border-color);
+    border-left-width: 5px;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+    background-color: var(--card-bg);
+}
+
+.job-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+    border-left-color: var(--primary-color) !important;
+}
+
+.job-card.active-job-card {
+    border-color: var(--primary-color);
+    border-left-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px var(--primary-color), var(--shadow-md);
+}
+
+.job-card.status-completed {
+    border-left-color: var(--success-color);
+}
+
+.job-card.status-running {
+    border-left-color: var(--info-color);
+}
+
+.job-card.status-error {
+    border-left-color: var(--danger-color);
+}
+
+.job-card.status-cancelled {
+    border-left-color: var(--secondary-color);
+}
+
+.job-card.status-pending {
+    border-left-color: var(--warning-color);
+}
+
+.job-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #330000;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--card-border-color);
 }
-.jobs-list-container li:last-child {
-    border-bottom: none;
-}
-.jobs-list-container li:hover {
-    background-color: #2a0000;
-}
-.job-summary {
-    flex-grow: 1;
-}
-.job-actions button, .job-actions a {
-    margin-left: 10px;
-    padding: 6px 10px;
-    font-size: 0.9em;
-}
-.job-status-running { color: #ffae42; } /* Naranja */
-.job-status-completed { color: #7eda28; } /* Verde */
-.job-status-error { color: #ff5f56; } /* Rojo */
-.job-status-cancelled { color: #aaaaaa; } /* Gris */
-.job-status-pending { color: #f0e68c; } /* Amarillo claro */
 
-/* Estilos para grupos de parámetros CLI */
-.tool-cli-params-group {
-    background-color: #101010; /* Fondo ligeramente más oscuro que el item */
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 3px;
-    border: 1px solid #300000;
+.job-id {
+    font-weight: bold;
+    color: var(--text-color);
 }
-.tool-cli-params-group label {
-    display: inline-block;
-    width: auto; /* Ajustar según sea necesario */
-    margin-right: 5px;
-    margin-bottom: 3px;
-    color: #ddd;
-    font-size: 0.85em;
+
+.job-status {
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
-.tool-cli-params-group input[type="text"],
-.tool-cli-params-group input[type="number"],
-.tool-cli-params-group select {
-    width: calc(100% - 100px); /* Ajustar según el ancho del label */
-    padding: 4px;
-    background-color: #000;
-    color: #fff;
-    border: 1px solid #ff0000;
-    margin-bottom: 5px;
-    font-size: 0.85em;
-    display: inline-block; /* Para que se alinee con el label */
+
+.job-card-body p {
+    margin: 0.3rem 0;
+    color: var(--text-muted);
+    font-size: 0.95em;
+}
+
+.job-card-body p strong {
+    color: var(--text-color);
+}
+
+.job-card-body p strong i {
+    margin-right: 0.3rem;
+}
+
+.job-targets,
+.job-timestamp {
+    display: flex;
+    align-items: center;
+}
+
+.job-targets strong,
+.job-timestamp strong {
+    min-width: 90px;
+}
+
+.job-card-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Placeholders, Errores */
+.loading-placeholder,
+.empty-placeholder,
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+/* Opciones Avanzadas */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.option-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.option-item label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.option-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+    transform: scale(1.1);
+}
+
+.option-item input[type="checkbox"]+label {
+    font-weight: normal;
+}
+
+
+/* Select para Temas */
+.theme-selector-container label {
+    margin-right: 8px;
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+[data-theme="redteam"] .theme-selector-container label {
+    color: var(--text-muted-redteam);
+}
+
+
+#themeSwitcher {
+    padding: 0.4rem 0.8rem;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius);
+    font-size: 0.9em;
+    font-family: var(--font-family-sans-serif);
+}
+
+#themeSwitcher:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--rgb-primary-color), 0.3);
+}
+
+/* Responsividad básica */
+@media (max-width: 992px) {
+    header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .logo-container {
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+
+    header h1 {
+        text-align: center;
+        font-size: 1.5rem;
+    }
+
+    nav.tabs {
+        order: 1;
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        overflow-x: auto;
+        justify-content: center;
+    }
+
+    .theme-selector-container {
+        order: 0;
+        margin-left: 0;
+        padding-left: 0;
+        justify-content: center;
+        margin-bottom: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 1rem;
+    }
+
+    .card h2,
+    .card h3 {
+        font-size: 1.25rem;
+    }
+
+    .job-info-grid,
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cli-param-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cli-param-row label {
+        text-align: left;
+        margin-bottom: 0.2rem;
+        flex-basis: auto;
+    }
+
+    .job-actions-output button,
+    .job-actions-output a {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        justify-content: center;
+    }
+
+    .job-card-actions button {
+        flex-grow: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .button-large {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .tab-link {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+    }
 }

@@ -3,8 +3,12 @@
 # Output file
 OUTPUT_FILE="code_context.txt"
 
-# Directories to search
-DIRS=("static" "templates" "scanner" "utils")
+# Use provided directories if any, else use defaults
+if [ "$#" -gt 0 ]; then
+    DIRS=("$@")
+else
+    DIRS=("static" "templates" "scanner" "utils")
+fi
 
 # Truncate the output file if it exists
 > "$OUTPUT_FILE"

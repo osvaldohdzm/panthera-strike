@@ -5,45 +5,78 @@ document.addEventListener('DOMContentLoaded', () => {
     const targetsTextarea = document.getElementById('targets');
     const jobIdDisplay = document.getElementById('jobIdDisplay');
     const jobStatusDisplay = document.getElementById('jobStatusDisplay');
+    const jobStatusBadge = document.getElementById('jobStatusBadge'); // NUEVO: Para el badge de estado
     const overallProgressBar = document.getElementById('overallProgressBar');
-    // const overallProgressBarContainer = document.getElementById('overallProgressBarContainer'); // Ya no se usa directamente aquí
     const currentJobInfoDiv = document.getElementById('currentJobInfo');
+    const jobInfoPanel = document.getElementById('job-info-panel');
     const cancelJobButton = document.getElementById('cancelJobButton');
     const downloadJobZipLink = document.getElementById('downloadJobZip');
     const jobsListArea = document.getElementById('jobsListArea');
-    const advancedOptionsDetails = document.querySelector('.advanced-options-container details');
-    const toolSpecificCliParamsContainer = document.getElementById('toolSpecificCliParamsContainer'); // Nuevo contenedor para CLI
 
-    // SCRIPT_ROOT será establecido por Flask en el HTML (en index.html).
-    // La declaración let SCRIPT_ROOT = ""; que estaba aquí se ha eliminado para evitar errores de redeclaración.
-    // Si SCRIPT_ROOT no está definido globalmente por alguna razón, se puede manejar así:
+    const importTargetsButton = document.getElementById('importTargetsButton');
+    const importTargetsFile = document.getElementById('importTargetsFile');
+    const clearTargetsButton = document.getElementById('clearTargetsButton'); // NUEVO
+    const targetsCountDisplay = document.getElementById('targetsCount'); // NUEVO
+
+    const copyLogButton = document.getElementById('copyLogButton');
+    const downloadLogButton = document.getElementById('downloadLogButton');
+    const scanButton = document.getElementById('startScanButton');
+    const refreshButton = document.getElementById('refreshStatusButton');
+
     if (typeof SCRIPT_ROOT === 'undefined') {
-        console.error("SCRIPT_ROOT no fue definido globalmente por el HTML. Usando '' por defecto.");
-        // En este caso, SCRIPT_ROOT se volvería una variable global implícita si se asigna sin 'const', 'let' o 'var'.
-        // Es mejor asegurar que el HTML lo defina siempre. Si se necesita un fallback:
-        // window.SCRIPT_ROOT = ""; // O manejar el error de otra forma.
-        // Sin embargo, el <script> en index.html DEBE definirlo.
+        console.warn("SCRIPT_ROOT no fue definido globalmente por el HTML. Usando '' por defecto, esto podría no funcionar si la app no está en la raíz.");
+        window.SCRIPT_ROOT = ""; // Asegurar que SCRIPT_ROOT exista
     }
 
-    let appConfig = { tools: {}, profiles: {}, phases: {} }; // Para almacenar la configuración del backend
+    let appConfig = { tools: {}, profiles: {}, phases: {} };
     let currentJobId = localStorage.getItem('currentJobId');
     let statusPollInterval;
+    // let logEntryCounter = 0; // Ya no se usa para animación secuencial aquí
+
+    // NUEVO: Función para actualizar contador de objetivos
+    function updateTargetsCount() {
+        if (targetsTextarea && targetsCountDisplay) {
+            const targets = targetsTextarea.value.trim().split('\n').filter(t => t.trim() !== '');
+            targetsCountDisplay.textContent = `${targets.length} objetivo(s)`;
+        }
+    }
+
+    if (targetsTextarea) {
+        targetsTextarea.addEventListener('input', updateTargetsCount);
+    }
+
+    if (clearTargetsButton && targetsTextarea) {
+        clearTargetsButton.onclick = () => {
+            targetsTextarea.value = '';
+            updateTargetsCount();
+            logToTerminal("Lista de objetivos borrada.", "info");
+        };
+    }
 
 
     function logToTerminal(message, type = 'info', isHtml = false) {
         const entry = document.createElement('div');
-        entry.classList.add('log-entry', type);
-        const timestamp = new Date().toLocaleTimeString();
-        let icon = 'ℹ️';
-        if (type === 'error') icon = '❌';
-        else if (type === 'warn') icon = '⚠️';
-        else if (type === 'success') icon = '✅';
-        else if (type === 'command') icon = '🛠️';
+        // MODIFICADO: Clases para mejor estilizado y tipo
+        entry.classList.add('log-entry', `log-type-${type}`);
+
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        let iconClass = 'icon-info-circle'; // Default
+        if (type === 'error') iconClass = 'icon-times-circle';
+        else if (type === 'warn') iconClass = 'icon-exclamation-triangle';
+        else if (type === 'success') iconClass = 'icon-check-circle';
+        else if (type === 'command') iconClass = 'icon-terminal';
+
+        // MODIFICADO: Uso de <i> para iconos, más flexible con CSS/librerías
+        const iconSpan = `<span class="log-icon"><i class="${iconClass}"></i></span>`;
+        const timestampSpan = `<span class="log-timestamp">[${timestamp}]</span>`;
+        const messageSpan = `<span class="log-message-content"></span>`;
+
+        entry.innerHTML = `${iconSpan}${timestampSpan}${messageSpan}`;
 
         if (isHtml) {
-            entry.innerHTML = `<strong>[${timestamp}] ${icon}</strong> ${message}`;
+            entry.querySelector('.log-message-content').innerHTML = message;
         } else {
-            entry.textContent = `[${timestamp}] ${icon} ${message}`;
+            entry.querySelector('.log-message-content').textContent = message;
         }
         scanOutput.appendChild(entry);
         scanOutput.scrollTop = scanOutput.scrollHeight;
@@ -51,122 +84,182 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchAppConfig() {
         try {
-            const response = await fetch(`${SCRIPT_ROOT}/api/config`); // Asume un endpoint /api/config
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            const response = await fetch(`${SCRIPT_ROOT}/api/config`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             appConfig = await response.json();
             populateToolSelection();
             populateScanProfiles();
-            populateAdvancedOptions(); // Para opciones globales y CLI dinámicas
         } catch (error) {
             logToTerminal(`Error al cargar la configuración de la aplicación: ${error}`, 'error');
-            toolListDiv.innerHTML = '<p class="error">Error al cargar herramientas. Intente recargar la página.</p>';
+            toolListDiv.innerHTML = '<p class="error-message">Error al cargar herramientas. Intente recargar la página.</p>';
         }
     }
-    
+
     function populateScanProfiles() {
-        const profilesContainer = document.querySelector('.scan-profiles');
-        const existingButtons = profilesContainer.querySelectorAll('button[data-profile-name]');
-        existingButtons.forEach(btn => btn.remove()); // Limpiar botones de perfiles previos si se regenera
+        const profilesContainer = document.querySelector('.scan-profiles-buttons'); // MODIFICADO: Selector más específico
+        if (!profilesContainer) return;
+
+        profilesContainer.innerHTML = ''; // Limpiar botones existentes
 
         Object.keys(appConfig.profiles).forEach(profileName => {
             const profile = appConfig.profiles[profileName];
             const button = document.createElement('button');
-            button.textContent = `${profile.icon || '🚀'} ${profileName}`;
+            button.className = 'button-profile'; // NUEVO: Clase para estilizar
+            // MODIFICADO: Usar <i> para iconos y span para texto
+            button.innerHTML = `<i class="${profile.icon_class || 'icon-profile'}"></i> <span>${profileName}</span>`;
             button.title = profile.description;
             button.dataset.profileName = profileName;
             button.onclick = () => applyScanProfile(profileName);
-            // Insertar antes del botón "Desmarcar Todas"
-            const deselectAllButton = profilesContainer.querySelector('button[onclick*="deselectAllTools()"]'); // Ajustado para ser más específico
-            if (deselectAllButton) {
-                profilesContainer.insertBefore(button, deselectAllButton);
-            } else {
-                profilesContainer.appendChild(button);
-            }
+            profilesContainer.appendChild(button);
         });
+        // Botón de desmarcar todas podría ir aquí o en el HTML directamente
+        const deselectAllButton = document.createElement('button');
+        deselectAllButton.className = 'button-profile-deselect';
+        deselectAllButton.innerHTML = '<i class="icon-square-o"></i> <span>Desmarcar Todas</span>';
+        deselectAllButton.onclick = () => deselectAllTools();
+        profilesContainer.appendChild(deselectAllButton);
     }
-
 
     function populateToolSelection() {
         toolListDiv.innerHTML = '';
-        let toolIdCounter = 0;
+        let uniqueIdCounter = 0;
 
-        // Agrupar herramientas por fase y luego por categoría
         const toolsByPhaseAndCategory = {};
         for (const toolKey in appConfig.tools) {
             const tool = appConfig.tools[toolKey];
-            const phaseName = tool.phase; // 'phase' ya viene resuelto desde helpers.py
+            const phaseName = tool.phase;
             const categoryName = tool.category;
 
-            if (!toolsByPhaseAndCategory[phaseName]) {
-                toolsByPhaseAndCategory[phaseName] = {};
-            }
-            if (!toolsByPhaseAndCategory[phaseName][categoryName]) {
-                toolsByPhaseAndCategory[phaseName][categoryName] = [];
-            }
+            if (!toolsByPhaseAndCategory[phaseName]) toolsByPhaseAndCategory[phaseName] = {};
+            if (!toolsByPhaseAndCategory[phaseName][categoryName]) toolsByPhaseAndCategory[phaseName][categoryName] = [];
             toolsByPhaseAndCategory[phaseName][categoryName].push({ ...tool, id: toolKey });
         }
 
         for (const phaseName in toolsByPhaseAndCategory) {
-            const phaseId = `phase-${toolIdCounter++}`;
+            const phaseId = `phase-toggle-${uniqueIdCounter++}`;
             const phaseDiv = document.createElement('div');
             phaseDiv.className = 'pentest-phase';
-            phaseDiv.innerHTML = `
-                <div class="pentest-phase-header">
+
+            const phaseDisplayName = appConfig.phases[phaseName]?.name || phaseName; // NUEVO: Usar nombre de fase de config si existe
+            const phaseIconClass = appConfig.phases[phaseName]?.icon_class || 'icon-layer-group'; // NUEVO
+
+            const phaseHeader = document.createElement('div');
+            phaseHeader.className = 'pentest-phase-header';
+            phaseHeader.innerHTML = `
+                <label class="toggle-switch">
                     <input type="checkbox" id="${phaseId}" data-type="phase">
-                    <h4>${phaseName}</h4>
-                </div>`;
+                    <span class="slider"></span>
+                </label>
+                <h4><i class="${phaseIconClass}"></i> ${phaseDisplayName}</h4>`;
+            phaseDiv.appendChild(phaseHeader);
 
             for (const categoryName in toolsByPhaseAndCategory[phaseName]) {
-                const categoryId = `category-${toolIdCounter++}`;
+                const categoryId = `category-toggle-${uniqueIdCounter++}`;
                 const categoryDiv = document.createElement('div');
                 categoryDiv.className = 'tool-category';
-                categoryDiv.innerHTML = `
-                    <div class="tool-category-header">
+
+                // MODIFICADO: Usar icono de config o default
+                const categoryConfig = toolsByPhaseAndCategory[phaseName][categoryName][0]; // Asume que todas las herramientas en cat tienen misma config de cat
+                const categoryIconClass = categoryConfig?.category_icon_class || 'icon-folder';
+                const categoryDisplayName = categoryConfig?.category_display_name || categoryName;
+
+
+                const categoryHeader = document.createElement('div');
+                categoryHeader.className = 'tool-category-header';
+                categoryHeader.innerHTML = `
+                    <label class="toggle-switch">
                         <input type="checkbox" id="${categoryId}" class="tool-category-checkbox" data-phase-parent-id="${phaseId}" data-type="category">
-                        <h5>${categoryName}</h5>
-                    </div>`;
+                        <span class="slider"></span>
+                    </label>
+                    <h5><i class="${categoryIconClass}"></i> ${categoryDisplayName}</h5>
+                    <span class="accordion-arrow"><i class="icon-chevron-down"></i></span>`; // MODIFICADO: Icono de acordeón
+
+                const toolItemsContainer = document.createElement('div');
+                toolItemsContainer.className = 'tool-items-container'; // Por defecto colapsado (CSS)
+
+                categoryHeader.onclick = (e) => {
+                    if (e.target.type === 'checkbox' || e.target.classList.contains('slider') || e.target.closest('.toggle-switch')) return;
+                    toolItemsContainer.classList.toggle('expanded');
+                    const arrowIcon = categoryHeader.querySelector('.accordion-arrow i');
+                    if (arrowIcon) {
+                        arrowIcon.className = toolItemsContainer.classList.contains('expanded') ? 'icon-chevron-up' : 'icon-chevron-down';
+                    }
+                };
+                categoryDiv.appendChild(categoryHeader);
 
                 toolsByPhaseAndCategory[phaseName][categoryName].forEach(tool => {
-                    const toolItemId = `tool-${tool.id}-${toolIdCounter++}`;
+                    const toolItemId = `tool-toggle-${tool.id}-${uniqueIdCounter++}`;
                     const toolItemDiv = document.createElement('div');
                     toolItemDiv.className = 'tool-item';
-                    
+
                     let cliParamsHtml = '';
                     if (tool.cli_params_config && tool.cli_params_config.length > 0) {
-                        cliParamsHtml += `<div class="tool-cli-params-group" id="cli-group-${tool.id}" style="display:none; margin-left: 25px; padding: 5px; border-left: 2px solid #440000;">`;
+                        cliParamsHtml += `<div class="tool-cli-params-group" id="cli-group-${tool.id}" style="display:none;"><h6><i class="icon-sliders-h"></i> Parámetros Adicionales:</h6>`;
                         tool.cli_params_config.forEach(paramConf => {
-                            cliParamsHtml += `<label for="cli-${tool.id}-${paramConf.name}">${paramConf.label}:</label>`;
+                            // MODIFICADO: Estructura de label e input para mejor layout con CSS
+                            cliParamsHtml += `<div class="cli-param-row">
+                                                <label for="cli-${tool.id}-${paramConf.name}" title="${paramConf.description || ''}">${paramConf.label}:</label>`;
                             if (paramConf.type === 'select') {
-                                cliParamsHtml += `<select id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}">`;
+                                cliParamsHtml += `<select id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}" title="${paramConf.description || ''}">`;
                                 paramConf.options.forEach(opt => {
-                                    cliParamsHtml += `<option value="${opt}" ${opt === paramConf.default ? 'selected' : ''}>${opt}</option>`;
+                                    cliParamsHtml += `<option value="${opt.value || opt}" ${(opt.value || opt) === paramConf.default ? 'selected' : ''}>${opt.label || opt}</option>`;
                                 });
-                                cliParamsHtml += `</select><br>`;
-                            } else { // text, number
-                                cliParamsHtml += `<input type="${paramConf.type || 'text'}" id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}" placeholder="${paramConf.placeholder || ''}" value="${paramConf.default || ''}"><br>`;
+                                cliParamsHtml += `</select>`;
+                            } else {
+                                cliParamsHtml += `<input type="${paramConf.type || 'text'}" id="cli-${tool.id}-${paramConf.name}" name="cli_param_${tool.id}_${paramConf.name}" placeholder="${paramConf.placeholder || ''}" value="${paramConf.default || ''}" title="${paramConf.description || ''}">`;
                             }
+                            cliParamsHtml += `</div>`; // Cierre de cli-param-row
                         });
                         cliParamsHtml += `</div>`;
                     }
 
+                    // MODIFICADO: Icono para herramienta, y tooltip para descripción
+                    const toolIconClass = tool.icon_class || 'icon-cog';
+                    const dangerousIndicator = tool.dangerous ? `<span class="tool-dangerous-indicator" title="Esta herramienta puede ser intrusiva o disruptiva"><i class="icon-exclamation-triangle"></i></span>` : '';
+
                     toolItemDiv.innerHTML = `
-                        <label for="${toolItemId}">
-                            <input type="checkbox" id="${toolItemId}" name="selected_tools" value="${tool.id}" class="tool-item-checkbox" data-category-parent-id="${categoryId}" data-type="tool" ${tool.default_enabled ? 'checked' : ''}>
-                            ${tool.name} ${tool.dangerous ? '<span class="tool-dangerous-indicator" title="Esta herramienta puede ser intrusiva o disruptiva">⚠️</span>' : ''}
-                        </label>
-                        <div class="tool-description">${tool.description}</div>
-                        ${cliParamsHtml}
+                        <div class="tool-item-main">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="${toolItemId}" name="selected_tools" value="${tool.id}" class="tool-item-checkbox" data-category-parent-id="${categoryId}" data-type="tool" ${tool.default_enabled ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                            <span class="tool-icon"><i class="${toolIconClass}"></i></span>
+                            <span class="toggle-label" title="${tool.description || tool.name}">${tool.name}</span>
+                            ${dangerousIndicator}
+                        </div>
+                        <div class="tool-details" style="display:none;"> ${cliParamsHtml}
+                        </div>
                     `;
-                    categoryDiv.appendChild(toolItemDiv);
+                    // Lógica para mostrar/ocultar tool.description y cliParamsHtml si se selecciona la herramienta
+                    const toolCheckboxInput = toolItemDiv.querySelector('.tool-item-checkbox');
+                    toolCheckboxInput.addEventListener('change', (e) => {
+                        const cliGroup = toolItemDiv.querySelector(`#cli-group-${e.target.value}`);
+                        const toolDetails = toolItemDiv.querySelector('.tool-details');
+                        if (cliGroup) { // Si hay parámetros CLI, se gestionan en handleCheckboxChange
+                            if (toolDetails) toolDetails.style.display = e.target.checked ? 'block' : 'none'; // Mostrar/ocultar el contenedor de detalles
+                        }
+                        // Si no hay CLI params, podrías querer mostrar la descripción de todas formas
+                        // else if (toolDetails && tool.description) {
+                        //    toolDetails.style.display = e.target.checked ? 'block' : 'none';
+                        // }
+
+                    });
+
+                    toolItemsContainer.appendChild(toolItemDiv);
                 });
+                categoryDiv.appendChild(toolItemsContainer);
                 phaseDiv.appendChild(categoryDiv);
             }
             toolListDiv.appendChild(phaseDiv);
         }
         addCheckboxEventListeners();
-        updateAllParentCheckboxes(); // Ensure correct initial state of parent checkboxes
+        updateAllParentCheckboxes();
+        // Por defecto, colapsar todas las categorías y actualizar flechas
+        document.querySelectorAll('.tool-items-container').forEach(container => {
+            container.classList.remove('expanded');
+            const arrowIcon = container.previousElementSibling.querySelector('.accordion-arrow i');
+            if (arrowIcon) arrowIcon.className = 'icon-chevron-down';
+        });
     }
 
     function addCheckboxEventListeners() {
@@ -184,103 +277,110 @@ document.addEventListener('DOMContentLoaded', () => {
             toolListDiv.querySelectorAll(`.tool-category-checkbox[data-phase-parent-id="${phaseId}"]`).forEach(catCb => {
                 catCb.checked = checkbox.checked;
                 catCb.indeterminate = false;
-                toggleChildren(catCb, '.tool-item-checkbox', checkbox.checked);
+                toggleChildren(catCb, checkbox.checked);
             });
         } else if (type === 'category') {
-            toggleChildren(checkbox, '.tool-item-checkbox', checkbox.checked);
-            updateParentCheckboxState(checkbox.dataset.phaseParentId, '.tool-category-checkbox');
+            toggleChildren(checkbox, checkbox.checked);
+            updateParentCheckboxState(checkbox.dataset.phaseParentId);
         } else if (type === 'tool') {
-            updateParentCheckboxState(checkbox.dataset.categoryParentId, '.tool-item-checkbox');
-            // Mostrar/ocultar CLI params para esta herramienta
+            updateParentCheckboxState(checkbox.dataset.categoryParentId);
+            const toolDetailsDiv = checkbox.closest('.tool-item').querySelector('.tool-details');
             const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
-            if (cliGroup) {
+
+            if (toolDetailsDiv) { // Contenedor general de detalles
+                toolDetailsDiv.style.display = checkbox.checked ? 'block' : 'none';
+            }
+            if (cliGroup) { // Específico para grupo CLI
                 cliGroup.style.display = checkbox.checked ? 'block' : 'none';
             }
         }
-        // Asegurar que los parámetros CLI se muestren si la herramienta está marcada inicialmente
-        // (Esta parte ya está cubierta por updateAllParentCheckboxes al final de populate y por la lógica de 'tool' arriba)
-        // if (type === 'tool' && checkbox.checked) {
-        // const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
-        // if (cliGroup) cliGroup.style.display = 'block';
-        // }
-    }
-    
-    function toggleChildren(parentCheckbox, childrenSelector, isChecked) {
-        const parentContainer = parentCheckbox.closest('.pentest-phase, .tool-category');
-        parentContainer.querySelectorAll(childrenSelector + `[data-category-parent-id="${parentCheckbox.id}"]`).forEach(child => {
-            child.checked = isChecked;
-            child.indeterminate = false;
-            // Visibilidad de CLI params para herramientas individuales
-            if (child.dataset.type === 'tool') {
-                const cliGroup = document.getElementById(`cli-group-${child.value}`);
-                if (cliGroup) cliGroup.style.display = isChecked ? 'block' : 'none';
-            }
-        });
     }
 
-    function updateParentCheckboxState(parentId, childrenSelectorClass) {
+    function toggleChildren(parentCheckbox, isChecked) {
+        const parentType = parentCheckbox.dataset.type;
+        let childrenSelector = '';
+        if (parentType === 'category') {
+            childrenSelector = `.tool-item-checkbox[data-category-parent-id="${parentCheckbox.id}"]`;
+        }
+
+        if (childrenSelector) {
+            // MODIFICADO: Búsqueda de hijos más robusta dentro del contenedor de la categoría
+            const categoryDiv = parentCheckbox.closest('.tool-category');
+            if (!categoryDiv) return;
+
+            categoryDiv.querySelectorAll(childrenSelector).forEach(childCb => {
+                childCb.checked = isChecked;
+                childCb.indeterminate = false;
+                if (childCb.dataset.type === 'tool') {
+                    const toolDetailsDiv = childCb.closest('.tool-item').querySelector('.tool-details');
+                    const cliGroup = document.getElementById(`cli-group-${childCb.value}`);
+                    if (toolDetailsDiv) {
+                        toolDetailsDiv.style.display = isChecked ? 'block' : 'none';
+                    }
+                    if (cliGroup) cliGroup.style.display = isChecked ? 'block' : 'none';
+                }
+            });
+        }
+    }
+
+    function updateParentCheckboxState(parentId) {
         if (!parentId) return;
         const parentCheckbox = document.getElementById(parentId);
         if (!parentCheckbox) return;
 
-        // Determinar el tipo de hijos a buscar (categorías para una fase, o herramientas para una categoría)
-        let actualChildrenSelector = '';
-        if (parentCheckbox.dataset.type === 'phase') {
-            actualChildrenSelector = `.tool-category-checkbox[data-phase-parent-id="${parentId}"]`;
-        } else if (parentCheckbox.dataset.type === 'category') {
-            actualChildrenSelector = `.tool-item-checkbox[data-category-parent-id="${parentId}"]`;
+        const parentType = parentCheckbox.dataset.type;
+        let childrenCheckboxes;
+
+        if (parentType === 'phase') {
+            childrenCheckboxes = toolListDiv.querySelectorAll(`.tool-category-checkbox[data-phase-parent-id="${parentId}"]`);
+        } else if (parentType === 'category') {
+            // MODIFICADO: Búsqueda de hijos más robusta dentro del contenedor de la categoría
+            const categoryDiv = parentCheckbox.closest('.tool-category');
+            if (!categoryDiv) return;
+            childrenCheckboxes = categoryDiv.querySelectorAll(`.tool-item-checkbox[data-category-parent-id="${parentId}"]`);
         } else {
-            return; // No es un padre conocido
-        }
-        
-        const children = Array.from(toolListDiv.querySelectorAll(actualChildrenSelector));
-        if (children.length === 0 && parentCheckbox.dataset.type === 'phase') { // Si una fase no tiene categorías (raro), basarse en herramientas directas (si existieran)
-             // Esta lógica puede necesitar ajuste si hay herramientas directas bajo fases, lo cual no es la estructura actual.
+            return;
         }
 
+        const childrenArray = Array.from(childrenCheckboxes);
+        const allChecked = childrenArray.length > 0 && childrenArray.every(child => child.checked && !child.indeterminate);
+        const someChecked = childrenArray.some(child => child.checked || child.indeterminate);
 
-        const allChecked = children.every(child => child.checked);
-        const someChecked = children.some(child => child.checked || child.indeterminate);
-
-        parentCheckbox.checked = allChecked && children.length > 0; // Solo 'checked' si hay hijos y todos están marcados
+        parentCheckbox.checked = allChecked;
         parentCheckbox.indeterminate = !allChecked && someChecked;
 
-        // Propagate upwards (de categoría a fase)
-        if (parentCheckbox.dataset.type === 'category' && parentCheckbox.dataset.phaseParentId) {
-            updateParentCheckboxState(parentCheckbox.dataset.phaseParentId, '.tool-category-checkbox'); // El selector aquí es para los hijos del padre (fase)
+        if (parentType === 'category' && parentCheckbox.dataset.phaseParentId) {
+            updateParentCheckboxState(parentCheckbox.dataset.phaseParentId);
         }
     }
 
     function updateAllParentCheckboxes() {
-        // Actualizar categorías basadas en herramientas
-        toolListDiv.querySelectorAll('.tool-category-checkbox').forEach(catCb => {
-            updateParentCheckboxState(catCb.id, '.tool-item-checkbox'); // Los hijos de una categoría son .tool-item-checkbox
-        });
-        // Actualizar fases basadas en categorías
-        toolListDiv.querySelectorAll('input[data-type="phase"]').forEach(phaseCb => {
-            updateParentCheckboxState(phaseCb.id, '.tool-category-checkbox'); // Los hijos de una fase son .tool-category-checkbox
-        });
-        // Asegurar que los CLI params de las herramientas marcadas por defecto se muestren
         toolListDiv.querySelectorAll('.tool-item-checkbox:checked').forEach(toolCb => {
+            const toolDetailsDiv = toolCb.closest('.tool-item').querySelector('.tool-details');
             const cliGroup = document.getElementById(`cli-group-${toolCb.value}`);
+            if (toolDetailsDiv) toolDetailsDiv.style.display = 'block';
             if (cliGroup) cliGroup.style.display = 'block';
         });
+        toolListDiv.querySelectorAll('.tool-category-checkbox').forEach(catCb => {
+            updateParentCheckboxState(catCb.id);
+        });
+        toolListDiv.querySelectorAll('input[data-type="phase"]').forEach(phaseCb => {
+            updateParentCheckboxState(phaseCb.id);
+        });
     }
-    
-    window.applyScanProfile = function(profileName) {
-        applyToolPreset('none'); // Desmarcar todo primero
+
+    window.applyScanProfile = function (profileName) {
+        deselectAllTools();
         const profile = appConfig.profiles[profileName];
         if (profile && profile.tools) {
             profile.tools.forEach(toolId => {
                 const toolCheckbox = toolListDiv.querySelector(`input[name="selected_tools"][value="${toolId}"]`);
                 if (toolCheckbox) {
                     toolCheckbox.checked = true;
-                    // Disparar evento change para actualizar padres y mostrar CLI
-                    toolCheckbox.dispatchEvent(new Event('change', { bubbles: true })); // Asegurar que el evento burbujee
+                    toolCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             });
 
-            // Aplicar parámetros específicos del perfil
             if (profile.params_override) {
                 for (const toolId in profile.params_override) {
                     const toolParams = profile.params_override[toolId];
@@ -292,28 +392,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            updateAllParentCheckboxes(); // Re-evaluar estado de checkboxes padres
+            logToTerminal(`Perfil '${profileName}' aplicado.`, 'success');
         }
+        updateAllParentCheckboxes();
+        // NUEVO: Resaltar perfil activo (requiere CSS)
+        document.querySelectorAll('.button-profile').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.profileName === profileName) {
+                btn.classList.add('active');
+            }
+        });
     }
 
-    window.applyToolPreset = function(presetName) {
-        if (presetName === 'none') {
-            toolListDiv.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = false;
-                checkbox.indeterminate = false;
-                if (checkbox.dataset.type === 'tool') { // Ocultar CLI params si se desmarca
-                    const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
-                    if (cliGroup) cliGroup.style.display = 'none';
-                }
-            });
-        }
-        // Podrías añadir más presets aquí (ej: 'all', 'safe', etc.)
+    window.deselectAllTools = function () {
+        toolListDiv.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;
+            checkbox.indeterminate = false;
+            if (checkbox.dataset.type === 'tool') {
+                const toolDetailsDiv = checkbox.closest('.tool-item').querySelector('.tool-details');
+                const cliGroup = document.getElementById(`cli-group-${checkbox.value}`);
+                if (toolDetailsDiv) toolDetailsDiv.style.display = 'none';
+                if (cliGroup) cliGroup.style.display = 'none';
+            }
+        });
+        // NUEVO: Quitar resaltado de perfil activo
+        document.querySelectorAll('.button-profile.active').forEach(btn => btn.classList.remove('active'));
+        logToTerminal('Todas las herramientas deseleccionadas.', 'info');
     }
 
     async function startScan() {
         const targets = targetsTextarea.value.trim().split('\n').filter(t => t.trim() !== '');
         if (targets.length === 0) {
             logToTerminal("Por favor, ingrese al menos un objetivo.", "error");
+            targetsTextarea.focus();
             return;
         }
 
@@ -328,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (inputField && inputField.value.trim() !== '') {
                         params[pConf.name] = inputField.value;
                     } else if (pConf.default) {
-                        params[pConf.name] = pConf.default; // Usar default si está vacío
+                        params[pConf.name] = pConf.default;
                     }
                 });
             }
@@ -339,74 +450,81 @@ document.addEventListener('DOMContentLoaded', () => {
             logToTerminal("Por favor, seleccione al menos una herramienta de escaneo.", "error");
             return;
         }
-        
+
+        // MODIFICADO: Obtener opciones avanzadas de forma más robusta
         const advancedScanOptions = {
-            customScanTime: document.getElementById('customScanTime') ? document.getElementById('customScanTime').value : null,
-            followRedirects: document.getElementById('followRedirects') ? document.getElementById('followRedirects').value : null,
-            // Añadir más opciones avanzadas globales aquí
+            customScanTime: document.getElementById('customScanTime')?.value || null,
+            followRedirects: document.getElementById('followRedirects')?.checked || false, // Asumiendo checkbox
+            scanIntensity: document.getElementById('scanIntensity')?.value || 'normal', // Asumiendo select
         };
 
-
-        logToTerminal(`Iniciando escaneo para objetivo(s): ${targets.join(', ')}...`, 'info');
+        logToTerminal(`Iniciando escaneo para objetivo(s): ${targets.join(', ')}...`, 'command');
+        if (jobInfoPanel) jobInfoPanel.style.display = 'block';
         currentJobInfoDiv.style.display = 'block';
         jobIdDisplay.textContent = 'Generando...';
-        jobStatusDisplay.textContent = 'Iniciando...';
+        if (jobStatusBadge) { // MODIFICADO: Actualizar badge
+            jobStatusBadge.textContent = 'Iniciando';
+            jobStatusBadge.className = 'status-badge status-pending';
+        }
         overallProgressBar.style.width = '0%';
+        overallProgressBar.setAttribute('aria-valuenow', '0'); // NUEVO: Accesibilidad
         overallProgressBar.textContent = '0%';
         cancelJobButton.style.display = 'inline-block';
         downloadJobZipLink.style.display = 'none';
         downloadJobZipLink.classList.add('disabled');
-
+        if (scanButton) {
+            // MODIFICADO: Usar <i> para icono
+            scanButton.innerHTML = '<i class="icon-spinner icon-spin"></i> Escaneando...';
+            scanButton.disabled = true;
+        }
 
         try {
             const response = await fetch(`${SCRIPT_ROOT}/api/scan/start`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    targets, 
-                    tools: selectedToolsPayload,
-                    advanced_options: advancedScanOptions 
-                }),
+                body: JSON.stringify({ targets, tools: selectedToolsPayload, advanced_options: advancedScanOptions }),
             });
-
             const data = await response.json();
             if (response.ok) {
                 currentJobId = data.job_id;
                 jobIdDisplay.textContent = currentJobId;
                 logToTerminal(`Escaneo iniciado con Job ID: ${currentJobId}`, "success");
                 localStorage.setItem('currentJobId', currentJobId);
-                clearTimeout(statusPollInterval); // Limpiar sondeo anterior
-                refreshStatus(currentJobId, true); // Iniciar sondeo para el nuevo job
-                loadJobs(); // Actualizar lista de historial
+                clearTimeout(statusPollInterval);
+                refreshStatus(currentJobId, true);
+                loadJobs();
             } else {
                 logToTerminal(`Error al iniciar escaneo (HTTP ${response.status}): ${data.error || 'Error desconocido'}`, "error");
+                if (jobInfoPanel) jobInfoPanel.style.display = 'none';
                 currentJobInfoDiv.style.display = 'none';
+                if (scanButton) {
+                    // MODIFICADO: Usar <i> para icono
+                    scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo';
+                    scanButton.disabled = false;
+                }
             }
         } catch (error) {
             logToTerminal(`Error de red al iniciar escaneo: ${error.message || error}`, "error");
+            if (jobInfoPanel) jobInfoPanel.style.display = 'none';
             currentJobInfoDiv.style.display = 'none';
+            if (scanButton) {
+                // MODIFICADO: Usar <i> para icono
+                scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo';
+                scanButton.disabled = false;
+            }
         }
     }
-    const scanButton = document.getElementById('startScanButton');
-    // CORRECCIÓN: Usar getElementById para 'refreshStatusButton'
-    const refreshButton = document.getElementById('refreshStatusButton'); 
-    
-    if(scanButton) {
-        scanButton.onclick = startScan;
-    } else {
-        console.error('No se encontró el botón startScanButton');
-    }
-    
-    if(refreshButton) {
-        refreshButton.onclick = () => refreshStatus(); // No necesita argumento, refreshStatus lo maneja
-    } else {
-        // Mensaje actualizado para reflejar que se busca por ID
-        console.error('No se encontró el botón con ID refreshStatusButton'); 
-    }
+
+    if (scanButton) scanButton.onclick = startScan;
+    if (refreshButton) refreshButton.onclick = () => {
+        if (currentJobId) refreshStatus(currentJobId);
+        else logToTerminal("No hay un trabajo activo para refrescar.", "info");
+    };
 
     async function refreshStatus(jobIdToRefresh = null, initialCall = false) {
         const effectiveJobId = jobIdToRefresh || currentJobId;
         if (!effectiveJobId) {
+            if (jobInfoPanel) jobInfoPanel.style.display = 'none';
             currentJobInfoDiv.style.display = 'none';
             cancelJobButton.style.display = 'none';
             downloadJobZipLink.style.display = 'none';
@@ -414,26 +532,38 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Si es una llamada inicial para un nuevo job, mostrar info inmediatamente
         if (initialCall) {
             jobIdDisplay.textContent = effectiveJobId;
+            if (jobInfoPanel) jobInfoPanel.style.display = 'block';
             currentJobInfoDiv.style.display = 'block';
-            cancelJobButton.style.display = 'inline-block'; // O 'none' si el job ya podría estar completo
+            cancelJobButton.style.display = 'inline-block';
             downloadJobZipLink.style.display = 'none';
             downloadJobZipLink.classList.add('disabled');
         }
-
 
         try {
             const response = await fetch(`${SCRIPT_ROOT}/api/scan/status/${effectiveJobId}`);
             if (!response.ok) {
                 if (response.status === 404) {
-                    logToTerminal(`Job ID ${effectiveJobId} no encontrado. Pudo haber sido eliminado o nunca existió.`, "warn");
-                    if (effectiveJobId === currentJobId) { // Solo limpiar si es el job "activo" actual
+                    logToTerminal(`Job ID ${effectiveJobId} no encontrado.`, "warn");
+                    if (effectiveJobId === currentJobId) {
                         localStorage.removeItem('currentJobId');
                         currentJobId = null;
+                        if (jobInfoPanel) jobInfoPanel.style.display = 'none';
                         currentJobInfoDiv.style.display = 'none';
                         clearTimeout(statusPollInterval);
+                        if (scanButton) {
+                            // MODIFICADO: Usar <i> para icono
+                            scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo';
+                            scanButton.disabled = false;
+                        }
+                        if (jobStatusBadge) { // MODIFICADO: Limpiar badge
+                            jobStatusBadge.textContent = 'N/A';
+                            jobStatusBadge.className = 'status-badge status-unknown';
+                        }
+                        overallProgressBar.style.width = `0%`;
+                        overallProgressBar.setAttribute('aria-valuenow', 0);
+                        overallProgressBar.textContent = `0%`;
                     }
                 } else {
                     const errorData = await response.json().catch(() => ({ error: "Error desconocido al obtener estado." }));
@@ -443,71 +573,76 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            jobIdDisplay.textContent = data.job_id; // Actualizar por si acaso
-            jobStatusDisplay.textContent = data.status;
-            overallProgressBar.style.width = `${data.overall_progress || 0}%`;
-            overallProgressBar.textContent = `${data.overall_progress || 0}%`;
-            currentJobInfoDiv.style.display = 'block'; // Asegurar que esté visible
+            jobIdDisplay.textContent = data.job_id;
+            // MODIFICADO: Usar jobStatusBadge
+            if (jobStatusBadge) {
+                jobStatusBadge.textContent = data.status;
+                jobStatusBadge.className = `status-badge status-${data.status.toLowerCase()}`;
+            } else if (jobStatusDisplay) { // Fallback si el badge no existe
+                jobStatusDisplay.textContent = data.status;
+            }
 
-            // Limpiar logs antiguos de la terminal si el job es diferente o está iniciando
-            if (scanOutput.dataset.currentJobLog !== data.job_id && initialCall) { // Limpiar solo en llamada inicial de un nuevo job
-                scanOutput.innerHTML = ''; 
+            const progress = Math.round(data.overall_progress || 0);
+            overallProgressBar.style.width = `${progress}%`;
+            overallProgressBar.setAttribute('aria-valuenow', progress); // NUEVO: Accesibilidad
+            overallProgressBar.textContent = `${progress}%`;
+            if (jobInfoPanel && jobInfoPanel.style.display === 'none') jobInfoPanel.style.display = 'block';
+            currentJobInfoDiv.style.display = 'block';
+
+            if (scanOutput.dataset.currentJobLog !== data.job_id && initialCall) {
+                scanOutput.innerHTML = '';
                 logToTerminal(`Mostrando logs para Job ID: ${data.job_id}`, 'info');
                 scanOutput.dataset.currentJobLog = data.job_id;
             }
-            
-            // Mostrar logs del job (el backend debería enviar solo logs nuevos o un subconjunto)
+
             if (data.logs && Array.isArray(data.logs)) {
+                // ASUNCIÓN: el backend envía solo logs nuevos o el frontend debe manejar la duplicación
+                // Esta implementación simple asume que si los logs vienen, son para ser mostrados.
+                // Para evitar duplicados si el backend envía todos los logs cada vez, necesitarías
+                // llevar un contador de logs ya mostrados para este job_id.
                 data.logs.forEach(log => {
-                    // Una forma simple de evitar duplicados si el backend reenvía todos los logs
-                    // Lo ideal es que el backend envíe solo logs nuevos desde el último poll.
-                    // Esta comprobación puede ser costosa si hay muchos logs.
-                    // if (!scanOutput.innerHTML.includes(log.message)) { // Esta comprobación puede ser ineficiente
-                        logToTerminal(log.message, log.type || 'info', log.is_html || false);
-                    // }
+                    logToTerminal(log.message, log.type || 'info', log.is_html || false);
                 });
             }
-
 
             if (data.status === 'COMPLETED' || data.status === 'CANCELLED' || data.status === 'ERROR') {
                 cancelJobButton.style.display = 'none';
                 if (data.zip_path) {
-                    downloadJobZipLink.href = `${SCRIPT_ROOT}${data.zip_path}`; // Asegurar SCRIPT_ROOT si es necesario
+                    downloadJobZipLink.href = `${SCRIPT_ROOT}${data.zip_path}`;
                     downloadJobZipLink.style.display = 'inline-block';
                     downloadJobZipLink.classList.remove('disabled');
-
                 }
-                if (effectiveJobId === currentJobId) { // Si el job "activo" ha terminado
-                    // No remover currentJobId de localStorage aquí, para que la UI pueda mostrarlo hasta que el usuario seleccione otro.
-                    // currentJobId = null; // No establecer a null para que refreshStatus manual aún funcione
+                if (effectiveJobId === currentJobId) {
+                    if (scanButton) {
+                        // MODIFICADO: Usar <i> para icono
+                        scanButton.innerHTML = '<i class="icon-zap"></i> Iniciar Escaneo';
+                        scanButton.disabled = false;
+                    }
                 }
-                clearTimeout(statusPollInterval); // Detener sondeo
-                loadJobs(); // Actualizar la lista para reflejar el estado final
-            } else { // PENDING, RUNNING
-                cancelJobButton.style.display = 'inline-block'; // Mantener visible si está en curso
+                clearTimeout(statusPollInterval);
+                loadJobs();
+            } else {
+                cancelJobButton.style.display = 'inline-block';
                 downloadJobZipLink.style.display = 'none';
                 downloadJobZipLink.classList.add('disabled');
-                clearTimeout(statusPollInterval); // Limpiar sondeo anterior
+                clearTimeout(statusPollInterval);
                 statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 5000);
             }
 
         } catch (error) {
             logToTerminal(`Error de red al obtener estado: ${error.message || error}`, "error");
             clearTimeout(statusPollInterval);
-            statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 10000); // Reintentar tras 10s
+            statusPollInterval = setTimeout(() => refreshStatus(effectiveJobId), 10000); // Reintentar más tarde
         }
     }
-    // ELIMINADA: La siguiente línea es redundante y causaba el error TypeError debido al selector incorrecto.
-    // La asignación de onclick para refreshButton ya se hace arriba de forma segura.
-    // document.querySelector('button[onclick="refreshStatus()"]').onclick = () => refreshStatus();
-
 
     async function cancelScan() {
-        const jobIdToCancel = jobIdDisplay.textContent; // Usar el ID mostrado en la UI
+        const jobIdToCancel = currentJobId || jobIdDisplay.textContent;
         if (!jobIdToCancel || jobIdToCancel === 'Generando...') {
-            logToTerminal("No hay un trabajo específico seleccionado o activo para cancelar.", "warn");
+            logToTerminal("No hay un trabajo específico activo para cancelar.", "warn");
             return;
         }
+        // NUEVO: Usar un modal de confirmación más estilizado si es posible, sino confirm es OK
         if (!confirm(`¿Está seguro de que desea cancelar el trabajo ${jobIdToCancel}?`)) {
             return;
         }
@@ -517,10 +652,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (response.ok) {
                 logToTerminal(`Solicitud de cancelación enviada para el trabajo ${jobIdToCancel}.`, "info");
-                jobStatusDisplay.textContent = "Cancelando...";
-                cancelJobButton.style.display = 'none'; // Ocultar inmediatamente
-                clearTimeout(statusPollInterval); // Detener sondeo temporalmente
-                statusPollInterval = setTimeout(() => refreshStatus(jobIdToCancel), 2000); // Actualizar estado pronto
+                if (jobStatusBadge) { // MODIFICADO: Actualizar badge
+                    jobStatusBadge.textContent = "Cancelando...";
+                    jobStatusBadge.className = 'status-badge status-cancelling'; // Clase para estilo
+                } else if (jobStatusDisplay) {
+                    jobStatusDisplay.textContent = "Cancelando...";
+                }
+                cancelJobButton.style.display = 'none';
+                clearTimeout(statusPollInterval);
+                statusPollInterval = setTimeout(() => refreshStatus(jobIdToCancel), 2000);
             } else {
                 logToTerminal(`Error al cancelar escaneo (HTTP ${response.status}): ${data.error || 'Error desconocido'}`, "error");
             }
@@ -528,75 +668,210 @@ document.addEventListener('DOMContentLoaded', () => {
             logToTerminal(`Error de red al cancelar escaneo: ${error.message || error}`, "error");
         }
     }
-    if (cancelJobButton) { // Asegurarse que el botón existe antes de asignar
-        cancelJobButton.onclick = cancelScan;
-    }
-
+    if (cancelJobButton) cancelJobButton.onclick = cancelScan;
 
     async function loadJobs() {
-        jobsListArea.innerHTML = '<li>Cargando trabajos...</li>';
+        if (!jobsListArea) return; // Si no existe el área, no hacer nada
+        jobsListArea.innerHTML = '<li class="loading-placeholder"><i class="icon-spinner icon-spin"></i> Cargando historial...</li>';
         try {
             const response = await fetch(`${SCRIPT_ROOT}/api/jobs`);
             if (!response.ok) throw new Error(`HTTP error ${response.status}`);
             const jobs = await response.json();
-            
-            jobsListArea.innerHTML = ''; // Limpiar
+
+            jobsListArea.innerHTML = '';
             if (jobs.length === 0) {
-                jobsListArea.innerHTML = '<li>No hay trabajos anteriores.</li>';
+                jobsListArea.innerHTML = '<li class="empty-placeholder">No hay trabajos anteriores.</li>';
                 return;
             }
             jobs.forEach(job => {
                 const li = document.createElement('li');
+                li.classList.add('job-card', `status-${job.status.toLowerCase()}`); // Clase de estado para estilizar tarjeta
+                if (job.id === currentJobId) {
+                    li.classList.add('active-job-card'); // NUEVO: para resaltar el job actual en la lista
+                }
+
                 let targetsDisplay = Array.isArray(job.targets) ? job.targets.join(', ') : (job.targets || 'N/A');
-                if (targetsDisplay.length > 50) targetsDisplay = targetsDisplay.substring(0, 47) + '...';
+                if (targetsDisplay.length > 35) targetsDisplay = targetsDisplay.substring(0, 32) + '...';
+
+                // MODIFICADO: Usar clases de icono para el estado
+                let statusIconClass = 'icon-question-circle';
+                if (job.status === 'COMPLETED') statusIconClass = 'icon-check-circle-green'; // Verde para completado
+                else if (job.status === 'RUNNING') statusIconClass = 'icon-spinner icon-spin blue'; // Azul para corriendo
+                else if (job.status === 'ERROR') statusIconClass = 'icon-times-circle-red'; // Rojo para error
+                else if (job.status === 'CANCELLED') statusIconClass = 'icon-ban grey'; // Gris para cancelado
+                else if (job.status === 'PENDING') statusIconClass = 'icon-clock orange'; // Naranja para pendiente
 
                 li.innerHTML = `
-                    <div class="job-summary">
-                        <strong>ID:</strong> ${job.id} <br>
-                        <strong>Estado:</strong> <span class="job-status-${job.status.toLowerCase()}">${job.status}</span> <br>
-                        <strong>Fecha:</strong> ${job.timestamp ? new Date(job.timestamp).toLocaleString() : 'N/A'} <br>
-                        <strong>Objetivos:</strong> ${targetsDisplay}
+                    <div class="job-card-header">
+                        <span class="job-id">ID: ${job.id}</span>
+                        <span class="job-status job-status-${job.status.toLowerCase()}">
+                            <i class="${statusIconClass}"></i> ${job.status}
+                        </span>
                     </div>
-                    <div class="job-actions">
-                        <button class="button-like view-details-btn">Ver Detalles</button>
-                        ${job.zip_path ? `<a href="${SCRIPT_ROOT}${job.zip_path}" class="button-like download-zip-btn" target="_blank">Descargar ZIP</a>` : ''}
+                    <div class="job-card-body">
+                        <p class="job-targets" title="${Array.isArray(job.targets) ? job.targets.join(', ') : (job.targets || 'N/A')}">
+                            <strong><i class="icon-target"></i> Objetivos:</strong> ${targetsDisplay}
+                        </p>
+                        <p class="job-timestamp">
+                            <strong><i class="icon-calendar"></i> Fecha:</strong> ${job.timestamp ? new Date(job.timestamp).toLocaleString() : 'N/A'}
+                        </p>
                     </div>
-                `;
+                    <div class="job-card-actions">
+                        <button class="button-secondary view-details-btn" data-job-id="${job.id}">
+                            <i class="icon-eye"></i> Ver Detalles
+                        </button>
+                        ${job.zip_path ? `<a href="${SCRIPT_ROOT}${job.zip_path}" class="button-success download-zip-btn" target="_blank">
+                                            <i class="icon-download"></i> Descargar ZIP
+                                          </a>` :
+                        `<button class="button-disabled download-zip-btn" disabled title="Resultados no disponibles para descarga">
+                                             <i class="icon-download"></i> Descargar ZIP
+                                           </button>`}
+                    </div>`;
                 li.querySelector('.view-details-btn').onclick = (e) => {
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     viewJobDetails(job.id);
                 };
+                // NUEVO: Permitir click en toda la tarjeta para ver detalles
+                li.onclick = () => viewJobDetails(job.id);
+
                 jobsListArea.appendChild(li);
             });
         } catch (error) {
             logToTerminal(`Error al cargar historial de trabajos: ${error.message || error}`, "error");
-            jobsListArea.innerHTML = '<li>Error al cargar trabajos.</li>';
+            jobsListArea.innerHTML = '<li class="error-message">Error al cargar trabajos.</li>';
         }
     }
 
     function viewJobDetails(jobId) {
         logToTerminal(`Cargando detalles para el trabajo ${jobId}...`, "info");
-        currentJobId = jobId; // Actualizar el currentJobId global del frontend
-        localStorage.setItem('currentJobId', jobId); // Guardar para futuras recargas de página
-        clearTimeout(statusPollInterval); // Detener cualquier sondeo anterior
-        // Limpiar terminal para logs del nuevo job ANTES de llamar a refreshStatus
-        scanOutput.innerHTML = ''; 
-        scanOutput.dataset.currentJobLog = jobId; // Marcar la terminal
-        refreshStatus(jobId, true); // Iniciar sondeo para este job, es una llamada inicial
+        currentJobId = jobId;
+        localStorage.setItem('currentJobId', jobId);
+        clearTimeout(statusPollInterval);
+        scanOutput.innerHTML = '';
+        scanOutput.dataset.currentJobLog = jobId;
+        // logEntryCounter = 0; // No es necesario si no hay animación secuencial de logs
+        refreshStatus(jobId, true);
+
+        // NUEVO: Resaltar el job card activo
+        document.querySelectorAll('.job-card.active-job-card').forEach(card => card.classList.remove('active-job-card'));
+        const activeCard = Array.from(jobsListArea.querySelectorAll('.job-card')).find(card => card.querySelector('.view-details-btn')?.dataset.jobId === jobId);
+        if (activeCard) activeCard.classList.add('active-job-card');
+
+        const terminalPanel = document.getElementById('terminal-panel'); // Asumiendo que este es el ID correcto
+        if (terminalPanel) {
+            terminalPanel.scrollIntoView({ behavior: 'smooth' });
+        } else { // Fallback si el panel no existe, ir a la pestaña de Output
+            const outputTabButton = document.querySelector('.tab-link[onclick*="OutputTab"]');
+            if (outputTabButton) outputTabButton.click();
+        }
     }
-    
-    // Función global para desmarcar todas las herramientas, referenciada desde index.html
-    window.deselectAllTools = function() {
-        applyToolPreset('none');
+
+    if (importTargetsButton && importTargetsFile) {
+        importTargetsButton.onclick = () => importTargetsFile.click();
+        importTargetsFile.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    targetsTextarea.value = e.target.result;
+                    logToTerminal(`Targets importados desde ${file.name}`, 'success'); // MODIFICADO: success type
+                    updateTargetsCount(); // NUEVO
+                };
+                reader.readAsText(file);
+                importTargetsFile.value = '';
+            }
+        };
     }
+
+    if (copyLogButton) {
+        copyLogButton.onclick = () => {
+            if (navigator.clipboard && scanOutput) {
+                // MODIFICADO: Copiar solo el texto, sin timestamps/iconos de la UI si es posible.
+                // Si se quieren timestamps, extraerlos del DOM.
+                let logText = "";
+                scanOutput.querySelectorAll('.log-entry').forEach(entry => {
+                    const timestamp = entry.querySelector('.log-timestamp')?.textContent || "";
+                    const message = entry.querySelector('.log-message-content')?.textContent || "";
+                    logText += `${timestamp} ${message}\n`;
+                });
+
+                navigator.clipboard.writeText(logText.trim())
+                    .then(() => logToTerminal("Log copiado al portapapeles.", "success"))
+                    .catch(err => logToTerminal("Error al copiar log: " + err, "error"));
+            } else {
+                logToTerminal("La API de portapapeles no está disponible en este navegador.", "warn");
+            }
+        };
+    }
+    if (downloadLogButton && scanOutput) {
+        downloadLogButton.onclick = () => {
+            let logData = ""; // MODIFICADO: similar a copyLogButton
+            scanOutput.querySelectorAll('.log-entry').forEach(entry => {
+                const timestamp = entry.querySelector('.log-timestamp')?.textContent || "";
+                const message = entry.querySelector('.log-message-content')?.textContent || "";
+                logData += `${timestamp} ${message}\n`;
+            });
+            logData = logData.trim();
+
+            const blob = new Blob([logData], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const timestampFile = new Date().toISOString().replace(/[:.]/g, '-');
+            a.download = `panthera_scan_log_${currentJobId || 'session'}_${timestampFile}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            logToTerminal("Log preparado para descarga.", "success");
+        };
+    }
+
+    window.openTab = function (evt, tabName) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none"; // MODIFICADO: Usar style.display para compatibilidad con .active
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        const activeTabContent = document.getElementById(tabName);
+        if (activeTabContent) {
+            activeTabContent.style.display = "block"; // MODIFICADO
+            activeTabContent.classList.add("active");
+        }
+        if (evt && evt.currentTarget) {
+            evt.currentTarget.classList.add("active");
+        }
+    }
+    const firstTabButton = document.querySelector('.tabs .tab-link');
+    if (firstTabButton) {
+        // Simular un evento de click para que openTab se ejecute correctamente
+        // Esto es mejor que llamar a firstTabButton.click() directamente si hay manejadores de eventos complejos
+        const mockEvent = { currentTarget: firstTabButton };
+        const tabName = firstTabButton.getAttribute('onclick').match(/openTab\(event, ['"](.*?)['"]\)/)[1];
+        openTab(mockEvent, tabName);
+    }
+
 
     // Inicialización
     fetchAppConfig().then(() => {
         loadJobs();
+        updateTargetsCount(); // NUEVO: Contar targets al inicio
         if (currentJobId) {
-            viewJobDetails(currentJobId); // Cargar detalles del último job activo si existe
+            viewJobDetails(currentJobId);
         } else {
-            currentJobInfoDiv.style.display = 'none'; // Ocultar si no hay job activo
+            if (jobInfoPanel) jobInfoPanel.style.display = 'none';
+            currentJobInfoDiv.style.display = 'none';
+            // Seleccionar la primera pestaña si no hay job actual
+            if (firstTabButton && !currentJobId) {
+                const mockEvent = { currentTarget: firstTabButton };
+                const tabName = firstTabButton.getAttribute('onclick').match(/openTab\(event, ['"](.*?)['"]\)/)[1];
+                openTab(mockEvent, tabName);
+            }
         }
     });
 });

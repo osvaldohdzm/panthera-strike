@@ -28,6 +28,7 @@ import shutil
 from pathlib import Path
 import time
 import re  # For cleaning up command templates
+import subprocess # Asegurándonos que está importado para run_scan_process
 
 from utils import helpers
 
@@ -195,6 +196,9 @@ def run_scan_process(
 
                 # Remove any remaining unreplaced placeholders like {some_other_param}
                 final_command = re.sub(r"\{[a-zA-Z0-9_]+\}", "", final_command)
+                # Ensure multiple spaces are condensed to one, but not if they are quoted
+                final_command = ' '.join(final_command.split())
+
 
                 app_logger.info(
                     f"Job {job_id}: Ejecutando [{tool_id}] en [{target_value}]: {final_command}"
@@ -278,7 +282,7 @@ def run_scan_process(
                 except Exception as e_tool:
                     tool_run_status = "error"
                     tool_error_message = str(e_tool)
-                    current_app.logger.error(
+                    app_logger.error( # Usar el logger pasado
                         f"Job {job_id}: Excepción ejecutando {tool_id} en {target_value}: {e_tool}"
                     )
                     current_summary_data["logs"].append(
@@ -340,7 +344,7 @@ def run_scan_process(
             )
 
     except Exception as e_main:
-        app_logger.error(
+        app_logger.error( # Usar el logger pasado
             f"Error mayor en el motor de escaneo para job {job_id}: {e_main}"
         )
         current_summary_data["logs"].append(
@@ -405,7 +409,7 @@ def init_db_command():
     with app.open_resource(schema_path, mode="r") as f:
         db.cursor().executescript(f.read())
     db.commit()
-    current_app.logger.info("Base de datos inicializada.")
+    app.logger.info("Base de datos inicializada.") # Usar app.logger
     cursor = db.cursor()
     cursor.execute("SELECT * FROM user WHERE username = ?", ("panthera",))
     if cursor.fetchone() is None:
@@ -415,7 +419,7 @@ def init_db_command():
             ("panthera", hashed_password),
         )
         db.commit()
-        current_app.logger.info("Usuario por defecto 'panthera' creado.")
+        app.logger.info("Usuario por defecto 'panthera' creado.") # Usar app.logger
 
 
 @app.cli.command("init-db")
@@ -475,7 +479,7 @@ def logout():
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    return render_template("scans.html")
 
 
 @app.route("/api/config", methods=["GET"])
@@ -490,7 +494,7 @@ def get_app_config_route():
         }
         return jsonify(config_data)
     except Exception as e:
-        current_app.logger.error(f"Error al cargar configuración: {e}")
+        app.logger.error(f"Error al cargar configuración: {e}") # Usar app.logger
         return (
             jsonify({"error": "No se pudo cargar la configuración del servidor."}),
             500,
@@ -550,15 +554,17 @@ def scan_job_thread_target(
                 # Attempt to create ZIP archive if completed successfully or with errors
                 if final_status in ["COMPLETED", "COMPLETED_WITH_ERRORS"]:
                     zip_filename_base = f"{job_id}_results"
-                    zip_path_on_disk = (
-                        Path(app.config["RESULTS_DIR"]) / f"{zip_filename_base}.zip"
-                    )  # Store in parent of job_path
-
+                    # Corregir para que el zip se guarde en RESULTS_DIR directamente, no en un subdirectorio de job_path
+                    zip_path_on_disk = Path(app.config["RESULTS_DIR"]) / f"{zip_filename_base}.zip"
+                    archive_root_dir = Path(job_path).parent # El directorio que contiene la carpeta del job (ej. scan_results)
+                    archive_base_name = Path(app.config["RESULTS_DIR"]) / zip_filename_base # Nombre base para el archivo sin extensión
+                    
                     try:
                         shutil.make_archive(
-                            str(Path(app.config["RESULTS_DIR"]) / zip_filename_base),
-                            "zip",
-                            job_path,
+                            str(archive_base_name), # path sin .zip
+                            "zip",      # formato
+                            root_dir=archive_root_dir, # Directorio desde el cual archivar
+                            base_dir=Path(job_path).name # Directorio a archivar, relativo a root_dir
                         )
                         zip_url_path = f"/api/results/download/{zip_filename_base}.zip"
                         conn_final.execute(
@@ -577,8 +583,11 @@ def scan_job_thread_target(
                         summary_path = Path(job_path) / "summary.json"
                         s_data = {}
                         if summary_path.exists():
-                            with open(summary_path, "r") as f:
-                                s_data = json.load(f)
+                            try:
+                                with open(summary_path, "r", encoding="utf-8") as f:
+                                    s_data = json.load(f)
+                            except json.JSONDecodeError: # Manejar corrupción de summary.json
+                                s_data = {"logs": []} 
                         if "logs" not in s_data:
                             s_data["logs"] = []
                         s_data["logs"].append(
@@ -588,7 +597,7 @@ def scan_job_thread_target(
                                 "type": "error",
                             }
                         )
-                        with open(summary_path, "w") as f:
+                        with open(summary_path, "w", encoding="utf-8") as f:
                             json.dump(s_data, f, indent=4)
 
         except Exception as e_db_final:
@@ -640,18 +649,19 @@ def start_scan_route():
 
     job_id = f"scan_{helpers.get_current_timestamp_str()}"
     job_path, _ = helpers.create_job_directories(
-        app.config["RESULTS_DIR"], job_id, targets
+        app.config["RESULTS_DIR"], job_id, targets # targets no se usa aquí, helpers lo usa internamente
     )
+
 
     initial_summary_data = {
         "job_id": job_id,
         "user_id": current_user.id,
-        "status": "PENDING",
+        "status": "PENDING", # Estado inicial antes de que el hilo lo tome
         "targets": targets,
         "selected_tools_config": selected_tools_payload,
         "advanced_options": advanced_options_input,
         "creation_timestamp": datetime.datetime.now().isoformat(),
-        "start_timestamp": None,
+        "start_timestamp": None, # El hilo lo establecerá
         "end_timestamp": None,
         "overall_progress": 0,
         "results_path": str(job_path),  # Store as string
@@ -664,8 +674,15 @@ def start_scan_route():
                 "type": "info",
             }
         ],
-        "tool_progress": {
-            tool_entry["id"]: {
+        "tool_progress": { # Inicializar progreso para cada herramienta/objetivo combinación
+             # Esto se llenará dinámicamente por el motor de escaneo
+        },
+    }
+    # Inicializar tool_progress con todas las herramientas planeadas
+    for target_val in targets:
+        for tool_entry in selected_tools_payload:
+            tool_prog_key = f"{tool_entry['id']}_on_{target_val}"
+            initial_summary_data["tool_progress"][tool_prog_key] = {
                 "status": "pending",
                 "command": None,
                 "output_file": None,
@@ -673,33 +690,33 @@ def start_scan_route():
                 "end_time": None,
                 "error_message": None,
             }
-            for tool_entry in selected_tools_payload
-        },
-    }
+
     helpers.save_job_summary(
         job_path, initial_summary_data
     )  # Save initial summary.json
 
     db = get_db()
     try:
+        # El estado inicial en DB es PENDING. El hilo lo cambiará a RUNNING.
         db.execute(
-            """INSERT INTO job (id, user_id, status, targets, selected_tools_config, advanced_options, creation_timestamp, results_path, overall_progress)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            """INSERT INTO job (id, user_id, status, targets, selected_tools_config, advanced_options, creation_timestamp, start_timestamp, results_path, overall_progress)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 job_id,
                 current_user.id,
-                "PENDING",
+                "PENDING", # Estado inicial
                 json.dumps(targets),
                 json.dumps(selected_tools_payload),
                 json.dumps(advanced_options_input),
                 initial_summary_data["creation_timestamp"],
+                datetime.datetime.now().isoformat(), # start_timestamp es cuando se encola, no cuando el hilo corre
                 str(job_path),
                 0,
             ),
         )
         db.commit()
     except sqlite3.Error as e:
-        current_app.logger.error(f"Error de DB al crear job {job_id}: {e}")
+        app.logger.error(f"Error de DB al crear job {job_id}: {e}") # Usar app.logger
         helpers.save_job_summary(
             job_path,
             {
@@ -722,7 +739,7 @@ def start_scan_route():
     tool_definitions = helpers.get_tools_definition()  # Cargar una vez
 
     # Pasar una copia del logger de la app al hilo
-    thread_logger = current_app.logger
+    thread_logger = app.logger # Usar app.logger, no current_app.logger aquí
 
     scan_thread = threading.Thread(
         target=scan_job_thread_target,
@@ -739,6 +756,23 @@ def start_scan_route():
     )
     active_scan_threads[job_id] = scan_thread
     scan_thread.start()
+    
+    # Actualizar estado a INITIALIZING o RUNNING en DB y summary después de iniciar hilo
+    try:
+        db.execute("UPDATE job SET status = ?, start_timestamp = ? WHERE id = ?", 
+                   ("INITIALIZING", datetime.datetime.now().isoformat(), job_id))
+        db.commit()
+        initial_summary_data["status"] = "INITIALIZING"
+        initial_summary_data["start_timestamp"] = datetime.datetime.now().isoformat()
+        initial_summary_data["logs"].append({
+            "timestamp": datetime.datetime.now().isoformat(),
+            "message": f"Job {job_id} ha comenzado la inicialización.",
+            "type": "info",
+        })
+        helpers.save_job_summary(job_path, initial_summary_data)
+    except sqlite3.Error as e_update:
+        app.logger.error(f"Error de DB al actualizar job {job_id} a INITIALIZING: {e_update}")
+
 
     return jsonify({"message": "Trabajo de escaneo iniciado.", "job_id": job_id}), 202
 
@@ -764,17 +798,23 @@ def scan_status_route(job_id):
             with open(summary_file_path, "r", encoding="utf-8") as f:
                 summary_data_file = json.load(f)
         except json.JSONDecodeError:
-            current_app.logger.warning(
+            app.logger.warning( # Usar app.logger
                 f"Job {job_id}: summary.json corrupto al obtener estado."
             )
             summary_data_file = {
-                "logs": [{"message": "summary.json corrupto", "type": "error"}],
+                "logs": [{"message": "summary.json corrupto", "type": "error", "timestamp": datetime.datetime.now().isoformat()}],
                 "tool_progress": {},
             }
+    else: # Si summary.json no existe por alguna razón crítica
+        summary_data_file = {
+            "logs": [{"message": "summary.json no encontrado", "type": "error", "timestamp": datetime.datetime.now().isoformat()}],
+            "tool_progress": {},
+        }
+
 
     response_data = {
         "job_id": job_data_db["id"],
-        "status": job_data_db["status"],
+        "status": job_data_db["status"], # El estado de la DB es la fuente de verdad principal
         "overall_progress": job_data_db["overall_progress"],
         "start_time": job_data_db["start_timestamp"],
         "end_time": job_data_db["end_timestamp"],
@@ -851,11 +891,14 @@ def cancel_scan_route(job_id):
         summary_file_path = Path(job_path) / "summary.json"
         s_data = {}
         if summary_file_path.exists():
-            with open(summary_file_path, "r") as f:
-                s_data = json.load(f)
+            try:
+                with open(summary_file_path, "r", encoding="utf-8") as f:
+                    s_data = json.load(f)
+            except json.JSONDecodeError:
+                 s_data = {"logs": []} # Manejar corrupción
         if "logs" not in s_data:
             s_data["logs"] = []
-        s_data["status"] = "REQUEST_CANCEL"
+        s_data["status"] = "REQUEST_CANCEL" # Reflejar el estado de solicitud
         s_data["logs"].append(
             {
                 "timestamp": datetime.datetime.now().isoformat(),
@@ -863,15 +906,12 @@ def cancel_scan_route(job_id):
                 "type": "warn",
             }
         )
-        with open(summary_file_path, "w") as f:
+        with open(summary_file_path, "w", encoding="utf-8") as f:
             json.dump(s_data, f, indent=4)
 
-        current_app.logger.info(
+        app.logger.info( # Usar app.logger
             f"Solicitud de cancelación para job {job_id} registrada."
         )
-        # El hilo de escaneo es responsable de verificar esta bandera y detenerse.
-        # Si el hilo ya terminó, el estado final (COMPLETED, ERROR) prevalecerá eventualmente.
-        # Si el hilo se detiene limpiamente, debería actualizar el estado a CANCELLED.
         return (
             jsonify(
                 {"message": f"Solicitud de cancelación para el job {job_id} enviada."}
@@ -879,7 +919,7 @@ def cancel_scan_route(job_id):
             200,
         )
     except sqlite3.Error as e:
-        current_app.logger.error(f"Error de DB al cancelar job {job_id}: {e}")
+        app.logger.error(f"Error de DB al cancelar job {job_id}: {e}") # Usar app.logger
         return (
             jsonify({"error": "Error de base de datos al solicitar cancelación."}),
             500,
@@ -891,29 +931,35 @@ def cancel_scan_route(job_id):
 )  # Cambiado para usar el nombre del archivo directamente
 @login_required
 def download_job_results_zip(zip_filename):
-    # Validar que el zip_filename pertenezca a un job del usuario actual
     db = get_db()
-    # El zip_filename podría ser job_id + "_results.zip"
-    # Necesitamos extraer el job_id para verificar la propiedad.
-    # Asumimos que zip_filename es como "scan_YYYYMMDD_HHMMSS_ffffff_results.zip"
-
-    # Forma más segura: buscar en la DB por zip_path
-    # El zip_path en la DB es como "/api/results/download/scan_..."
     db_zip_path_search = f"/api/results/download/{zip_filename}"
     cur = db.execute(
-        "SELECT results_path FROM job WHERE zip_path = ? AND user_id = ?",
+        "SELECT results_path FROM job WHERE zip_path = ? AND user_id = ?", # Buscar por el zip_path completo
         (db_zip_path_search, current_user.id),
     )
     job_data = cur.fetchone()
 
     if not job_data:
-        return jsonify({"error": "Archivo ZIP no encontrado o no autorizado."}), 404
+        # Intentar buscar por job ID si el zip_filename es solo el ID del job (menos seguro, pero como fallback)
+        # Esto asume que zip_filename podría ser job_id + "_results.zip"
+        if zip_filename.endswith("_results.zip"):
+            possible_job_id = zip_filename.replace("_results.zip", "")
+            cur_fallback = db.execute(
+                 "SELECT results_path, zip_path FROM job WHERE id = ? AND user_id = ?", (possible_job_id, current_user.id)
+            )
+            job_data_fallback = cur_fallback.fetchone()
+            if job_data_fallback and job_data_fallback["zip_path"] == db_zip_path_search:
+                job_data = job_data_fallback # Usar este si coincide
+            else:
+                 return jsonify({"error": "Archivo ZIP no encontrado o no autorizado (búsqueda fallback fallida)."}), 404
+        else:
+            return jsonify({"error": "Archivo ZIP no encontrado o no autorizado."}), 404
 
-    # El archivo ZIP se almacena en app.config['RESULTS_DIR']
+
     file_on_disk_path = Path(app.config["RESULTS_DIR"]) / zip_filename
 
     if not file_on_disk_path.is_file():
-        current_app.logger.error(
+        app.logger.error( # Usar app.logger
             f"Archivo ZIP {file_on_disk_path} no encontrado en disco para job (DB path: {db_zip_path_search})."
         )
         return jsonify({"error": "Archivo ZIP no encontrado en el servidor."}), 404
@@ -922,20 +968,19 @@ def download_job_results_zip(zip_filename):
         return send_file(
             str(file_on_disk_path),
             as_attachment=True,
-            download_name=zip_filename,
+            download_name=zip_filename, # El nombre que verá el usuario al descargar
             mimetype="application/zip",
         )
     except Exception as e:
-        current_app.logger.error(f"Error al enviar archivo ZIP {zip_filename}: {e}")
+        app.logger.error(f"Error al enviar archivo ZIP {zip_filename}: {e}") # Usar app.logger
         return jsonify({"error": "No se pudo enviar el archivo ZIP."}), 500
 
 
 if __name__ == "__main__":
     # Crear la base de datos y el usuario por defecto si no existen al iniciar
-    # Esto es mejor que hacerlo en el scope global del módulo
-    with app.app_context():
+    with app.app_context(): # Asegura que app.logger y otras extensiones estén disponibles
         if not Path(app.config["DATABASE"]).exists():
-            current_app.logger.info(
+            app.logger.info(
                 f"Base de datos no encontrada en {app.config['DATABASE']}. Inicializando..."
             )
             init_db_command()
@@ -947,9 +992,38 @@ if __name__ == "__main__":
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='job';"
             )
             if not cursor_check.fetchone():
-                current_app.logger.warning(
+                app.logger.warning(
                     "La tabla 'job' no existe. Es posible que necesites reinicializar la DB con 'flask init-db'."
                 )
             cursor_check.close()
 
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # --- MODIFICACIÓN PARA PUERTOS DINÁMICOS ---
+    env_mode = os.environ.get("APP_ENV_MODE", "PROD").upper()
+    run_host = "0.0.0.0"  # Por defecto para PROD y si se quiere acceso de red local
+    run_port = 5000       # Puerto por defecto para PROD
+    flask_debug_mode = False # Por defecto, debug desactivado
+
+    if env_mode == "DEBUG":
+        run_port = 5001       # Puerto para modo DEBUG
+        run_host = "127.0.0.1" # Escuchar solo en localhost para DEBUG (acceso vía Tor local)
+        flask_debug_mode = True
+        # app.logger está disponible aquí porque estamos fuera del app_context() del if __name__
+        # pero la instancia 'app' ya existe. Flask configura su logger al crear la instancia.
+        app.logger.info(f"MODO DEBUG activado. Escuchando en http://{run_host}:{run_port}")
+    elif env_mode == "DEMO":
+        run_port = 5002       # Puerto para modo DEMO
+        run_host = "127.0.0.1" # Escuchar solo en localhost para DEMO (acceso vía Tor local)
+        flask_debug_mode = False # O True si se desea modo debug en DEMO
+        app.logger.info(f"MODO DEMO activado. Escuchando en http://{run_host}:{run_port}")
+    elif env_mode == "PROD":
+        # flask_debug_mode ya es False
+        app.logger.info(f"MODO PRODUCCIÓN activado. Escuchando en http://{run_host}:{run_port}")
+    else:
+        app.logger.warning(
+            f"APP_ENV_MODE '{env_mode}' no reconocido. Usando configuración de PRODUCCIÓN por defecto (http://{run_host}:{run_port})."
+        )
+        # Se mantiene la configuración de PROD por defecto (puerto 5000, debug False)
+
+    # --- FIN DE MODIFICACIÓN ---
+
+    app.run(host=run_host, port=run_port, debug=flask_debug_mode)
