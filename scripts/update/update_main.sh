@@ -3,6 +3,8 @@
 # Ensure script stops on first error
 set -e
 
+git clean -fd
+
 # Fetch the latest updates from the remote
 echo "Fetching from origin..."
 git fetch origin
